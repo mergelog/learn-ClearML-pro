@@ -42,7 +42,7 @@ Workers・Queues画面: https://www.clear.ml/docs/latest/docs/webapp/webapp_work
 ```text
 .
 ├── apps/web/             # Angular 22版 ClearML Web
-├── docs/                 # 設計判断(adr)と運用手順(runbooks)
+├── docs/                 # 体系資料(phase*)、未解決ストーリー(backlog)、凍結資料(_archive)
 ├── infra/clearml/        # ClearML ServerとAgent用Docker Compose
 ├── infra/training/       # 学習・Agentイメージのビルド定義
 ├── infra/serving/        # 推論サービスイメージのビルド定義
@@ -402,7 +402,7 @@ corepack pnpm web:start
 ```
 
 画面操作からモデル登録までのデータの流れは
-[docs/004_20260908_angular_pipeline_trace.md](docs/004_20260908_angular_pipeline_trace.md)
+[docs/_archive/004_20260908_angular_pipeline_trace.md](docs/_archive/004_20260908_angular_pipeline_trace.md)
 にまとめています。
 
 ## 観測性と運用アラート
