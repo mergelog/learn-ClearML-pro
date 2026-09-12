@@ -1,0 +1,20 @@
+@if (model(); as productionModel) {
+  <dl class="production-model-card__facts">
+    <dt>Model version</dt>
+    <dd>{{ productionModel.modelVersion }}</dd>
+    <dt>Dataset version</dt>
+    <dd>{{ productionModel.datasetVersion || '—' }}</dd>
+    <dt>Promoted by</dt>
+    <dd>{{ productionModel.promotedBy || '—' }}</dd>
+    <dt>Promoted at</dt>
+    <dd>{{ productionModel.promotedAt || '—' }}</dd>
+    <dt>Reason</dt>
+    <dd>{{ productionModel.promotionReason || '—' }}</dd>
+    <dt>Trained by task</dt>
+    <dd>{{ productionModel.trainTaskId || '—' }}</dd>
+    <dt>Model id</dt>
+    <dd>{{ productionModel.modelId || '—' }}</dd>
+  </dl>
+} @else {
+  <p class="production-model-card__hint">No model has been promoted to production yet.</p>
+}

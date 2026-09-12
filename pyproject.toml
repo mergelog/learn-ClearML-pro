@@ -1,0 +1,102 @@
+# リポジトリ共通のPythonツール設定。
+#
+# パッケージ配布は行わないため [project] は置かない。ここにあるのは
+# 「ローカルとCIで同じ検証コマンドを使う」ための静的解析・型・カバレッジの
+# 設定だけで、実行時の依存は requirements/ 配下で固定する。
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["ml", "services", "tools"]
+extend-exclude = [".generated", ".venv", "apps", "node_modules"]
+
+[tool.ruff.lint]
+select = [
+    "A",    # 組み込み名の隠蔽
+    "ARG",  # 使われていない引数
+    "B",    # 実行時に効いてくるバグの型
+    "C4",   # 内包表記
+    "DTZ",  # tz naive な datetime
+    "E",    # pycodestyle error
+    "F",    # pyflakes
+    "I",    # import順
+    "N",    # 命名規約
+    "PTH",  # os.path ではなく pathlib
+    "RUF",  # ruff 固有
+    "SIM",  # 単純化できる分岐
+    "T20",  # print / pprint の残存
+    "TID",  # 相対importの深さ
+    "UP",   # 新しい構文への追従
+    "W",    # pycodestyle warning
+]
+
+# 日本語のコメントは全角の括弧や記号を自然に使う。RUF001-003 はそれを
+# 「半角と紛らわしい」と警告するが、ここでは誤りではない。
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+# コマンドライン入口は結果を標準出力へ書くことが仕事なので print を許す。
+"**/*cli.py" = ["T20"]
+"tools/seed_clearml.py" = ["T20"]
+# プロセスの入口は、起動できない理由を標準エラーへ書くのが仕事である。
+"**/main.py" = ["T20"]
+"tools/semiconductor_seed/*.py" = ["T20"]
+# テストは表明の読みやすさを優先する。
+# ARG: テストダブルが受け口として持つだけの引数を許す。
+# SIM117: patchを1行1件で積むほうが、どの依存を差し替えたか差分から読める。
+"**/tests/**" = ["ARG002", "ARG005", "SIM117"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ml", "services", "tools"]
+lines-after-imports = 2
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[tool.mypy]
+python_version = "3.10"
+files = ["ml", "services", "tools"]
+exclude = "(^|/)(\\.generated|\\.venv|apps|node_modules)/"
+namespace_packages = true
+explicit_package_bases = true
+strict = true
+# ClearML / scikit-learn / numpy は型情報を配布していないか、実装が Any を
+# 返すため、境界モジュールだけ個別に緩める。ドメイン側は strict のまま保つ。
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = ["clearml.*", "joblib.*", "sklearn.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source = ["ml", "services", "tools"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+# 導入時点の実測は82%。下限を割る変更をCIで止めるための床であって、
+# 目標値ではない。品質ゲートを厚くする過程で引き上げる。
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+# --- 既存テストの型付けbaseline -------------------------------------------
+#
+# 本番コードは strict のまま維持する。ここに並ぶのは strict 導入以前から
+# 存在するテストだけで、新規に追加するテストをこの一覧へ足してはならない。
+# 計画書 P2-11 で一覧を段階的に空にする。
+[[tool.mypy.overrides]]
+module = [
+    "ml.tests.*",
+    "tools.tests.*",
+]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+disallow_any_generics = false

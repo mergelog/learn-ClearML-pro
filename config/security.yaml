@@ -1,0 +1,40 @@
+# 秘密検査の除外。
+#
+# ここに書かれた行は「見たうえで、資格情報ではないと判断した」ものである。
+# 設定ではなく判断なので、1件ずつ理由を書く。理由の無い除外は読み込みで拒否する。
+#
+#   pnpm sec:scan          追跡されているファイルを検査する
+#   pnpm sec:scan:paths    追跡されていない生成物を検査する
+#   pnpm sec:scan:clearml  Taskが記録した内容を検査する
+#
+# 1行だけを外したいときは、このファイルではなくその行へ
+# `secret-scan:allow <理由>` と書く。除外の理由が、除外された行の隣に残る。
+
+secret_scan:
+  exemptions:
+    - path: "apps/web/**/assets/**"
+      rules:
+        - named-secret
+      reason: >-
+        持ち込んだ第三者ライブラリ（plotly、ace-builds の各言語モード）。
+        圧縮された識別子や構文定義が「名前が秘密を約束している代入」に見えるだけで、
+        こちらの資格情報ではない。src と build の両方を指すのは、生成物にも
+        同じものが写るためである。版数を上げるときは、差し替えたファイル自体を
+        paths 検査にかける。
+
+    - path: "ml/tests/security/test_secrets.py"
+      rules:
+        - private-key
+        - aws-access-key-id
+        - json-web-token
+        - credential-in-url
+        - clearml-credential
+        - named-secret
+      reason: >-
+        検出器そのものの題材。ここに並ぶ文字列は「この形を見つけられること」を
+        確かめるために置いてあり、実在の資格情報ではない（AWSの例示キー、
+        署名の合わない JWT、その場で考えた乱数列）。行ごとの
+        `secret-scan:allow` ではなくファイル単位にしたのは、同じ理由が
+        8行に並ぶだけになるためである。規則を1つずつ挙げてあるので、
+        `issued-token`（このリポジトリが発行するトークン）だけは
+        このファイルでも検出される。

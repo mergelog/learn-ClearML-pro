@@ -1,0 +1,29 @@
+<table class="evaluation-scores-table">
+  <caption>
+    Validation decides which model is chosen. Test confirms the choice once.
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Split</th>
+      <th scope="col">Accuracy</th>
+      <th scope="col">Precision</th>
+      <th scope="col">Recall</th>
+      <th scope="col">F1</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (score of scores(); track score.split) {
+      <tr>
+        <td>{{ score.split }}</td>
+        <td>{{ (score.accuracy | number: scoreFormat) ?? '—' }}</td>
+        <td>{{ (score.precision | number: scoreFormat) ?? '—' }}</td>
+        <td>{{ (score.recall | number: scoreFormat) ?? '—' }}</td>
+        <td>{{ (score.f1 | number: scoreFormat) ?? '—' }}</td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="5">No scores yet.</td>
+      </tr>
+    }
+  </tbody>
+</table>

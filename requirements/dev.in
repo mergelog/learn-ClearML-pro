@@ -1,0 +1,14 @@
+# 検証だけに使う依存。学習イメージにも推論イメージにも入れない。
+#
+#   pnpm run py:lock
+
+-c training.txt
+-c serving.txt
+
+coverage>=7.6,<8
+httpx>=0.28,<1
+mypy>=1.13,<2
+pip-tools>=7.4,<8
+ruff>=0.8,<1
+# 設定ファイル読み込みで使う PyYAML の型情報。実行時には不要。
+types-pyyaml>=6.0,<7

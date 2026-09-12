@@ -1,0 +1,27 @@
+# ビルドコンテキストへ送らないもの。
+#
+# 依存の実体や生成物はイメージ内で作り直すため、送っても使わない。
+# 数百MBの転送を毎回避ける効果もある。
+
+.git/
+.github/
+.generated/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+apps/web/node_modules/
+apps/web/build/
+apps/web/.angular/
+apps/web/.stryker-tmp/
+apps/web/playwright-report/
+apps/web/test-results/
+**/__pycache__/
+**/*.py[cod]
+
+# 認証情報はイメージへ焼かない。実行時にマウントする。
+clearml.conf
+.env
+apps/web/.env
+apps/web/src/credentials.json

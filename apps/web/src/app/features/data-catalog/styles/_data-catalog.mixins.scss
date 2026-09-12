@@ -1,0 +1,75 @@
+// 台帳の中で複数のcomponentが共有する見た目。
+//
+// componentを分けると、同じ「表」「定義リスト」「補足文」が別々のscssへ
+// 書き写されていく。写した時点で少しずつずれるので、形の定義はここに1つ置き、
+// 各componentは自分のクラス名に対して呼び出すだけにする。
+//
+// 色は決めない。参照するのはアプリのテーマ変数だけである。値を直接書くと、
+// ダークテーマでその1か所だけコントラストが崩れ、しかもそれをlintは
+// 見つけられない。
+//
+// `quality-pipeline` の mixins とは別に置いている。同じ形が2つあることは
+// 分かったうえで、まだ `shared/` へ寄せない。2つを見比べてから寄せる判断を
+// する（チェックリスト P-2）。
+
+@mixin hint {
+  margin: 0;
+  color: var(--color-on-surface-variant);
+}
+
+@mixin controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@mixin facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+
+  dt {
+    color: var(--color-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@mixin data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  caption {
+    padding-bottom: 8px;
+    text-align: left;
+    color: var(--color-on-surface-variant);
+  }
+
+  th,
+  td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--color-outline-variant);
+  }
+}
+
+// タグの並び。資産1件につき何個でも付きうるので、折り返す。
+@mixin tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  li {
+    padding: 0 6px;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 10px;
+    color: var(--color-on-surface-variant);
+  }
+}

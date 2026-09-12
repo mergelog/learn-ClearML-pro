@@ -1,0 +1,43 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.data-catalog {
+  display: grid;
+  gap: 24px;
+  padding: 24px;
+
+  &__lead {
+    @include dc.hint;
+  }
+
+  &__panel {
+    display: grid;
+    gap: 8px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__panel-head {
+    @include dc.controls;
+
+    justify-content: space-between;
+  }
+
+  &__export-note {
+    @include dc.hint;
+  }
+
+  &__error {
+    margin: 0;
+    padding: 12px;
+    border-radius: 4px;
+    // 色だけで失敗を伝えないよう、role="alert" と併用している。
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
+  }
+}

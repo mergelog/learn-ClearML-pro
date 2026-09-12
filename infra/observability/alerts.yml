@@ -1,0 +1,157 @@
+# いつ人を呼ぶか。
+#
+# 決めていることが3つある。
+#
+# 1. severity は warning と critical だけにする。段階を増やすと、
+#    どれが起こしてよい通知なのか誰も覚えていられなくなる。
+# 2. すべての規則に `for` を付ける。1回のスクレイプで鳴る規則は、
+#    一過性のゆらぎで鳴り続け、やがて無視されるようになる。
+# 3. 各規則の annotation に、最初に見る場所を書く。深夜に起こされた人が
+#    runbook を探すところから始めなくて済むようにする。
+
+groups:
+  - name: serving
+    rules:
+      - alert: PredictionServiceDown
+        expr: up{job="prediction-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 推論サービスが応答していない
+          description: >-
+            2分以上スクレイプできていない。プロセスが落ちたか、
+            モデルを読み込めずに起動に失敗している。
+          runbook: docs/runbooks/006_20260908_observability.md#推論サービスが応答しない
+
+      - alert: PredictionServiceHasNoModel
+        expr: prediction_model_loaded == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 推論サービスが提供できるモデルを持っていない
+          description: production に昇格したモデルが無いか、読み込みに失敗している。
+          runbook: docs/runbooks/006_20260908_observability.md#提供できるモデルがない
+
+      - alert: PredictionErrorRateHigh
+        expr: >-
+          sum(rate(prediction_requests_total{outcome="unavailable"}[5m]))
+          / clamp_min(sum(rate(prediction_requests_total[5m])), 0.001) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: 推論の失敗率が5%を超えている
+          description: >-
+            サービス側の失敗（5xx）の割合。入力の誤り（4xx）は含めない。
+            含めると、呼び出し側の不具合でこちらが起こされる。
+          runbook: docs/runbooks/006_20260908_observability.md#失敗率が上がった
+
+      - alert: PredictionLatencyHigh
+        # 95パーセンタイル。平均だと、遅い一部の呼び出しが埋もれる。
+        expr: >-
+          histogram_quantile(
+            0.95,
+            sum(rate(prediction_request_seconds_bucket[5m])) by (le, endpoint)
+          ) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 推論の応答が遅くなっている
+          description: 95パーセンタイルが1秒を超えた状態が10分続いている。
+          runbook: docs/runbooks/006_20260908_observability.md#応答が遅い
+
+      - alert: PredictionDistributionShifted
+        # 学習時に見た不良率と、いま返している不良率の差。
+        # 30分続いたときだけ鳴らすのは、短時間の偏りは普通に起きるためである。
+        expr: >-
+          abs(predicted_failure_share - training_failure_share) > 0.2
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: 予測の分布が学習時から離れている
+          description: >-
+            モデルは動いているが、返している不良の割合が学習時と20ポイント以上違う。
+            工程が変わったか、入力の質が変わった可能性がある。
+          runbook: docs/runbooks/006_20260908_observability.md#予測の分布が変わった
+
+  - name: training
+    rules:
+      - alert: ClearmlUnreachable
+        expr: clearml_reachable == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: ClearML Serverを読めていない
+          description: 学習側の状態が5分以上取得できていない。
+          runbook: docs/runbooks/006_20260908_observability.md#clearml-serverが読めない
+
+      - alert: QueueUnattended
+        # 待っている仕事があるのに、聞いているAgentがいない。
+        # 「長い行列」より悪い。行列は捌けるが、これは捌けない。
+        expr: clearml_queue_pending_tasks > 0 and clearml_queue_workers == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: 誰も見ていないQueueに仕事が溜まっている
+          description: Agentが停止しているか、購読するQueue名が違っている。
+          runbook: docs/runbooks/006_20260908_observability.md#queueが捌けない
+
+      - alert: QueueBacklogGrowing
+        expr: clearml_queue_pending_tasks > 5
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: Queueの滞留が続いている
+          description: Agentは動いているが処理が追いついていない。
+          runbook: docs/runbooks/006_20260908_observability.md#queueが捌けない
+
+      - alert: PipelineFailuresRecurring
+        expr: clearml_tasks_failed_recent > 2
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: 学習Taskの失敗が続いている
+          description: >-
+            直近30分で3件以上のTaskが失敗している。Datasetの品質か、
+            Agentの実行環境を疑う。
+          runbook: docs/runbooks/006_20260908_observability.md#taskが繰り返し失敗する
+
+  - name: host
+    rules:
+      - alert: HostDiskFillingUp
+        # ClearMLのDBも、Dataset も、モデルの重みも同じディスクに載っている。
+        # 空きが尽きたときの症状は別々の場所に出るが、原因は1つである。
+        expr: >-
+          min(
+            node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs"}
+            / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs"}
+          ) < 0.1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: ホストのディスクの空きが10%を切っている
+          description: >-
+            Elasticsearch はディスクが逼迫すると索引を読み取り専用にする。
+            推論より先に、学習と画面が静かに壊れる。
+          runbook: docs/runbooks/006_20260908_observability.md#ホストの資源が足りない
+
+      - alert: HostMemoryExhausted
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: ホストの空きメモリが10%を切っている
+          description: >-
+            学習・推論・監視が同じホストに載っている。OOM killer が選ぶのは
+            いちばん大きなプロセスであって、いちばん重要でないプロセスではない。
+          runbook: docs/runbooks/006_20260908_observability.md#ホストの資源が足りない

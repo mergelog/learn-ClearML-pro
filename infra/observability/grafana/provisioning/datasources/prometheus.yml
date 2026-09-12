@@ -1,0 +1,13 @@
+# Grafanaが見るデータ元。手作業の設定を残さないためにコードで置く。
+#
+# ポートは直書きしない。Grafanaはprovisioningの中で環境変数を展開できるので、
+# `.env` の PROMETHEUS_PORT をcomposeからコンテナへ渡し、ここで受ける。
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://localhost:${PROMETHEUS_PORT}
+    isDefault: true
+    editable: false

@@ -1,0 +1,21 @@
+# 本番環境の予算と実行先。
+#
+# ここだけは「探し切る」ための予算を持つ。上限を外さないのは、
+# 探索は放っておくと終わらないためで、計算資源の費用は
+# 計画書 P3-15（コスト・容量管理）で扱う。
+#
+# この設定で走らせるには EXPERIMENT_ENVIRONMENT=production を明示するか、
+# --environment production を渡す必要がある。既定は dev である。
+
+budget:
+  max_trials: 60
+  parallel_trials: 4
+  trial_minutes: 30
+  total_minutes: 240
+  keep_top: 20
+  # 本番は3 foldまで見てから打ち切る。捨てる判断をより慎重にする。
+  minimum_folds: 3
+
+execution:
+  trial_queue: semiconductor-training
+  optimizer_queue: semiconductor-pipeline

@@ -1,0 +1,43 @@
+# 鳴った警報をどこへ届けるか。
+#
+# 学習環境なので、実際の宛先（メール、Slack、PagerDuty）は設定しない。
+# 代わりに、届け先の設定がここにあるという形だけを残す。実運用では
+# receiver の中身を差し替えるだけで済む。
+#
+# 決めていることが2つある。
+#
+# 同じ原因の警報はまとめる。1つの障害で10通届くと、次からは読まれない。
+# critical と warning は別の経路にする。深夜に起こしてよいのは critical だけである。
+
+global:
+  resolve_timeout: 5m
+
+route:
+  # 同じアラート名・同じQueue・同じプロジェクトはまとめて1通にする。
+  group_by: ['alertname', 'queue', 'project']
+  group_wait: 30s
+  group_interval: 5m
+  # 直っていない警報を鳴らし直す間隔。短いと通知が騒がしくなる。
+  repeat_interval: 4h
+  receiver: warning
+  routes:
+    - matchers:
+        - severity = "critical"
+      receiver: critical
+      # 重大なものは待たずに出す。
+      group_wait: 10s
+      repeat_interval: 1h
+
+receivers:
+  # 学習環境では受け口を持たない。実運用ではここを差し替える。
+  - name: warning
+  - name: critical
+
+inhibit_rules:
+  # サービスが落ちているときに、応答が遅い・失敗率が高いは当たり前である。
+  # 原因ではなく結果の警報で人を起こさない。
+  - source_matchers:
+      - alertname = "PredictionServiceDown"
+    target_matchers:
+      - severity =~ "warning|critical"
+    equal: ['job']

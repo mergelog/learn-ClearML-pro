@@ -1,0 +1,37 @@
+@if (template(); as pipelineTemplate) {
+  <p class="start-run-form__hint">
+    Cloned from {{ pipelineTemplate.name }}.
+    @if (runIsTemplate()) {
+      This is the same task as the latest run below — the pipeline is submitted
+      under one name, so the newest submitted run is also what a new run is cloned from.
+    }
+  </p>
+} @else if (!loading()) {
+  <p class="start-run-form__hint">
+    No pipeline to start from. Submit one with
+    <code>pnpm ml:pipeline -- --dataset-version 1.0.0 --submit</code>.
+  </p>
+}
+
+<form class="start-run-form__controls" [formGroup]="form" (ngSubmit)="submit()">
+  <label for="dataset-version">Dataset version</label>
+  <input
+    id="dataset-version"
+    type="text"
+    formControlName="datasetVersion"
+    [attr.aria-invalid]="form.controls.datasetVersion.invalid"
+    aria-describedby="dataset-version-format"
+  />
+  <button type="submit" [disabled]="!canSubmit()">
+    {{ starting() ? 'Starting…' : 'Start' }}
+  </button>
+  <button type="button" [disabled]="loading()" (click)="reload.emit()">Reload</button>
+</form>
+
+<p
+  id="dataset-version-format"
+  class="start-run-form__hint"
+  [class.start-run-form__hint--invalid]="form.controls.datasetVersion.invalid"
+>
+  {{ formatHint }}
+</p>

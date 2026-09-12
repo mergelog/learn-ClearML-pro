@@ -1,0 +1,57 @@
+<section class="catalog-asset-detail">
+  <header class="catalog-asset-detail__header">
+    <p class="catalog-asset-detail__back">
+      <a [routerLink]="[catalogRoute]">Back to the catalog</a>
+    </p>
+    <h1>
+      @if (detail(); as assetDetail) {
+        {{ assetDetail.asset.name }}
+      } @else if (target(); as openTarget) {
+        {{ kindLabels[openTarget.kind] }} {{ openTarget.id }}
+      } @else {
+        Unknown asset
+      }
+    </h1>
+  </header>
+
+  @if (error(); as reason) {
+    <p class="catalog-asset-detail__error" role="alert">{{ reason }}</p>
+  }
+
+  @if (target(); as openTarget) {
+    <section class="catalog-asset-detail__panel">
+      <h2>Details</h2>
+      @if (detailLoading() && detail() === null) {
+        <p class="catalog-asset-detail__hint">Loading…</p>
+      } @else {
+        <sm-catalog-asset-facts [detail]="detail()" />
+      }
+    </section>
+
+    <section class="catalog-asset-detail__panel">
+      <h2>Where it came from</h2>
+      <sm-catalog-lineage
+        [nodes]="lineageNodes()"
+        [partial]="lineageIsPartial()"
+        [loading]="detailLoading()"
+      />
+    </section>
+
+    @if (detail(); as assetDetail) {
+      <section class="catalog-asset-detail__panel">
+        <h2>Edit metadata</h2>
+        <sm-catalog-metadata-form
+          [detail]="assetDetail"
+          [canSave]="canSave()"
+          [saving]="saving()"
+          (save)="save($event)"
+        />
+      </section>
+    }
+  } @else {
+    <p class="catalog-asset-detail__hint">
+      This address does not name a dataset, model or run. Go back to the catalog and
+      pick one.
+    </p>
+  }
+</section>

@@ -1,0 +1,32 @@
+<form class="catalog-metadata-form" [formGroup]="form" (ngSubmit)="submit()">
+  <label for="catalog-edit-tags">Tags</label>
+  <input
+    id="catalog-edit-tags"
+    type="text"
+    formControlName="tags"
+    aria-describedby="catalog-edit-tags-hint"
+    data-id="catalogEditTags"
+  />
+  <p id="catalog-edit-tags-hint" class="catalog-metadata-form__hint">
+    Separate tags with “{{ tagSeparator }}”.
+  </p>
+
+  <label for="catalog-edit-description">Description</label>
+  <textarea
+    id="catalog-edit-description"
+    rows="3"
+    formControlName="description"
+    data-id="catalogEditDescription"
+  ></textarea>
+
+  <div class="catalog-metadata-form__controls">
+    <button type="submit" [disabled]="!canSave()" data-id="catalogSave">
+      {{ saving() ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+
+  <p class="catalog-metadata-form__hint">
+    Saving writes straight to ClearML. The same asset can also be edited from its
+    ClearML page — reload before editing if someone else may have changed it.
+  </p>
+</form>

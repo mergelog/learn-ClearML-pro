@@ -1,0 +1,55 @@
+// この画面の中で複数のcomponentが共有する見た目。
+//
+// componentを分けると、同じ「表」「定義リスト」「補足文」が別々のscssへ
+// 書き写されていく。写した時点で少しずつずれるので、形の定義はここに1つ置き、
+// 各componentは自分のクラス名に対して呼び出すだけにする。
+//
+// 色は決めない。参照するのはアプリのテーマ変数だけである。値を直接書くと、
+// ダークテーマでその1か所だけコントラストが崩れ、しかもそれをlintは
+// 見つけられない（`@angular-eslint/template/accessibility-*` は色を見ない）。
+// 余白の値はここが決めるが、それは「同じものは同じに見える」ためである。
+
+@mixin hint {
+  margin: 0;
+  color: var(--color-on-surface-variant);
+}
+
+@mixin controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@mixin facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+
+  dt {
+    color: var(--color-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@mixin data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  caption {
+    padding-bottom: 8px;
+    text-align: left;
+    color: var(--color-on-surface-variant);
+  }
+
+  th,
+  td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--color-outline-variant);
+  }
+}

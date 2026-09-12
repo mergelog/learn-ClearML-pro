@@ -1,0 +1,55 @@
+<section class="quality-pipeline">
+  <header class="quality-pipeline__header">
+    <h1>Quality pipeline</h1>
+    <p class="quality-pipeline__lead">
+      Start the training pipeline for one Dataset version, follow it while it runs, and
+      see which model is serving.
+    </p>
+  </header>
+
+  @if (error(); as reason) {
+    <p class="quality-pipeline__error" role="alert">{{ reason }}</p>
+  }
+
+  <section class="quality-pipeline__panel">
+    <h2>Start a run</h2>
+    <sm-start-run-form
+      [template]="template()"
+      [runIsTemplate]="runIsTemplate()"
+      [loading]="loading()"
+      [starting]="starting()"
+      [canStart]="canStart()"
+      (start)="start($event)"
+      (reload)="reload()"
+    />
+  </section>
+
+  <section class="quality-pipeline__panel">
+    <h2>Latest run</h2>
+
+    @if (run(); as latestRun) {
+      <sm-run-summary
+        [run]="latestRun"
+        [canCancel]="canCancel()"
+        [cancelling]="cancelling()"
+        (refresh)="refresh()"
+        (cancelRun)="cancel()"
+      />
+      <sm-pipeline-steps-table [steps]="steps()" [truncated]="stepsTruncated()" />
+    } @else if (loading()) {
+      <p class="quality-pipeline__hint">Loading…</p>
+    } @else {
+      <p class="quality-pipeline__hint">No run yet.</p>
+    }
+  </section>
+
+  <section class="quality-pipeline__panel">
+    <h2>Evaluation</h2>
+    <sm-evaluation-scores-table [scores]="scores()" />
+  </section>
+
+  <section class="quality-pipeline__panel">
+    <h2>Serving now</h2>
+    <sm-production-model-card [model]="productionModel()" />
+  </section>
+</section>

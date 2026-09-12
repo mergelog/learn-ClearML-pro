@@ -1,0 +1,67 @@
+# 何を、どれくらいの間隔で見るか。
+#
+# 編集するのは infra/observability/prometheus.yml.template である。Prometheusが
+# 読むのは、そこから scripts/backend-up.sh が起動のたびに書き出す
+# .generated/observability/prometheus.yml で、こちらを直接編集しても次の起動で消える。
+#
+# 間に生成を挟むのは、Prometheusが設定ファイルの中で環境変数を展開しないためである。
+# ポートを直書きすると `.env` の変更に追従せず、監視だけが古いポートを見続ける。
+# 落ちていないのにダッシュボードだけが空になる、という気付きにくい壊れ方をする。
+#
+# 15秒にしているのは、推論の応答が秒未満で、パイプラインが分単位で進むため。
+# これより短くしても分かることは増えず、これより長いと「落ちてから気付くまで」
+# が目に見えて延びる。
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['localhost:{{ALERTMANAGER_PORT}}']
+
+scrape_configs:
+  # 推論サービス。応答時間・エラー率・予測の偏りを持つ。
+  #
+  # /metrics は metrics:read を要求する。Prometheus は scraper の資格情報を
+  # ファイルから読む。設定ファイルへ直接書くと、Prometheus の設定APIから
+  # 読めてしまうためで、ファイルなら「読めるのはこのプロセスだけ」に保てる。
+  # トークンは scripts/security-tokens.sh が .generated/security/ へ置く。
+  - job_name: prediction-api
+    authorization:
+      type: Bearer
+      credentials_file: /etc/prometheus/security/prometheus-token
+    static_configs:
+      - targets: ['localhost:{{PREDICTION_PORT}}']
+        labels:
+          component: serving
+
+  # 学習側。Queueの滞留、Agentの数、直近のTask失敗を持つ。
+  # 学習側はHTTPを話さないため、この中継が代わりに答える。
+  - job_name: ops-exporter
+    authorization:
+      type: Bearer
+      credentials_file: /etc/prometheus/security/prometheus-token
+    static_configs:
+      - targets: ['localhost:{{OPS_EXPORTER_PORT}}']
+        labels:
+          component: training
+
+  # ホストの資源。CPU・メモリ・ディスクが尽きると、学習も推論も監視も
+  # 同時に落ちる。どれか1つの症状として現れる前に見えるようにする。
+  - job_name: node-exporter
+    static_configs:
+      - targets: ['localhost:{{NODE_EXPORTER_PORT}}']
+        labels:
+          component: host
+
+  # Prometheus自身。監視が落ちていることに気付けるようにする。
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:{{PROMETHEUS_PORT}}']
+        labels:
+          component: monitoring

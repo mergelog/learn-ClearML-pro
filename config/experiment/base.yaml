@@ -1,0 +1,65 @@
+# 探索が「何を意味するか」。どの環境でも同じ。
+#
+# 環境ごとに変わるのは予算とQueueだけで、それは
+# config/experiment/{dev,staging,production}.yaml に置く。
+# この2枚を「共通の意味 -> その環境の上限」の順に重ねて読む
+# （ml/experiment/settings.py）。
+#
+# 資格情報はここへ書かない。接続先とAPIキーは環境変数から読む
+# （ml/semiconductor_quality/config.py の ClearmlSettings）。
+# 読み込み時に秘密の検出器を通すので、書いても拒否される。
+#
+# ここに無いキーを足すと読み込みが失敗する。綴りを間違えた設定が
+# 黙って既定値で走るのを防ぐためである。
+
+objective:
+  # 何を良いとするか。評価が報告する指標だけを指定できる。
+  # f1 にしているのは、recall だけを上げて何でも不良と言うモデルを
+  # 選ばないためである。評価ゲートの基準（config/model_gate.yaml）と
+  # 揃えてある。
+  metric: f1
+  direction: maximise
+
+search:
+  # 探索するアルゴリズムは1つに固定する。アルゴリズムの比較は
+  # docs/adr/001_20260908_learning_algorithm_choice.md で済んだ別の問いで、
+  # 混ぜると結果をどちらにも帰属できなくなる。
+  algorithm: random-forest
+
+  # 探索する設定と、その範囲。
+  parameters:
+    n_estimators:
+      integer:
+        minimum: 100
+        maximum: 600
+        step: 50
+    min_samples_leaf:
+      integer:
+        minimum: 1
+        maximum: 20
+    # 深さは「無制限」も候補に含める。空の値は「指示していない」を意味し、
+    # 学習側は各アルゴリズムの既定（無制限）として読む。
+    max_depth:
+      choice: [null, 8, 12, 16, 24]
+    # 不良は全体の一部しかない。重み付けをするかどうかも探索に含め、
+    # 「均衡させたほうが良い」を測って決める。
+    class_weight:
+      choice: [none, balanced]
+
+  # 探索しない設定の出発点。書き方はTask Parameterと同じで、
+  # 読み取りもPipelineのステップと同じ実装を使う。
+  defaults: {}
+
+trial:
+  # 候補1件をどう判定するか。
+  #
+  # 1回のtrain/validation分割で測ると「その分割で強かった設定」を選んでしまう。
+  # 学習用の部分をfolds個に分けて順に測り、その平均で比較する。
+  # 検証用の部分は評価ゲートが、試験用の部分は最終評価が使うので、
+  # 探索はどちらにも触れない。
+  folds: 5
+  # 不良と判定する確率のしきい値を、既定の0.5から動かして選ぶ。
+  # しきい値は各foldの学習側だけを使った内側の分割で決めるので、
+  # 採点するfoldの答えを覗くことはない。
+  tune_threshold: true
+  threshold_folds: 3

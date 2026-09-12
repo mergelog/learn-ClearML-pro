@@ -1,0 +1,64 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+#
+# Angular アプリ固有の生成物はすべてここで無視する。
+# リポジトリ横断のもの（node_modules / .venv / エディタ / Python）はルート側にある。
+
+# compiled output
+/build*
+/dist
+/tmp
+/out-tsc
+/gen-code
+/src/__ngcc_entry_points__.json
+
+# dependencies
+/node_modules
+
+# 資格情報（example のみ追跡し、実値は start / build で生成する）
+/.env
+/src/credentials.json
+
+# テストとレポートの出力
+/coverage
+/reports
+/playwright-report
+/test-results
+/.stryker-tmp
+
+# ビルドキャッシュ（直下には cache 以外も出る）
+/.angular
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vim/
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+yarn-error.log
+gen-code
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db

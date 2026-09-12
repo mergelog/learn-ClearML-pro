@@ -1,0 +1,414 @@
+name: learn01-clearml
+
+services:
+  apiserver:
+    image: ${CLEARML_SERVER_IMAGE:-clearml/server:2.4.0}
+    command: [apiserver]
+    restart: unless-stopped
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      fileserver:
+        condition: service_started
+    environment:
+      CLEARML_ELASTIC_SERVICE_HOST: elasticsearch
+      CLEARML_ELASTIC_SERVICE_PORT: 9200
+      CLEARML_MONGODB_SERVICE_HOST: mongo
+      CLEARML_MONGODB_SERVICE_PORT: 27017
+      CLEARML_REDIS_SERVICE_HOST: redis
+      CLEARML_REDIS_SERVICE_PORT: 6379
+      CLEARML_SERVER_DEPLOYMENT_TYPE: linux
+      # Keep a fresh learning environment free of ClearML's example data.
+      CLEARML__apiserver__pre_populate__enabled: "false"
+      CLEARML__apiserver__pre_populate__zip_files: /opt/clearml/db-pre-populate
+      CLEARML__apiserver__pre_populate__artifacts_path: /mnt/fileserver
+      CLEARML__services__async_urls_delete__enabled: "true"
+      CLEARML__services__async_urls_delete__fileserver__url_prefixes: '["http://localhost:${CLEARML_FILES_PORT:-8081}"]'
+    ports:
+      - "${CLEARML_API_PORT:-8008}:8008"
+    volumes:
+      - clearml-logs:/var/log/clearml
+      - clearml-config:/opt/clearml/config
+      - clearml-files:/mnt/fileserver
+    networks: [backend, frontend]
+
+  fileserver:
+    image: ${CLEARML_SERVER_IMAGE:-clearml/server:2.4.0}
+    command: [fileserver]
+    restart: unless-stopped
+    environment:
+      CLEARML__fileserver__delete__allow_batch: "true"
+    ports:
+      - "${CLEARML_FILES_PORT:-8081}:8081"
+    volumes:
+      - clearml-logs:/var/log/clearml
+      - clearml-config:/opt/clearml/config
+      - clearml-files:/mnt/fileserver
+    networks: [backend, frontend]
+
+  webserver:
+    image: ${CLEARML_SERVER_IMAGE:-clearml/server:2.4.0}
+    command: [webserver]
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_started
+    ports:
+      - "${CLEARML_WEB_PORT:-8080}:80"
+    networks: [backend, frontend]
+
+  async-delete:
+    image: ${CLEARML_SERVER_IMAGE:-clearml/server:2.4.0}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      CLEARML_ELASTIC_SERVICE_HOST: elasticsearch
+      CLEARML_ELASTIC_SERVICE_PORT: 9200
+      CLEARML_MONGODB_SERVICE_HOST: mongo
+      CLEARML_MONGODB_SERVICE_PORT: 27017
+      CLEARML_REDIS_SERVICE_HOST: redis
+      CLEARML_REDIS_SERVICE_PORT: 6379
+      PYTHONPATH: /opt/clearml/apiserver
+      CLEARML__services__async_urls_delete__fileserver__url_prefixes: '["http://localhost:${CLEARML_FILES_PORT:-8081}"]'
+    entrypoint:
+      - python3
+      - -m
+      - jobs.async_urls_delete
+      - --fileserver-host
+      - http://fileserver:8081
+    volumes:
+      - clearml-logs:/var/log/clearml
+      - clearml-config:/opt/clearml/config
+    networks: [backend]
+
+  elasticsearch:
+    image: elasticsearch:8.19.9
+    restart: unless-stopped
+    environment:
+      bootstrap.memory_lock: "true"
+      cluster.name: clearml
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+      http.compression_level: "7"
+      node.name: clearml
+      xpack.security.enabled: "false"
+      cluster.routing.allocation.disk.watermark.low: 500mb
+      cluster.routing.allocation.disk.watermark.high: 500mb
+      cluster.routing.allocation.disk.watermark.flood_stage: 500mb
+    healthcheck:
+      test: [CMD-SHELL, "curl --fail --silent http://localhost:9200/_cluster/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - clearml-elasticsearch:/usr/share/elasticsearch/data
+    networks: [backend]
+
+  mongo:
+    image: mongo:8.0.15
+    restart: unless-stopped
+    command:
+      - --wiredTigerCacheSizeGB=2
+      - --setParameter
+      - internalQueryMaxBlockingSortMemoryUsageBytes=196100200
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    volumes:
+      - clearml-mongo-db:/data/db
+      - clearml-mongo-config:/data/configdb
+    networks: [backend]
+
+  redis:
+    image: redis:8.2.3
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - clearml-redis:/data
+    networks: [backend]
+
+  training-agent:
+    build:
+      context: ../..
+      dockerfile: infra/training/Dockerfile
+      target: agent
+      args:
+        IMAGE_REFERENCE: ${TRAINING_AGENT_IMAGE:-stackup/semiconductor-agent:0.1.0}
+    image: ${TRAINING_AGENT_IMAGE:-stackup/semiconductor-agent:0.1.0}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_started
+    # Agentは開発端末と同じURLでClearML Serverへ接続する。Compose内部の
+    # サービス名で接続すると、Agentがアップロードした成果物のURLに
+    # `http://fileserver:8081` が入り、ホストのブラウザから開けなくなる。
+    # 公開済みポートをそのまま使うことで、誰が実行しても同じURLになる。
+    network_mode: host
+    environment:
+      # 接続先と認証情報は、開発者が使うものと同じ設定ファイルから読む。
+      CLEARML_CONFIG_FILE: /home/app/clearml.conf
+      CLEARML_AGENT_HOME: /home/app/.clearml
+      # Agentはworker名をホスト名から作り、id を `名前:PID` として登録する。
+      # 両Agentは network_mode: host で同じホスト名を名乗り、PIDも各コンテナで
+      # 同じ値になるため、idが衝突して片方しかServerに残らない。監視は
+      # 「そのQueueを聞いている者がいるか」をworkerから数えるので、衝突すると
+      # 動いているAgentのQueueが無人に見え、QueueUnattendedが誤って鳴る。
+      # idではなく名前だけを与える。idは名前とPIDから毎回作られるので、
+      # 異常終了した後でも「同じidが既に走っている」で起動できなくならない。
+      CLEARML_WORKER_NAME: ${CLEARML_TRAINING_WORKER_NAME:-semiconductor-training-agent}
+      # SDKのキャッシュは設定ファイルでは作業ツリー内を指している。作業ツリーは
+      # 読み取り専用で渡すため、Agent側だけ書き込める場所へ向け直す。
+      CLEARML_CACHE_DIR: /home/app/.clearml/sdk-cache
+      # Agentが実行するTaskへ、実行環境の来歴として渡す。コンテナは自分が
+      # どのイメージから起動したかを読めないため、外から名乗らせる。
+      # digestはregistryへpushして初めて決まるので、ローカルビルドでは
+      # `docker image inspect --format '{{.Id}}'` の値を .env へ入れる。
+      SEMICONDUCTOR_TRAINING_IMAGE: ${TRAINING_AGENT_IMAGE:-stackup/semiconductor-agent:0.1.0}
+      SEMICONDUCTOR_TRAINING_IMAGE_DIGEST: ${TRAINING_AGENT_IMAGE_DIGEST:-unknown}
+      # コードはgitから取得せず、持ち込んだ作業ツリーをそのまま使う。
+      # このリポジトリにはgit remoteがないため、Agentはcloneできない。
+      CLEARML_AGENT_FORCE_CODE_DIR: /workspace
+    volumes:
+      - ../../clearml.conf:/home/app/clearml.conf:ro
+      # 学習コードは読み取り専用で渡す。Agentが作業ツリーを書き換えないことを、
+      # 権限の側で担保する。
+      - ../..:/workspace:ro
+      # Taskごとの学習環境とpipキャッシュの置き場所。ここだけ書き込める。
+      - clearml-agent-home:/home/app/.clearml
+    command:
+      - daemon
+      - --foreground
+      - --queue
+      - ${CLEARML_TRAINING_QUEUE:-semiconductor-training}
+      - --create-queue
+
+  # Pipelineの制御役だけを担うAgent。ステップ用と分けているのは、制御役が
+  # ステップの終了を待つ間ずっとAgentを占有するためで、同じQueueに載せると
+  # 制御役が待っている間ステップを動かすAgentがいなくなる。
+  pipeline-agent:
+    image: ${TRAINING_AGENT_IMAGE:-stackup/semiconductor-agent:0.1.0}
+    restart: unless-stopped
+    depends_on:
+      training-agent:
+        condition: service_started
+    network_mode: host
+    environment:
+      CLEARML_CONFIG_FILE: /home/app/clearml.conf
+      CLEARML_AGENT_HOME: /home/app/.clearml
+      CLEARML_CACHE_DIR: /home/app/.clearml/sdk-cache
+      CLEARML_AGENT_FORCE_CODE_DIR: /workspace
+      # 学習用Agentと同じ理由で、こちらも名前を明示する。
+      CLEARML_WORKER_NAME: ${CLEARML_PIPELINE_WORKER_NAME:-semiconductor-pipeline-agent}
+      SEMICONDUCTOR_TRAINING_IMAGE: ${TRAINING_AGENT_IMAGE:-stackup/semiconductor-agent:0.1.0}
+      SEMICONDUCTOR_TRAINING_IMAGE_DIGEST: ${TRAINING_AGENT_IMAGE_DIGEST:-unknown}
+    volumes:
+      - ../../clearml.conf:/home/app/clearml.conf:ro
+      - ../..:/workspace:ro
+      - clearml-agent-home:/home/app/.clearml
+    command:
+      - daemon
+      - --foreground
+      - --queue
+      - ${CLEARML_PIPELINE_QUEUE:-semiconductor-pipeline}
+      - --create-queue
+
+  prediction-api:
+    build:
+      context: ../..
+      dockerfile: infra/serving/Dockerfile
+      target: serving
+      args:
+        IMAGE_REFERENCE: ${PREDICTION_API_IMAGE:-stackup/semiconductor-prediction-api:0.1.0}
+        IMAGE_DIGEST: ${PREDICTION_API_IMAGE_DIGEST:-unknown}
+    image: ${PREDICTION_API_IMAGE:-stackup/semiconductor-prediction-api:0.1.0}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_started
+    # Agentと同じ理由でホストのネットワークを使う。モデルの取得先URLは
+    # 開発者が使うものと同じでなければならない。
+    network_mode: host
+    environment:
+      CLEARML_CONFIG_FILE: /home/serving/clearml.conf
+      CLEARML_CACHE_DIR: /home/serving/.clearml
+      PREDICTION_PORT: ${PREDICTION_PORT:-8090}
+      # ヘルスチェックが見に行く先。待ち受けと同じ番号でなければ、
+      # 別のサービスの健康状態を自分のものとして答えてしまう。
+      SERVICE_HEALTH_PORT: ${PREDICTION_PORT:-8090}
+      # 待ち受けるアドレス。ホストのネットワークをそのまま使うため、
+      # 0.0.0.0 にすると家庭内LANの誰でも推論を呼べる。既定はループバック。
+      PREDICTION_HOST: ${BIND_ADDRESS:-127.0.0.1}
+      # 呼んでよい者。scripts/backend-up.sh が .generated/security から渡す。
+      # 空のまま起動しようとすると、サービスは理由を述べて起動を拒否する。
+      PREDICTION_API_CLIENTS: ${PREDICTION_API_CLIENTS:-}
+      # 提供するモデルはRegistryが決める。ここで固定しない。
+      # 障害の再現でのみ PREDICTION_MODEL_ID を与える。
+      PREDICTION_MODEL_ID: ${PREDICTION_MODEL_ID:-}
+      SEMICONDUCTOR_SERVING_IMAGE: ${PREDICTION_API_IMAGE:-stackup/semiconductor-prediction-api:0.1.0}
+      SEMICONDUCTOR_SERVING_IMAGE_DIGEST: ${PREDICTION_API_IMAGE_DIGEST:-unknown}
+    volumes:
+      - ../../clearml.conf:/home/serving/clearml.conf:ro
+      - prediction-api-cache:/home/serving/.clearml
+
+  # 学習側の状態を、Prometheusが読める形に中継する。
+  # Queue・Agent・Taskはどれも自分でHTTPを話さないため、代わりに答える。
+  ops-exporter:
+    build:
+      context: ../..
+      dockerfile: infra/serving/Dockerfile
+      target: serving
+      args:
+        IMAGE_REFERENCE: ${OPS_EXPORTER_IMAGE:-stackup/semiconductor-ops-exporter:0.1.0}
+    image: ${OPS_EXPORTER_IMAGE:-stackup/semiconductor-ops-exporter:0.1.0}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_started
+    network_mode: host
+    environment:
+      CLEARML_CONFIG_FILE: /home/serving/clearml.conf
+      CLEARML_CACHE_DIR: /home/serving/.clearml
+      OPS_EXPORTER_PORT: ${OPS_EXPORTER_PORT:-8091}
+      # このコンテナは推論サービスと同じイメージを使い、同じホストの
+      # ネットワークにいる。渡し忘れると 8090（推論サービス）を見に行き、
+      # 自分が答えられなくても healthy と名乗る。
+      SERVICE_HEALTH_PORT: ${OPS_EXPORTER_PORT:-8091}
+      OPS_EXPORTER_HOST: ${BIND_ADDRESS:-127.0.0.1}
+      OPS_EXPORTER_PROJECTS: ${OPS_EXPORTER_PROJECTS:-Semiconductor Quality Prediction}
+      OPS_EXPORTER_CLIENTS: ${OPS_EXPORTER_CLIENTS:-}
+    volumes:
+      - ../../clearml.conf:/home/serving/clearml.conf:ro
+      - ops-exporter-cache:/home/serving/.clearml
+    entrypoint: ["python", "-m", "services.ops_exporter.main"]
+
+  node-exporter:
+    # v1.10.0 はこのホストの overlay マウントを解析できず、filesystem
+    # コレクタ全体が失敗する（ディスクの空きが1つも取れなくなる）。
+    image: prom/node-exporter:v1.9.1
+    restart: unless-stopped
+    # 資源は「どのコンテナが使ったか」ではなく「このホストに残っているか」で見る。
+    # 学習も推論も監視も同じホストの上にあり、先に尽きるのはホストの側である。
+    # コンテナ単位の内訳が要るようになったらcAdvisorを足す。
+    network_mode: host
+    volumes:
+      # WSL2のルートは shared / slave ではないため rslave を付けると起動できない。
+      # 後から現れたマウントは見えなくなるが、見たいのはCPU・メモリと
+      # ルートの空き容量であり、いずれも起動時から在る。
+      - /:/host:ro
+    command:
+      - --path.rootfs=/host
+      # ホストの資源の内訳は、外から見えてよいものではない。
+      - --web.listen-address=${BIND_ADDRESS:-127.0.0.1}:${NODE_EXPORTER_PORT:-9100}
+
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    restart: unless-stopped
+    depends_on:
+      ops-exporter:
+        condition: service_started
+      node-exporter:
+        condition: service_started
+    # 監視対象がホストの公開ポートにいるため、同じネットワークから見る。
+    network_mode: host
+    volumes:
+      # scripts/backend-up.sh が `.env` のポートを埋めて書き出したもの。
+      # テンプレートは ../observability/prometheus.yml.template にある。
+      - ../../.generated/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../observability/alerts.yml:/etc/prometheus/alerts.yml:ro
+      # scrape先が要求する資格情報。scripts/security-tokens.sh が置く。
+      - ../../.generated/security:/etc/prometheus/security:ro
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      # 学習環境なので短く保つ。長期保存はP3のコスト管理で扱う。
+      - --storage.tsdb.retention.time=7d
+      - --web.listen-address=${BIND_ADDRESS:-127.0.0.1}:${PROMETHEUS_PORT:-9090}
+      - --web.enable-lifecycle
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ../observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --web.listen-address=${BIND_ADDRESS:-127.0.0.1}:${ALERTMANAGER_PORT:-9093}
+
+  grafana:
+    image: grafana/grafana:12.3.1
+    restart: unless-stopped
+    depends_on:
+      prometheus:
+        condition: service_started
+    network_mode: host
+    environment:
+      GF_SERVER_HTTP_PORT: ${GRAFANA_PORT:-3000}
+      # Grafanaは匿名で閲覧できる。誰でも見てよいのはこのホストの中だけである。
+      GF_SERVER_HTTP_ADDR: ${BIND_ADDRESS:-127.0.0.1}
+      # provisioningのdatasourceが参照する。直書きすると、ポートを変えたときに
+      # Grafanaだけが古いPrometheusを指し続ける。
+      PROMETHEUS_PORT: ${PROMETHEUS_PORT:-9090}
+      # 匿名の閲覧を許すのは、待ち受けをループバックへ寄せたうえでの判断である。
+      # 閲覧しかできない役割に固定し、書き込みは無効にする。
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_VIEWERS_CAN_EDIT: "false"
+      GF_USERS_DEFAULT_THEME: light
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    volumes:
+      - ../observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+
+networks:
+  backend:
+    internal: true
+  frontend:
+
+volumes:
+  alertmanager-data:
+  clearml-agent-home:
+  grafana-data:
+  ops-exporter-cache:
+  prediction-api-cache:
+  prometheus-data:
+  clearml-config:
+  clearml-elasticsearch:
+  clearml-files:
+  clearml-logs:
+  clearml-mongo-config:
+  clearml-mongo-db:
+  clearml-redis:

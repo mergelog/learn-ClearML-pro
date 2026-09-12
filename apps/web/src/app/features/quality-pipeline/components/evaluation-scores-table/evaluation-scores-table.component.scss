@@ -1,0 +1,9 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+:host {
+  display: block;
+}
+
+.evaluation-scores-table {
+  @include qp.data-table;
+}

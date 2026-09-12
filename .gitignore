@@ -1,0 +1,26 @@
+# リポジトリ横断の関心事だけをここに置く。
+# apps/web に固有のものは apps/web/.gitignore にある（二重に書かない）。
+
+# 依存と仮想環境
+node_modules/
+.venv/
+
+# エディタ
+.idea/
+.vscode/
+
+# Python
+.coverage
+.mypy_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+
+# 生成物
+.generated/
+
+# 資格情報・ローカル設定（追跡してはいけない）
+.env
+clearml.conf
+AGENTS.local.md
+___.git

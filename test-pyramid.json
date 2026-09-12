@@ -1,0 +1,96 @@
+{
+  "$comment": "テストの層の定義。何をどの層で確かめるかを決めた記録であり、scripts/test-pyramid.mjs がこの宣言と実際のテストの置き場所を突き合わせる。判断の経緯は docs/adr/005_20260911_test_pyramid.md にある。",
+  "discovery": {
+    "patterns": ["test_*.py", "*.spec.ts", "*.test.ts", "*.test.mjs", "*.spec.mjs"],
+    "skip": [
+      ".git",
+      ".angular",
+      ".generated",
+      ".stryker-tmp",
+      ".venv",
+      "build",
+      "coverage",
+      "dist",
+      "node_modules",
+      "playwright-report",
+      "reports",
+      "test-results"
+    ]
+  },
+  "layers": [
+    {
+      "id": "gates",
+      "name": "ゲート自身",
+      "command": "web:gates:test",
+      "counter": "javascript",
+      "include": ["scripts/tests/**/*.test.mjs"],
+      "verifies": "検査スクリプトが、落とすべきものを本当に落とすこと。読み取り（ci.yml の行・tsconfig の paths・JSONCの註釈）が壊れていないこと",
+      "excludes": "製品コードの挙動。ここが緑でも、製品について分かることは何も無い"
+    },
+    {
+      "id": "ml-unit",
+      "name": "学習・評価の単体",
+      "command": "ml:test",
+      "counter": "python",
+      "include": ["ml/tests/**/test_*.py"],
+      "verifies": "学習・評価・昇格・drift 判定の**判断そのもの**。しきい値、境界値、失敗時にどちらへ倒すか。ClearML SDK は差し替える",
+      "excludes": "ClearML Server との実通信、Agent 上での実行、学習の精度そのもの"
+    },
+    {
+      "id": "services-unit",
+      "name": "サービスの単体",
+      "command": "services:test",
+      "counter": "python",
+      "include": ["services/tests/**/test_*.py"],
+      "verifies": "`prediction_api` / `ops_exporter` の入出力、認可、失敗応答の形。HTTP 層まで含めて呼ぶ（FastAPI の TestClient）。公開している OpenAPI が黙って変わっていないことも、消費者がいないためここで見る",
+      "excludes": "画面からの利用、実際のモデル成果物、負荷特性"
+    },
+    {
+      "id": "tools-unit",
+      "name": "道具の単体",
+      "command": "tools:test",
+      "counter": "python",
+      "include": ["tools/tests/**/test_*.py"],
+      "verifies": "seed / security / supply_chain / data_status の CLI の判断。何を見つけ、何で止めるか",
+      "excludes": "外部データベースへの実問い合わせ、Docker イメージの実走査"
+    },
+    {
+      "id": "web-unit",
+      "name": "Angular の単体（自作）",
+      "command": "web:test",
+      "counter": "javascript",
+      "include": [
+        "apps/web/src/app/shared/clearml/**/*.spec.ts",
+        "apps/web/src/app/features/quality-pipeline/**/*.spec.ts",
+        "apps/web/src/app/features/data-catalog/**/*.spec.ts"
+      ],
+      "verifies": "presentational の表示判断（桁・空・打ち切り・UTC）、container と state の結線、data-access の変換、reducer / effects の遷移、および自作の共有層（`shared/clearml`）の判断",
+      "excludes": "実際の HTTP、ルーティング、本番ビルドの成立、画面全体の見た目"
+    },
+    {
+      "id": "web-unit-vendor",
+      "name": "Angular の単体（取り込み）",
+      "command": "web:test",
+      "counter": "javascript",
+      "include": ["apps/web/src/**/*.spec.ts"],
+      "exclude": [
+        "apps/web/src/app/shared/clearml/**/*.spec.ts",
+        "apps/web/src/app/features/quality-pipeline/**/*.spec.ts",
+        "apps/web/src/app/features/data-catalog/**/*.spec.ts"
+      ],
+      "verifies": "取り込んだ ClearML Web が持っていたテスト。回帰の網としてそのまま走らせる",
+      "excludes": "自分たちの判断。ここへ新しいテストを足さない（自作の範囲は web-unit へ置く）"
+    },
+    {
+      "id": "e2e",
+      "name": "E2E（Playwright）",
+      "command": "web:e2e",
+      "counter": "javascript",
+      "include": ["apps/web/e2e/**/*.spec.ts"],
+      "verifies": "画面が起動し、route から操作、表示までが縦に繋がっていること。API 応答は `e2e/fixtures` が差し替える",
+      "excludes": "業務ルールの網羅。分岐を1つ増やすたびにここを増やさない（下の層で確かめる）",
+      "max": 30,
+      "maxReason": "現在29件（うち smoke 5件・a11y 5件）。W12-6 / W12-7 の見込み分に加え、Stage N-10 で data-catalog の smoke 1件と a11y 1件を足した。**残り1件しか無い。上限を上げたくなったら、まず「下の層でやるべきことを上げていないか」を疑う**（ADR 005）"
+    }
+  ]
+}

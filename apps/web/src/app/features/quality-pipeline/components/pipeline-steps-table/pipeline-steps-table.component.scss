@@ -1,0 +1,9 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+:host {
+  display: block;
+}
+
+.pipeline-steps-table {
+  @include qp.data-table;
+}

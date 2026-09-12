@@ -1,0 +1,18 @@
+# 探索そのものを進める依存。
+#
+# 学習イメージにも推論イメージにも入れない。探索を動かすのは制御役の1プロセス
+# だけで、そこから作られる試行Taskは requirements/training.txt しか要らない。
+# 学習側と同じ版数で解決するため、requirements/training.txt を制約に使う。
+#
+#   pnpm run py:lock
+
+-c training.txt
+
+clearml>=2.0,<3
+joblib>=1.4,<2
+numpy>=2.0,<3
+# 探索の戦略と枝刈り。ClearML同梱の探索は打ち切りを持たないため、
+# 見込みの無い試行を途中で止める判断はこちらに任せる。
+optuna>=4.0,<5
+pyyaml>=6.0,<7
+scikit-learn>=1.7,<2

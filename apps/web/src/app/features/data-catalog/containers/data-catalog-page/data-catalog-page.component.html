@@ -1,0 +1,49 @@
+<section class="data-catalog">
+  <header class="data-catalog__header">
+    <h1>Data catalog</h1>
+    <p class="data-catalog__lead">
+      One ledger for datasets, models and runs. Filter across all three, then follow an
+      asset to where it came from.
+    </p>
+  </header>
+
+  @if (error(); as reason) {
+    <p class="data-catalog__error" role="alert">{{ reason }}</p>
+  }
+
+  <section class="data-catalog__panel">
+    <h2>Filters</h2>
+    <sm-catalog-filters
+      [filter]="filter()"
+      [projects]="projects()"
+      [availableTags]="availableTags()"
+      [loading]="loading()"
+      (filterChange)="applyFilter($event)"
+    />
+  </section>
+
+  <section class="data-catalog__panel">
+    <div class="data-catalog__panel-head">
+      <h2>Assets</h2>
+      <button
+        type="button"
+        [disabled]="assets().length === 0"
+        (click)="exportAssets()"
+        data-id="catalogExport"
+      >
+        Export JSON
+      </button>
+    </div>
+    @if (hasMore()) {
+      <p class="data-catalog__export-note">
+        The list is capped, and the exported file says so as well.
+      </p>
+    }
+    <sm-catalog-assets-table
+      [assets]="assets()"
+      [hasMore]="hasMore()"
+      [loading]="loading()"
+      [emptyReason]="emptyReason()"
+    />
+  </section>
+</section>

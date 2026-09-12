@@ -1,0 +1,17 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.run-summary {
+  &__facts {
+    @include qp.facts;
+  }
+
+  &__controls {
+    @include qp.controls;
+  }
+}

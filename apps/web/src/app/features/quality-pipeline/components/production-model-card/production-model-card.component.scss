@@ -1,0 +1,15 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+:host {
+  display: block;
+}
+
+.production-model-card {
+  &__facts {
+    @include qp.facts;
+  }
+
+  &__hint {
+    @include qp.hint;
+  }
+}

@@ -1,0 +1,58 @@
+# 学習に使ってよいDatasetの条件。
+#
+# 「列が揃っていて型が正しい」ことは ml/semiconductor_quality/dataset.py が見る。
+# ここで見るのはその先で、列が揃っていても学習に使うべきでない状態を止める。
+# センサが上限に張り付いている、宣言していない装置が混ざっている、
+# ほとんど不良が出ていない、といったものである。
+#
+# 範囲は「その値が物理的にありうるか」で決める。いまのDatasetが収まっている
+# 範囲ではない。狭くしすぎると、正常な製造条件の変化で学習が止まる。
+#
+# 列の一覧は ml/semiconductor_quality/domain.py と一致していなければならない。
+# 食い違うと読み込み時に拒否される（ml/data_quality/contract.py）。
+
+numeric:
+  # 摂氏。プロセス温度として成立する範囲。
+  temperature:
+    minimum: 0
+    maximum: 1000
+  pressure:
+    minimum: 0
+    maximum: 1000
+  # 秒。
+  process_time:
+    minimum: 0
+    maximum: 3600
+  gas_flow:
+    minimum: 0
+    maximum: 1000
+  # 正規化済みのセンサ値。装置側で標準化されて届く。
+  sensor_1:
+    minimum: -10
+    maximum: 10
+  sensor_2:
+    minimum: -10
+    maximum: 10
+  inspection_value:
+    minimum: 0
+    maximum: 100
+
+categorical:
+  equipment_id:
+    # 稼働している装置。増設したらここへ追加する。追加せずに流すと
+    # 「モデルが一度も見たことのない装置」で判定することになる。
+    allowed: [EQ-01, EQ-02, EQ-03, EQ-04]
+    # 未知の装置は1件も許さない。増設は必ず宣言してから流す。
+    maximum_unknown_share: 0.0
+  process_step:
+    allowed: [CLEAN, DEPOSITION, ETCH]
+    maximum_unknown_share: 0.0
+
+labels:
+  # どのラベルもこの割合を下回ってはいけない。
+  # 不良がほとんど無いDatasetは、「全部良品」と答えるモデルを高得点にしてしまう。
+  minimum_share: 0.05
+
+identifiers:
+  # sample_id の重複。1件でもあれば同じ製品を二重に数えている。
+  maximum_duplicate_share: 0.0

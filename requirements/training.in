@@ -1,0 +1,14 @@
+# 学習実行が直接importする依存。
+#
+# ここは互換範囲だけを宣言し、実際に使う版数は requirements/training.txt へ
+# 固定する。ローカル実行、clearml-agent、Pipelineのstepは同じ固定版を使う。
+#
+# 更新するときは requirements/training.in を直してから次を実行する。
+#   pnpm run py:lock
+
+clearml>=2.0,<3
+joblib>=1.4,<2
+numpy>=2.0,<3
+# 合格基準など、人が編集する設定ファイルの読み込みに使う。
+pyyaml>=6.0,<7
+scikit-learn>=1.7,<2

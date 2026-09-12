@@ -1,0 +1,16 @@
+# 検証環境の予算と実行先。
+#
+# 本番と同じ手順を、本番より短い予算で通す場所である。
+# 並列数を2にしてあるのは、並列実行そのものを検証対象に含めるため。
+
+budget:
+  max_trials: 24
+  parallel_trials: 2
+  trial_minutes: 15
+  total_minutes: 90
+  keep_top: 10
+  minimum_folds: 2
+
+execution:
+  trial_queue: semiconductor-training
+  optimizer_queue: semiconductor-pipeline

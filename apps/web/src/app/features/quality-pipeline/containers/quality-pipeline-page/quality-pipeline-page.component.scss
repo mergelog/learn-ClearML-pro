@@ -1,0 +1,32 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+.quality-pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+
+  &__lead {
+    margin: 4px 0 0;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__hint {
+    @include qp.hint;
+  }
+
+  &__error {
+    margin: 0;
+    padding: 12px;
+    border-radius: 4px;
+    // 色だけで失敗を伝えないよう、role="alert" と併用している。
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
+  }
+}

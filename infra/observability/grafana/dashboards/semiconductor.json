@@ -1,0 +1,330 @@
+{
+  "title": "Semiconductor quality — serving and training",
+  "uid": "semiconductor-quality",
+  "tags": [
+    "semiconductor",
+    "mlops"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "description": "上段は推論、下段は学習。上段だけを見ていると「モデルは答えているが学習が止まっている」状態に気付けないため、1枚に並べている。",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "推論の失敗率（サービス側の失敗のみ）",
+      "description": "入力の誤り(4xx)は別系列にしてある。混ぜると、呼び出し側の不具合でこちらが起こされる。",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(prediction_requests_total{outcome=\"unavailable\"}[5m])) / clamp_min(sum(rate(prediction_requests_total[5m])), 0.001)",
+          "legendFormat": "unavailable",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(prediction_requests_total{outcome=\"invalid\"}[5m])) / clamp_min(sum(rate(prediction_requests_total[5m])), 0.001)",
+          "legendFormat": "invalid (呼び出し側)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "推論の応答時間",
+      "description": "平均ではなく分位で見る。平均は遅い一部を隠す。",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(prediction_request_seconds_bucket[5m])) by (le, endpoint))",
+          "legendFormat": "p95 {{endpoint}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(prediction_request_seconds_bucket[5m])) by (le, endpoint))",
+          "legendFormat": "p50 {{endpoint}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "予測の偏り（学習時との比較）",
+      "description": "2本が離れていくのが drift。モデルは動いているのに世界が変わった状態。",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "predicted_failure_share",
+          "legendFormat": "いま返している不良率",
+          "refId": "A"
+        },
+        {
+          "expr": "training_failure_share",
+          "legendFormat": "学習時に見た不良率",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "推論の処理量",
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(predictions_total[5m])) by (label)",
+          "legendFormat": "{{label}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Queueの滞留とAgent数",
+      "description": "待ちがあるのにAgentが0の状態が、放っておくと永久に捌けない。",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "clearml_queue_pending_tasks",
+          "legendFormat": "待ち {{queue}}",
+          "refId": "A"
+        },
+        {
+          "expr": "clearml_queue_workers",
+          "legendFormat": "Agent {{queue}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "直近の学習Taskの結果",
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "clearml_tasks_completed_recent",
+          "legendFormat": "成功 {{project}}",
+          "refId": "A"
+        },
+        {
+          "expr": "clearml_tasks_failed_recent",
+          "legendFormat": "失敗 {{project}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "ホストの資源（残っている割合）",
+      "description": "学習も推論も監視も同じホストの上にある。ここが尽きると、症状は別々の場所に現れるが原因は1つである。",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "min(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay|squashfs\"})",
+          "legendFormat": "ディスクの空き",
+          "refId": "A",
+          "datasource": null
+        },
+        {
+          "expr": "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes",
+          "legendFormat": "メモリの空き",
+          "refId": "B",
+          "datasource": null
+        },
+        {
+          "expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))",
+          "legendFormat": "CPU使用率",
+          "refId": "C",
+          "datasource": null
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "監視そのものの生存",
+      "description": "0 が並んだときは、対象ではなく監視側が落ちている可能性を先に疑う。",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "up",
+          "legendFormat": "scrape {{job}}",
+          "refId": "A"
+        },
+        {
+          "expr": "clearml_reachable",
+          "legendFormat": "ClearML 読み取り",
+          "refId": "B"
+        },
+        {
+          "expr": "prediction_model_loaded",
+          "legendFormat": "モデル読み込み済み",
+          "refId": "C"
+        }
+      ]
+    }
+  ]
+}

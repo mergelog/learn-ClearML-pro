@@ -1,0 +1,21 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.catalog-metadata-form {
+  display: grid;
+  gap: 4px;
+  max-width: 640px;
+
+  &__controls {
+    @include dc.controls;
+
+    margin-top: 8px;
+  }
+
+  &__hint {
+    @include dc.hint;
+  }
+}

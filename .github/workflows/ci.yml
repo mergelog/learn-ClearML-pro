@@ -1,0 +1,321 @@
+# 変更ごとの自動検証。
+#
+# 各ジョブは `package.json` の script を**呼ぶ**。中身を書き写さない。
+# 書き写していた頃、`services/tests`（認可13件を含む133件）と `web:contract` が
+# 落ちたまま CI は緑であり続けた。走っていないことは、走っていないという理由では
+# 表に出てこない。`pnpm run ci:parity` が、手元の `verify` にある検証が
+# ここから落ちていないことを毎回確かめる。
+#
+# Python と Web を別ジョブに分けているのは、片方の失敗でもう片方の結果が
+# 隠れないようにするためで、依存関係があるからではない。セキュリティも
+# 同じ理由で分けてある。加えて、秘密の検査（ネットワーク不要・毎回同じ結果）と
+# 供給網の検査（外部データベースへ問い合わせる）は別のジョブにしてある。
+# 前者は変更の正しさを見ており、後者は「今日の世界の状態」を見ているためで、
+# 後者が外部要因で赤くなったときに前者の結果まで疑わずに済む。
+#
+# lock の検証と Trivy 走査は手元の `verify` に無い CI 固有の手順である。
+# 揃えたいのは「手元にある検証が CI で必ず走ること」であって、
+# CI から固有の手順を無くすことではない。
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# 同じ参照への後続pushが走ったら、古い実行は打ち切る。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VIRTUAL_ENVIRONMENT: .venv
+
+jobs:
+  python:
+    name: Python lint / types / tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: requirements/*.txt
+
+      # script を呼ぶために Node が要る。root の script は `.venv` の python を
+      # 直接叩くので、`pnpm install` は不要（node の依存を使わない）。
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      # root の script はどれも `.venv/bin/python` を前提にしている。
+      # 手元と同じ場所に同じものを作る。
+      - name: Create the virtual environment the scripts expect
+        run: |
+          python -m venv "${PYTHON_VIRTUAL_ENVIRONMENT}"
+          "${PYTHON_VIRTUAL_ENVIRONMENT}/bin/python" -m pip install --upgrade pip
+          "${PYTHON_VIRTUAL_ENVIRONMENT}/bin/python" -m pip install \
+            -r requirements/training.txt \
+            -r requirements/serving.txt \
+            -r requirements/optimization.txt \
+            -r requirements/dev.txt
+
+      # lock が .in と食い違ったまま取り込まれると、Agent と手元で違う版数が
+      # 入る。手元と同じ script で再生成して、差分が出ないことを確かめる。
+      - name: The dependency locks match their declarations
+        run: |
+          pnpm run py:lock
+          git diff --exit-code -- requirements
+
+      - name: Lint
+        run: pnpm run py:lint
+
+      - name: Type check
+        run: pnpm run py:typecheck
+
+      # `ml/tests` + `services/tests` + `tools/tests` を1つの coverage で測る。
+      - name: Unit tests with coverage
+        run: pnpm run py:coverage
+
+  web:
+    name: Angular lint baseline / tests / build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # 生成物の走査（`web:scan:build`）が `.venv` の python を使う。
+      # 走査に要るものだけを入れた軽い環境で足りる。
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Create the virtual environment the scan expects
+        run: |
+          python -m venv "${PYTHON_VIRTUAL_ENVIRONMENT}"
+          "${PYTHON_VIRTUAL_ENVIRONMENT}/bin/python" -m pip install --quiet "pyyaml>=6,<7"
+
+      # ゲート自身の検査を先に置く。設定の読み違いで「何も検査せずに成功する」
+      # ことが実際に起きたため、ここが通らない限り以降の結果は信用しない。
+      - name: Tests of the gates themselves
+        run: pnpm run web:gates:test
+
+      # このファイルが手元の verify を本当に走らせているか。web ジョブに
+      # 置いてあるのは、ゲート群と同じ「先に自分を疑う」段に属するためで、
+      # 検査対象は web に限らず python / security のジョブも含む。
+      - name: CI runs everything verify runs
+        run: pnpm run ci:parity
+
+      # テストが、決めた層に置かれているか。どの層で何を確かめるかは
+      # `test-pyramid.json` にあり、決めた理由は
+      # `docs/adr/005_20260911_test_pyramid.md` にある。
+      - name: Tests sit in the layer they were meant for
+        run: pnpm run test:pyramid
+
+      # 既存違反の全件解消は第一ゴールの前提にしない。増えた場合だけ失敗させる。
+      - name: ESLint baseline
+        run: pnpm run web:lint:baseline
+
+      # feature 間の禁止依存。既知の違反（取り込んだClearML Webのもの）は
+      # 一覧で記録してあり、増えた場合だけ失敗する。
+      - name: Architecture boundaries
+        run: pnpm run web:boundaries
+
+      # 画面とPython側が同じ文字列を指しているか。片方だけ変えても
+      # どちらのテストも通り、画面は黙って「実行がありません」と表示する。
+      - name: Pipeline contract
+        run: pnpm run web:contract
+
+      # `strict` は feature 単位で進める。移行済みの範囲だけを失敗にする。
+      - name: Strict type check of the migrated scope
+        run: pnpm run web:typecheck:strict
+
+      - name: Unit tests
+        run: pnpm run web:test
+
+      - name: E2E type check
+        run: pnpm run web:e2e:typecheck
+
+      # bundle budget を超えるとここで失敗する（angular.json の production）。
+      - name: Production build
+        run: pnpm run web:build
+
+      # 生成物は「入った変更」ではなく「出ていくもの」なので、リポジトリの
+      # 走査とは別に見る。ブラウザへ配る資格情報がここで見つかる。
+      - name: No credential leaves in the build artifact
+        run: pnpm run web:scan:build
+
+  # e2e を web ジョブへ足さずに分けているのは、ビルドとサーバ起動で数分かかり、
+  # lint や単体テストの結果が e2e の待ち時間の後ろに隠れるためである。
+  # 手元の `verify:web` にも足さない（変更のたびに回す速さで作ってある）。
+  # 手元で e2e まで通すときは `pnpm run web:e2e` を直接叩く。
+  #
+  # ここは `verify` に無い検証を走らせる唯一のジョブである。落ちても誰も
+  # 気付かないという点は W12-1 で塞いだ穴と同じ性質なので、`ci:parity` の
+  # `COVERAGE` に `web:e2e` → このジョブの対応を入れて固定してある。
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # ブラウザ本体と、その実行に要るOSのライブラリはリポジトリに入っていない。
+      - name: Install the browser
+        run: pnpm --dir apps/web e2e:install
+
+      # `CI` により `reuseExistingServer` が false になり、Playwright が
+      # `corepack pnpm start` で dev server を自前で起動する
+      # （`apps/web/playwright.config.ts`）。`start` は先に `config:credentials`
+      # を走らせるが、`clearml.conf` が無い CI では空の資格情報を書き出して
+      # 続行する。API 応答は `e2e/fixtures` が差し替えるので backend は要らない。
+      #
+      # `forbidOnly` も `CI` で有効になる。`test.only` が残っていると
+      # 手元では緑のまま、ここだけが落ちる。
+      - name: E2E
+        run: pnpm run web:e2e
+
+      # 失敗の再現に要るのは HTML 報告と trace / 動画である。成功時は上げない
+      # （trace は `retain-on-failure` なので、そもそも残らない）。
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e
+          path: |
+            apps/web/playwright-report
+            apps/web/reports/e2e
+            apps/web/test-results
+          retention-days: 14
+
+  security:
+    name: Secrets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 秘密は「入った変更」ではなく「入ったままの状態」を見る。
+          # 追跡されているファイル全体を対象にする。
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Create the virtual environment the scan expects
+        run: |
+          python -m venv "${PYTHON_VIRTUAL_ENVIRONMENT}"
+          "${PYTHON_VIRTUAL_ENVIRONMENT}/bin/python" -m pip install --quiet "pyyaml>=6,<7"
+
+      - name: No credential is written down in the repository
+        run: pnpm run sec:scan
+
+  supply-chain:
+    name: SBOM / vulnerabilities / container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Install what the audit needs
+        run: python -m pip install --quiet "pyyaml>=6,<7"
+
+      # 何でできているかを先に書き出す。リリースの成果物として残す。
+      - name: Bill of materials
+        run: python -m tools.supply_chain.cli sbom
+
+      - name: Ask what is known about it
+        run: python -m tools.supply_chain.cli audit
+
+      # イメージの中身は lock に現れない。ベースイメージとOSのパッケージは
+      # 別の走査器が要る。報告は同じゲートへ渡す。
+      - name: Build the serving image
+        run: |
+          docker build \
+            --file infra/serving/Dockerfile \
+            --target serving \
+            --tag stackup/semiconductor-prediction-api:ci \
+            .
+
+      - name: Scan the image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: stackup/semiconductor-prediction-api:ci
+          format: json
+          output: .generated/security/image.json
+          ignore-unfixed: false
+          exit-code: "0"
+
+      # 止めるかどうかを決めるのはここだけ。走査器は見つけるだけである。
+      - name: Release gate
+        run: |
+          python -m tools.supply_chain.cli gate \
+            --report .generated/security/dependencies.json \
+            --report .generated/security/image.json
+
+      # 成果物として残すのは報告だけにする。`.generated/security/` を丸ごと
+      # 上げると、ローカルの資格情報を置く場所と同じ名前のものを、いつか
+      # 一緒に公開することになる。
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: supply-chain
+          path: |
+            .generated/security/sbom.json
+            .generated/security/dependencies.json
+            .generated/security/image.json
+          retention-days: 30

@@ -1,0 +1,24 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.catalog-filters {
+  display: grid;
+  gap: 8px;
+
+  &__row {
+    @include dc.controls;
+
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__hint {
+    @include dc.hint;
+
+    flex-basis: 100%;
+  }
+}

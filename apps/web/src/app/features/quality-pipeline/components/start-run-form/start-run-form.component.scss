@@ -1,0 +1,23 @@
+@use '../../styles/quality-pipeline.mixins' as qp;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.start-run-form {
+  &__hint {
+    @include qp.hint;
+
+    // 書式に外れていることは `aria-invalid` でも伝えている。色はその補強で、
+    // 単独で意味を担わせてはいない。
+    &--invalid {
+      color: var(--color-error);
+    }
+  }
+
+  &__controls {
+    @include qp.controls;
+  }
+}

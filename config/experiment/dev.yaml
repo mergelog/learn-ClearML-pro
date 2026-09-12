@@ -1,0 +1,23 @@
+# 開発環境の予算と実行先。
+#
+# ここでの探索は「仕組みが動くこと」を確かめるためのもので、
+# 良いモデルを見つけるためのものではない。手元のAgentは1台なので
+# 並列数は1に固定し、待ち時間が学習の妨げにならない範囲に収める。
+
+budget:
+  max_trials: 6
+  parallel_trials: 1
+  trial_minutes: 5
+  total_minutes: 20
+  # 上位以外の試行Taskは残さない。手元のClearMLに数十件のTaskを
+  # 積み上げても読まない。
+  keep_top: 3
+  # 2 foldまでは打ち切らない。1 foldの不運で候補を捨てないため。
+  minimum_folds: 2
+
+execution:
+  # 試行は学習用Queueで走る。中身は学習1回と同じ重さである。
+  trial_queue: semiconductor-training
+  # 探索の制御役は、試行の終了を待つ間ずっとAgentを占有する。
+  # 試行と同じQueueへ入れると、待っているのに動かす相手がいなくなる。
+  optimizer_queue: semiconductor-pipeline

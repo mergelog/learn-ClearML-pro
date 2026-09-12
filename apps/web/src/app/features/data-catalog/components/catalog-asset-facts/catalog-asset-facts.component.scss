@@ -1,0 +1,21 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.catalog-asset-facts {
+  &__list {
+    @include dc.facts;
+  }
+
+  &__tags {
+    @include dc.tag-list;
+  }
+
+  &__hint {
+    @include dc.hint;
+
+    margin-top: 8px;
+  }
+}

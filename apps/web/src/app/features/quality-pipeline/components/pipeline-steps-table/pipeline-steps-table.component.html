@@ -1,0 +1,30 @@
+<table class="pipeline-steps-table">
+  <caption>
+    Steps
+    @if (truncated()) {
+      — showing the first {{ stepLimit }}; this run has more.
+    }
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Step</th>
+      <th scope="col">Status</th>
+      <th scope="col">Started</th>
+      <th scope="col">Finished</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (step of steps(); track step.taskId) {
+      <tr>
+        <td>{{ step.name }}</td>
+        <td [attr.data-status]="step.status">{{ step.status }}</td>
+        <td>{{ step.startedAt ? (step.startedAt | date: timeFormat : timeZone) : '—' }}</td>
+        <td>{{ step.finishedAt ? (step.finishedAt | date: timeFormat : timeZone) : '—' }}</td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="4">No steps have run yet.</td>
+      </tr>
+    }
+  </tbody>
+</table>

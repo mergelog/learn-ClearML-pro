@@ -1,0 +1,21 @@
+<dl class="run-summary__facts">
+  <dt>Status</dt>
+  <dd [attr.data-status]="run().status">{{ run().status }}</dd>
+  <dt>Dataset version</dt>
+  <dd>{{ run().datasetVersion || '—' }}</dd>
+  <dt>Started</dt>
+  <dd>{{ run().startedAt ? (run().startedAt | date: timestampFormat : timeZone) : '—' }}</dd>
+  <dt>Finished</dt>
+  <dd>{{ run().finishedAt ? (run().finishedAt | date: timestampFormat : timeZone) : '—' }}</dd>
+  @if (run().statusReason) {
+    <dt>Reason</dt>
+    <dd>{{ run().statusReason }}</dd>
+  }
+</dl>
+
+<div class="run-summary__controls">
+  <button type="button" (click)="refresh.emit()">Refresh</button>
+  <button type="button" [disabled]="!canCancel()" (click)="cancelRun.emit()">
+    {{ cancelling() ? 'Cancelling…' : 'Cancel' }}
+  </button>
+</div>

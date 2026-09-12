@@ -1,0 +1,56 @@
+@if (detail(); as assetDetail) {
+  <dl class="catalog-asset-facts__list" data-id="catalogAssetFacts">
+    <dt>Kind</dt>
+    <dd>{{ kindLabels[assetDetail.asset.kind] }}</dd>
+
+    <dt>Project</dt>
+    <dd>{{ assetDetail.asset.project.name || '—' }}</dd>
+
+    <dt>State</dt>
+    <dd [attr.data-state]="assetDetail.asset.state">{{ assetDetail.asset.state }}</dd>
+
+    <dt>Updated</dt>
+    <dd>
+      {{
+        assetDetail.asset.updatedAt
+          ? (assetDetail.asset.updatedAt | date: timeFormat : timeZone)
+          : '—'
+      }}
+    </dd>
+
+    <dt>Tags</dt>
+    <dd>
+      @if (assetDetail.asset.tags.length > 0) {
+        <ul class="catalog-asset-facts__tags">
+          @for (tag of assetDetail.asset.tags; track tag) {
+            <li>{{ tag }}</li>
+          }
+        </ul>
+      } @else {
+        —
+      }
+    </dd>
+
+    <dt>Description</dt>
+    <dd>{{ assetDetail.description || '—' }}</dd>
+
+    @for (fact of assetDetail.facts; track fact.label) {
+      <dt>{{ fact.label }}</dt>
+      <dd>{{ fact.value }}</dd>
+    }
+  </dl>
+
+  @if (vendorLink(); as link) {
+    <p class="catalog-asset-facts__hint">
+      <a [routerLink]="link" data-id="catalogVendorLink">
+        Open this {{ kindLabels[assetDetail.asset.kind] }} in ClearML
+      </a>
+    </p>
+  } @else {
+    <p class="catalog-asset-facts__hint">
+      This asset is not attached to a project, so there is no ClearML page to open.
+    </p>
+  }
+} @else {
+  <p class="catalog-asset-facts__hint">This asset is no longer in ClearML.</p>
+}

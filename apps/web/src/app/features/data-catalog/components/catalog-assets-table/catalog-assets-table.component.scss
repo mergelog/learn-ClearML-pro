@@ -1,0 +1,13 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.catalog-assets-table {
+  @include dc.data-table;
+
+  &__tags {
+    @include dc.tag-list;
+  }
+}

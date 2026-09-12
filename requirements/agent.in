@@ -1,0 +1,10 @@
+# Queueを購読してTaskを実行する clearml-agent の依存。
+#
+# training.txt を制約に使わないのは、agent自身の実行環境と、agentが
+# Taskごとに作る学習環境を分けているため。学習側の版数は Task に記録された
+# requirements/training.txt から agent が改めて用意する。
+# こうしておくと、記録した固定版が本当に入るところまで実行で確かめられる。
+#
+#   pnpm run py:lock
+
+clearml-agent>=3.0,<4

@@ -1,0 +1,38 @@
+{
+  "reference": {
+    "list": "/data-catalog",
+    "detail": "/data-catalog/:kind/:id",
+    "queryKeys": {
+      "text": "q",
+      "kinds": "kind",
+      "project": "project",
+      "tags": "tag",
+      "updatedFrom": "from",
+      "updatedTo": "to"
+    },
+    "multiValueSeparator": ",",
+    "dateFormat": "YYYY-MM-DD"
+  },
+  "export": {
+    "kind": "stackup-data-catalog",
+    "version": 1,
+    "mediaType": "application/json",
+    "envelope": [
+      "catalog",
+      "version",
+      "exportedAt",
+      "reference",
+      "filter",
+      "truncated",
+      "count",
+      "assets"
+    ],
+    "assetFields": ["kind", "id", "name", "project", "updatedAt", "tags", "state"],
+    "projectFields": ["id", "name"],
+    "filterFields": ["text", "kinds", "project", "tags", "updatedFrom", "updatedTo"]
+  },
+  "vocabulary": {
+    "kind": ["dataset", "model", "run"],
+    "state": ["draft", "running", "completed", "failed", "stopped", "published", "unknown"]
+  }
+}

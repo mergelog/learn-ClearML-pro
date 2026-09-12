@@ -1,0 +1,61 @@
+<form class="catalog-filters" [formGroup]="form" (ngSubmit)="apply()">
+  <div class="catalog-filters__row">
+    <label for="catalog-text">Name contains</label>
+    <input id="catalog-text" type="search" formControlName="text" data-id="catalogText" />
+
+    <label for="catalog-project">Project</label>
+    <input
+      id="catalog-project"
+      type="text"
+      list="catalog-project-options"
+      formControlName="project"
+      data-id="catalogProject"
+    />
+    <datalist id="catalog-project-options">
+      @for (project of projects(); track project) {
+        <option [value]="project"></option>
+      }
+    </datalist>
+  </div>
+
+  <fieldset class="catalog-filters__row">
+    <legend>Kind</legend>
+    @for (kind of kinds; track kind) {
+      <label [attr.for]="'catalog-kind-' + kind">{{ kindLabels[kind] }}</label>
+      <input [id]="'catalog-kind-' + kind" type="checkbox" [formControlName]="kind" />
+    }
+  </fieldset>
+
+  <div class="catalog-filters__row">
+    <label for="catalog-tags">Tags</label>
+    <input
+      id="catalog-tags"
+      type="text"
+      list="catalog-tag-options"
+      formControlName="tags"
+      aria-describedby="catalog-tags-hint"
+      data-id="catalogTags"
+    />
+    <datalist id="catalog-tag-options">
+      @for (tag of availableTags(); track tag) {
+        <option [value]="tag"></option>
+      }
+    </datalist>
+    <p id="catalog-tags-hint" class="catalog-filters__hint">
+      Separate tags with “{{ tagSeparator }}”. An asset must carry all of them.
+    </p>
+  </div>
+
+  <div class="catalog-filters__row">
+    <label for="catalog-from">Updated from</label>
+    <input id="catalog-from" type="date" formControlName="updatedFrom" />
+
+    <label for="catalog-to">Updated to</label>
+    <input id="catalog-to" type="date" formControlName="updatedTo" />
+  </div>
+
+  <div class="catalog-filters__row">
+    <button type="submit" [disabled]="loading()" data-id="catalogApply">Apply</button>
+    <button type="button" (click)="clear()" data-id="catalogClear">Clear</button>
+  </div>
+</form>

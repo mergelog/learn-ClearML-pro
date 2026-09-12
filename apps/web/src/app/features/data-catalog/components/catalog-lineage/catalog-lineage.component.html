@@ -1,0 +1,28 @@
+<ol class="catalog-lineage" data-id="catalogLineage">
+  @for (node of nodes(); track node.kind + ':' + node.id) {
+    <li class="catalog-lineage__node">
+      <span class="catalog-lineage__kind">{{ kindLabels[node.kind] }}</span>
+      @if (node.asset; as asset) {
+        <a [routerLink]="[catalogRoute, asset.kind, asset.id]">{{ asset.name }}</a>
+      } @else {
+        <span class="catalog-lineage__missing">
+          {{ node.id }} — no longer in ClearML
+        </span>
+      }
+    </li>
+  } @empty {
+    <li class="catalog-lineage__hint">
+      @if (loading()) {
+        Tracing…
+      } @else {
+        Nothing links this asset to a dataset or a model.
+      }
+    </li>
+  }
+</ol>
+
+@if (partial()) {
+  <p class="catalog-lineage__hint">
+    This chain is incomplete — part of Dataset → Run → Model could not be traced.
+  </p>
+}

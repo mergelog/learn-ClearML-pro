@@ -1,0 +1,19 @@
+# 推論サービスが直接importする依存。
+#
+# 学習と同じ版数のscikit-learn / numpy / joblibでなければ、学習時に保存した
+# pipelineを読み込めない可能性があるため、requirements/training.txt を制約に
+# 使って解決する。
+#
+#   pnpm run py:lock
+
+-c training.txt
+
+clearml>=2.0,<3
+fastapi>=0.115,<1
+joblib>=1.4,<2
+numpy>=2.0,<3
+# メトリクスの公開に使う。Prometheusの公開形式を自前で書かないため。
+prometheus-client>=0.21,<1
+pydantic>=2.9,<3
+scikit-learn>=1.7,<2
+uvicorn[standard]>=0.32,<1

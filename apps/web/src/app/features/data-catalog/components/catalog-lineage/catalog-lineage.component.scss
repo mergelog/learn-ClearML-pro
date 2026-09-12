@@ -1,0 +1,39 @@
+@use '../../styles/data-catalog.mixins' as dc;
+
+:host {
+  display: block;
+}
+
+.catalog-lineage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  &__node {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  // 節の間に向きを描く。並びが Dataset → Run → Model であることを、
+  // 順序だけでなく見た目でも言う。
+  &__node + &__node::before {
+    content: '→';
+    color: var(--color-on-surface-variant);
+  }
+
+  &__kind {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__missing {
+    color: var(--color-on-surface-variant);
+  }
+
+  &__hint {
+    @include dc.hint;
+  }
+}
