@@ -1,0 +1,18 @@
+{
+  "$comment": "fork 元（ClearML Web）の、最後に確認した状態。scripts/upstream-status.mjs がこの記録と upstream の現在を突き合わせる。upstream が進んだらこの検査は失敗する。取り込むか見送るかを決め、決めた結果として recorded を書き換えること。書き換えは『見た』という記録であって、取り込んだという記録ではない。判断は docs/phase1_上流設計/03_方式設計書.md §4.15 に従う。",
+  "remote": "upstream",
+  "repository": "https://github.com/clearml/clearml-web.git",
+  "branch": "master",
+  "recorded": {
+    "commit": "067b48519563",
+    "version": "2.5.0",
+    "date": "2026-09-13",
+    "note": "update dependencies to fix security advisory（2026-09-03）。未取り込み。package.json / pnpm-lock.yaml / src/test.ts に触れており、手元にあるのは package.json だけである"
+  },
+  "forkBase": {
+    "ref": "refs/tags/v2.5",
+    "commit": "48b61702f703",
+    "version": "2.5.0",
+    "確認方法": "vendor のまま残っているファイル（src/app/webapp-common/constants.ts）の内容が v2.5 系列と一致し、v2.4 とは一致しない。commit を1つに絞れていないのは、tag v2.5 と branch v2.5 を分ける src/test.ts と pnpm-workspace.yaml が手元に無いためである"
+  }
+}

@@ -55,12 +55,18 @@ const EXIT_FAILURE = 1;
  * サーバ起動で数分かかるため `verify:web` へは入れない（入れると「変更ごとに
  * 回す」速さが失われ、回されなくなる）。それでも CI では走らせるので、
  * 対応先のジョブを他と同じ表に書いて固定する。
+ *
+ * `upstream:status` も同じ扱いである。こちらが `verify` に無いのは速さでは
+ * なく、外部へ通信するためで、手元の検証を機内でも回せる状態は崩さない。
+ * CI から落ちても誰も気付かない性質は `web:e2e` と同じなので、同じ表で固定する。
  */
 export const COVERAGE = [
+  {chain: 'verify:docs', job: 'docs'},
   {chain: 'verify:python', job: 'python'},
   {chain: 'verify:web', job: 'web'},
   {chain: 'verify:security', job: 'security'},
   {chain: 'web:e2e', job: 'e2e'},
+  {chain: 'upstream:status', job: 'upstream'},
 ];
 
 /** `pnpm run <name>` だけで構成された script は、連鎖として展開する。 */

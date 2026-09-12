@@ -514,7 +514,7 @@ Dockerデーモンを起動してから、次を実行します。
 corepack pnpm backend:up
 ```
 
-`../learn-ClearML` が起動していると、次のように失敗します。
+`../001-learn-ClearML` が起動していると、次のように失敗します。
 
 ```text
 Bind for 0.0.0.0:8081 failed: port is already allocated
@@ -525,7 +525,7 @@ Composeプロジェクト名が別（こちらは `learn01-clearml`、あちら�
 なので、片方を止めても**もう片方のデータは消えません**。あちらを先に止めてください。
 
 ```bash
-docker compose -f ../learn-ClearML/infra/clearml/compose.yaml down
+docker compose -f ../001-learn-ClearML/infra/clearml/compose.yaml down
 ```
 
 `backend:up` は途中まで進んでから失敗するため、いくつかのコンテナは `Created` の
@@ -955,7 +955,7 @@ corepack pnpm ops:smoke
 ```
 
 Angularのポートは [apps/web/package.json](apps/web/package.json) の `start` コマンドで設定しています。
-`../learn-ClearML` も 4200 を使うため、同時には起動できません。
+`../001-learn-ClearML` も 4200 を使うため、同時には起動できません。
 
 ## ブラウザに400エラーが表示される場合
 
@@ -970,7 +970,7 @@ ChromeのDevToolsで `Application`、`Storage` の順に開き、
 `apps/web/src/credentials.json` が空のまま生成された可能性があります。
 このリポジトリの `./clearml.conf` に `api.credentials` を用意したうえで、
 `corepack pnpm web:start` を実行し直してください。**`~/clearml.conf` は
-`../learn-ClearML` 用で、こちらの生成は読みません**（[Web画面の認証情報](#web画面の認証情報)）。
+`../001-learn-ClearML` 用で、こちらの生成は読みません**（[Web画面の認証情報](#web画面の認証情報)）。
 
 ログイン画面のSTARTが `403 not allowed for role` や
 `400 Impersonation error` で失敗する場合は、直し方ではなく入り方の問題です。

@@ -88,6 +88,54 @@ jobs:
       - name: Unit tests with coverage
         run: pnpm run py:coverage
 
+  # 文書のリンク切れ。Node の標準ライブラリだけで動くので、依存の導入は要らない。
+  # 別ジョブにしてあるのは、`docs/` の失敗が Angular のビルド待ちの後ろに
+  # 隠れないようにするためで、python / web を分けてあるのと同じ理由である。
+  docs:
+    name: Docs link check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Links in docs point at files that exist
+        run: pnpm run docs:links
+
+  # fork 元が進んだかどうか。これは「入った変更」ではなく「今日の世界の状態」を
+  # 見ており、供給網の検査と同じ性質である。だから変更の正しさを見るジョブとは
+  # 分けてある。ここが赤いことは、変更が壊れていることを意味しない。
+  #
+  # 見送ると決めた更新も `upstream.json` の recorded を進めて止める。
+  # 止め方が記録になるようにしてあり、赤を消すために検査を外す道は作らない。
+  upstream:
+    name: Fork upstream status
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      # CI の checkout には fork 元の remote が無い。ゲートは登録を求めるので、
+      # ここで登録する。手元では一度登録すれば残る。
+      - name: Register the fork source
+        run: git remote add upstream https://github.com/clearml/clearml-web.git
+
+      - name: Upstream has not moved past what we recorded
+        run: pnpm run upstream:status
+
   web:
     name: Angular lint baseline / tests / build
     runs-on: ubuntu-24.04

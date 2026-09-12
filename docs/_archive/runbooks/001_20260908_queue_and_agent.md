@@ -161,6 +161,6 @@ docker compose -f infra/clearml/compose.yaml stop training-agent
 
 ## 併存リポジトリへの影響
 
-`../learn-ClearML` とはポート 8008 / 8080 / 8081 を共有する。
+`../001-learn-ClearML` とはポート 8008 / 8080 / 8081 を共有する。
 Agentは `network_mode: host` でそれらを使うため、あちらのClearML Serverが
 起動している状態でこちらのAgentを動かしてはいけない。

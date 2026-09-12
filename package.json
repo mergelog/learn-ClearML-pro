@@ -8,10 +8,13 @@
     "pnpm": ">=10.0.0 <11.0.0"
   },
   "scripts": {
-    "verify": "pnpm run verify:python && pnpm run verify:web && pnpm run verify:security",
+    "verify": "pnpm run verify:docs && pnpm run verify:python && pnpm run verify:web && pnpm run verify:security",
+    "verify:docs": "pnpm run docs:links",
     "verify:python": "pnpm run py:lint && pnpm run py:typecheck && pnpm run py:coverage",
     "verify:web": "pnpm run web:gates:test && pnpm run ci:parity && pnpm run test:pyramid && pnpm run web:lint:baseline && pnpm run web:boundaries && pnpm run web:contract && pnpm run web:typecheck:strict && pnpm run web:test && pnpm run web:e2e:typecheck && pnpm run web:build && pnpm run web:scan:build",
     "verify:security": "pnpm run sec:scan",
+    "docs:links": "node scripts/docs-links.mjs check",
+    "upstream:status": "node scripts/upstream-status.mjs check",
     "ci:parity": "node scripts/ci-parity.mjs check",
     "test:pyramid": "node scripts/test-pyramid.mjs check",
     "test:pyramid:report": "node scripts/test-pyramid.mjs report",

@@ -35,7 +35,7 @@ corepack pnpm serving:start
 ```
 
 既定は `http://0.0.0.0:8090`。ポートは `PREDICTION_PORT` で変えられる。
-`../learn-ClearML` と共有する 8008 / 8080 / 8081 は使わない。
+`../001-learn-ClearML` と共有する 8008 / 8080 / 8081 は使わない。
 
 OpenAPIは <http://localhost:8090/docs> で読める。
 
@@ -140,7 +140,7 @@ curl -X POST http://localhost:8090/predict \
 1回の呼び出しで受け付けるのは500件までである。それ以上は分けて呼ぶ。
 
 受け付ける値と答えの形は
-[services/prediction_api/openapi.json](../../services/prediction_api/openapi.json)
+[services/prediction_api/openapi.json](../../../services/prediction_api/openapi.json)
 に全部書いてある。起動中のサービスなら `http://localhost:8090/docs` でも読める。
 この2つは必ず一致する（`services:test` が突き合わせている）ので、
 サービスを起動できない相手にはファイルのほうを渡せばよい。
