@@ -159,7 +159,7 @@ ClearMLのAPI応答は `apps/web/e2e/fixtures` が差し替えるので、backen
 
 どの層で何を確かめるかを `test-pyramid.json` に宣言し、実際の置き場所が
 それと合っていることをゲートで確かめます。判断の経緯は
-[docs/adr/005_20260911_test_pyramid.md](docs/adr/005_20260911_test_pyramid.md)
+[docs/_archive/adr/005_20260911_test_pyramid.md](docs/_archive/adr/005_20260911_test_pyramid.md)
 にあります。
 
 ```bash
@@ -178,7 +178,7 @@ corepack pnpm test:pyramid:report   # 層ごとのファイル数・ケース数
 
 振れるテスト（flaky）は隔離もretryもしません。同じものを繰り返して数える道具
 だけを置き、見つけたら原因を分類して直し、台帳へ記録します。手順は
-[docs/runbooks/009_20260912_flaky_tests.md](docs/runbooks/009_20260912_flaky_tests.md)
+[docs/_archive/runbooks/009_20260912_flaky_tests.md](docs/_archive/runbooks/009_20260912_flaky_tests.md)
 にあります。
 
 ```bash
@@ -202,7 +202,7 @@ E2Eが答えるのは「繋がっているか」だけです。
 
 自作featureの組み立て方（standalone / SignalsとNgRxの責務 / lazy routeの
 provider / 失敗の扱い）は
-[docs/adr/007_20260912_angular_feature_composition.md](docs/adr/007_20260912_angular_feature_composition.md)
+[docs/_archive/adr/007_20260912_angular_feature_composition.md](docs/_archive/adr/007_20260912_angular_feature_composition.md)
 にあります。形（ディレクトリ構成・featureの標準形・命名）は
 [apps/web/README.md](apps/web/README.md) が正で、ADRはそこから起こした
 **理由**だけを持ちます。
@@ -212,7 +212,7 @@ provider / 失敗の扱い）は
 `apps/web` はClearML Webを取り込んだ既存コードを多く含みます。全件解消を
 待たずに開発を進めるため、現状を基準値として記録し、**そこから悪化する変更だけ**
 を失敗させます。判断の経緯は
-[docs/adr/003_20260908_angular_boundaries_and_strict.md](docs/adr/003_20260908_angular_boundaries_and_strict.md)
+[docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md](docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md)
 にあります。
 
 | ゲート | コマンド | 失敗する条件 | 基準を書く場所 |
@@ -254,7 +254,7 @@ corepack pnpm ml:train -- --dataset-version 1.0.0 --queue
 ```
 
 手順と確認方法、失敗時の切り分けは
-[docs/runbooks/001_20260908_queue_and_agent.md](docs/runbooks/001_20260908_queue_and_agent.md)
+[docs/_archive/runbooks/001_20260908_queue_and_agent.md](docs/_archive/runbooks/001_20260908_queue_and_agent.md)
 にまとめています。
 
 ## 学習Pipeline
@@ -269,7 +269,7 @@ corepack pnpm ml:pipeline -- --dataset-version 1.0.0
 ```
 
 ステップの責務と確認方法は
-[docs/runbooks/002_20260908_training_pipeline.md](docs/runbooks/002_20260908_training_pipeline.md)
+[docs/_archive/runbooks/002_20260908_training_pipeline.md](docs/_archive/runbooks/002_20260908_training_pipeline.md)
 にまとめています。
 
 ## データ品質・lineage・drift
@@ -285,7 +285,7 @@ corepack pnpm ml:data drift   -- --dataset-version 2.0.0 --against 1.0.0
 
 Pipelineの `validate` ステップが毎回この判断を行い、満たさないDatasetでは
 後続を起動しません。判断の基準と失敗時の扱いは
-[docs/runbooks/005_20260908_data_quality.md](docs/runbooks/005_20260908_data_quality.md)
+[docs/_archive/runbooks/005_20260908_data_quality.md](docs/_archive/runbooks/005_20260908_data_quality.md)
 にまとめています。
 
 ## モデルの昇格とrollback
@@ -300,7 +300,7 @@ corepack pnpm ml:model rollback -- --approved-by "..." --reason "..."
 ```
 
 段階の意味と追跡の鎖は
-[docs/runbooks/003_20260908_model_promotion.md](docs/runbooks/003_20260908_model_promotion.md)
+[docs/_archive/runbooks/003_20260908_model_promotion.md](docs/_archive/runbooks/003_20260908_model_promotion.md)
 にまとめています。
 
 ## 学習アルゴリズムの比較
@@ -318,7 +318,7 @@ corepack pnpm ml:train -- --dataset-version 1.0.0 --algorithm hist-gradient-boos
 記録されるので、精度だけでなく運用費用も含めて比較できます。
 
 採用したアルゴリズムと理由は
-[docs/adr/001_20260908_learning_algorithm_choice.md](docs/adr/001_20260908_learning_algorithm_choice.md)
+[docs/_archive/adr/001_20260908_learning_algorithm_choice.md](docs/_archive/adr/001_20260908_learning_algorithm_choice.md)
 に記録しています。
 
 ## ハイパーパラメータ探索
@@ -348,9 +348,9 @@ corepack pnpm ml:experiment -- --dataset-version 2.0.0 --handoff
 Pipeline（評価ゲート）1本だけです。
 
 手順は
-[docs/runbooks/008_20260909_hyperparameter_search.md](docs/runbooks/008_20260909_hyperparameter_search.md)、
+[docs/_archive/runbooks/008_20260909_hyperparameter_search.md](docs/_archive/runbooks/008_20260909_hyperparameter_search.md)、
 設計判断は
-[docs/adr/004_20260909_experiment_settings_and_search.md](docs/adr/004_20260909_experiment_settings_and_search.md)
+[docs/_archive/adr/004_20260909_experiment_settings_and_search.md](docs/_archive/adr/004_20260909_experiment_settings_and_search.md)
 にあります。
 
 ## 推論サービス
@@ -368,7 +368,7 @@ corepack pnpm serving:openapi:update # 公開しているAPIの記録を更新�
 ```
 
 配備・切替・rollbackの手順は
-[docs/runbooks/004_20260908_prediction_service.md](docs/runbooks/004_20260908_prediction_service.md)
+[docs/_archive/runbooks/004_20260908_prediction_service.md](docs/_archive/runbooks/004_20260908_prediction_service.md)
 にまとめています。
 
 ### 公開しているAPI
@@ -387,7 +387,7 @@ corepack pnpm serving:openapi:update # 公開しているAPIの記録を更新�
 
 いま消費者がいない（画面は推論APIを呼んでいません）ため、
 consumer-provider contract test は書きません。判断の経緯は
-[docs/adr/006_20260911_published_api_snapshot.md](docs/adr/006_20260911_published_api_snapshot.md)
+[docs/_archive/adr/006_20260911_published_api_snapshot.md](docs/_archive/adr/006_20260911_published_api_snapshot.md)
 にあります。
 
 ## AngularからPipelineを起動する
@@ -426,7 +426,7 @@ corepack pnpm ops:logs    # 監視側のログを見る
 
 警報は warning と critical の2段階だけを使い、原因の警報が鳴っている間は
 結果の警報を抑止します。症状別の切り分けとSLI / SLO、postmortemの雛形は
-[docs/runbooks/006_20260908_observability.md](docs/runbooks/006_20260908_observability.md)
+[docs/_archive/runbooks/006_20260908_observability.md](docs/_archive/runbooks/006_20260908_observability.md)
 にまとめています。
 
 ## 認証・認可・秘密・供給網
@@ -474,11 +474,11 @@ corepack pnpm sec:gate    # 出してよいかを決める。criticalは通さ�
 ```
 
 脅威モデルとデータ分類は
-[docs/security/001_20260908_threat_model.md](docs/security/001_20260908_threat_model.md)、
+[docs/_archive/security/001_20260908_threat_model.md](docs/_archive/security/001_20260908_threat_model.md)、
 方式の選定理由は
-[docs/adr/002_20260908_service_authorization.md](docs/adr/002_20260908_service_authorization.md)、
+[docs/_archive/adr/002_20260908_service_authorization.md](docs/_archive/adr/002_20260908_service_authorization.md)、
 発行・更新・漏えい時の手順は
-[docs/runbooks/007_20260908_security.md](docs/runbooks/007_20260908_security.md)
+[docs/_archive/runbooks/007_20260908_security.md](docs/_archive/runbooks/007_20260908_security.md)
 にあります。
 
 ## 初回セットアップ
@@ -702,7 +702,7 @@ Settings > Workspace で発行する `user` 権限のもので、これはSDK（
 
 この制約は開発時の接続方法の話です。本番相当の環境ではClearML Serverの
 ログイン画面（パスワード方式）へ移す想定で、判断は
-[ADR 003](docs/adr/003_20260908_angular_boundaries_and_strict.md) の選択肢Dに
+[ADR 003](docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md) の選択肢Dに
 あります。
 
 ## URL
@@ -906,7 +906,7 @@ Web画面はコンパイル時の定数ではなく、実行時に取得する `
 ブラウザへ配る成果物を作らないためで、生成物に残っていないことを
 `pnpm web:scan:build` が毎回確かめます。本番相当の環境では、ClearML Serverの
 ログイン画面（パスワード方式）へ移す想定です
-（[ADR 003](docs/adr/003_20260908_angular_boundaries_and_strict.md) の選択肢D）。
+（[ADR 003](docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md) の選択肢D）。
 
 `web:start` は [scripts/clearml-run.sh](scripts/clearml-run.sh) を経由するため、
 認証情報の解決規則はPythonコマンドと同じです。

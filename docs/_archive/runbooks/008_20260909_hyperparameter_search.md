@@ -106,7 +106,7 @@ corepack pnpm ml:experiment -- --dataset-version 2.0.0 --environment staging
 推論サービス側の変更は要らない。保存されたファイルが、そのまま
 「その位置で切るモデル」である。
 
-引き渡し後の昇格手順は `docs/runbooks/003_20260908_model_promotion.md`。
+引き渡し後の昇格手順は `docs/_archive/runbooks/003_20260908_model_promotion.md`。
 
 ## 6. うまくいかないとき
 

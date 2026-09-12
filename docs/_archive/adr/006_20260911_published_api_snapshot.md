@@ -3,8 +3,8 @@
 - 状態: 採用
 - 日付: 2026-09-11
 - 対象: `services/prediction_api`（公開している HTTP API）
-- 関連: 計画書 W12-5、`docs/adr/002_20260908_service_authorization.md`、
-  `docs/adr/005_20260911_test_pyramid.md`、`docs/runbooks/004_20260908_prediction_service.md`
+- 関連: 計画書 W12-5、`docs/_archive/adr/002_20260908_service_authorization.md`、
+  `docs/_archive/adr/005_20260911_test_pyramid.md`、`docs/_archive/runbooks/004_20260908_prediction_service.md`
 
 ## 背景
 

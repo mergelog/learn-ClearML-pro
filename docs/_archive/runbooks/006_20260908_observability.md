@@ -145,7 +145,7 @@ docker compose -f infra/clearml/compose.yaml logs --tail 200 prediction-api \
 まず処理量を見る。増えているなら容量の問題、増えていないならモデルか
 サーバ側の問題である。RandomForestは推論が重い（W5の測定で185 µs/行）。
 モデルの選び直しは
-[docs/adr/001_20260908_learning_algorithm_choice.md](../adr/001_20260908_learning_algorithm_choice.md)
+[docs/_archive/adr/001_20260908_learning_algorithm_choice.md](../adr/001_20260908_learning_algorithm_choice.md)
 に測定値がある。
 
 ### 予測の分布が変わった

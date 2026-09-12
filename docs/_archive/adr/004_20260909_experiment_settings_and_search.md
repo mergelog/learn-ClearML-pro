@@ -3,8 +3,8 @@
 - 状態: 採用
 - 日付: 2026-09-09
 - 対象: `config/experiment/`、`ml/experiment/`、`ml/semiconductor_quality`（設定と推定器）
-- 関連: 計画書 P2-12、`docs/adr/001_20260908_learning_algorithm_choice.md`、
-  `docs/runbooks/003_20260908_model_promotion.md`
+- 関連: 計画書 P2-12、`docs/_archive/adr/001_20260908_learning_algorithm_choice.md`、
+  `docs/_archive/runbooks/003_20260908_model_promotion.md`
 
 ## 背景
 

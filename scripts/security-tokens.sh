@@ -15,7 +15,7 @@
 # 置き場所は .generated/security/（gitignore済み）。トークンの平文はここにしか
 # 無く、リポジトリにもイメージにも入らない。staging以降ではこのファイルではなく
 # secret manager から fingerprint を渡す。ここが「ローカルだけの近道」である
-# ことは docs/security の脅威モデルに書いてある。
+# ことは docs/_archive/security の脅威モデルに書いてある。
 #
 # 使い方:
 #   scripts/security-tokens.sh            無ければ作る。あるものは触らない

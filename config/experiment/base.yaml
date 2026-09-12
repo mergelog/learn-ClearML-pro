@@ -22,7 +22,7 @@ objective:
 
 search:
   # 探索するアルゴリズムは1つに固定する。アルゴリズムの比較は
-  # docs/adr/001_20260908_learning_algorithm_choice.md で済んだ別の問いで、
+  # docs/_archive/adr/001_20260908_learning_algorithm_choice.md で済んだ別の問いで、
   # 混ぜると結果をどちらにも帰属できなくなる。
   algorithm: random-forest
 

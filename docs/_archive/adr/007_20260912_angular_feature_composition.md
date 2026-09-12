@@ -4,10 +4,10 @@
 - 日付: 2026-09-12
 - 対象: `apps/web/src/app/features/**`（自作分。`quality-pipeline` と `data-catalog` の2つ）
   および自作の共有層 `apps/web/src/app/shared/**`
-- 関連: 計画書 W12-10、`docs/adr/003_20260908_angular_boundaries_and_strict.md`、
+- 関連: 計画書 W12-10、`docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md`、
   `apps/web/README.md`（「ディレクトリ構成」「feature の標準形」
   「変更検知とコンポーネントの命名」）、
-  `docs/adr/009_20260912_shared_layer_and_deferred_decisions.md`（Stage P の判定）
+  `docs/_archive/adr/009_20260912_shared_layer_and_deferred_decisions.md`（Stage P の判定）
 
 ## 背景
 

@@ -4,10 +4,10 @@
 - 日付: 2026-09-12
 - 対象: `apps/web/src/app/features/data-catalog`（外向きの面）
 - 関連: 計画書 `x-plan-改訂/00_プラン.md` §1.1 / §5、
-  `docs/adr/006_20260911_published_api_snapshot.md`（公開した形の守り方）、
-  `docs/adr/002_20260908_service_authorization.md`（サービスの認可）、
-  `docs/adr/005_20260911_test_pyramid.md`（層）、
-  `docs/adr/009_20260912_shared_layer_and_deferred_decisions.md`（`libs/` を切らない判断）
+  `docs/_archive/adr/006_20260911_published_api_snapshot.md`（公開した形の守り方）、
+  `docs/_archive/adr/002_20260908_service_authorization.md`（サービスの認可）、
+  `docs/_archive/adr/005_20260911_test_pyramid.md`（層）、
+  `docs/_archive/adr/009_20260912_shared_layer_and_deferred_decisions.md`（`libs/` を切らない判断）
 
 ## 背景
 

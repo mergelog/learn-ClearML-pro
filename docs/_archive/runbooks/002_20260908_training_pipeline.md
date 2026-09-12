@@ -32,7 +32,7 @@ validate ──> preprocess ──> train ──┬─> evaluate ──> registe
 
 ## 前提
 
-`docs/runbooks/001_20260908_queue_and_agent.md` の手順でAgentが起動していること。
+`docs/_archive/runbooks/001_20260908_queue_and_agent.md` の手順でAgentが起動していること。
 Pipelineの各ステップはそのAgentが実行する。
 
 ## 1. ステップのテンプレートを作る

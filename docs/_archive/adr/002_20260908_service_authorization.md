@@ -3,7 +3,7 @@
 - 状態: 採用
 - 日付: 2026-09-08
 - 対象: 推論サービス（`services/prediction_api`）、ops-exporter（`services/ops_exporter`）
-- 関連: `docs/security/001_20260908_threat_model.md`、計画書 P1-9
+- 関連: `docs/_archive/security/001_20260908_threat_model.md`、計画書 P1-9
 
 ## 背景
 

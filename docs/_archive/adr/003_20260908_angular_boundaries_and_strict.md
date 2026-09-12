@@ -3,8 +3,8 @@
 - 状態: 採用
 - 日付: 2026-09-08
 - 対象: `apps/web`（取り込んだClearML Webを土台にしたAngularアプリ）
-- 関連: 計画書 P2-10、`docs/adr/002_20260908_service_authorization.md`、
-  `docs/security/001_20260908_threat_model.md`
+- 関連: 計画書 P2-10、`docs/_archive/adr/002_20260908_service_authorization.md`、
+  `docs/_archive/security/001_20260908_threat_model.md`
 
 ## 背景
 

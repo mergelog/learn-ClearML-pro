@@ -129,7 +129,7 @@ src/app/
 3. **`webapp-common` 内を編集したら理由を記録する。** ベンダー差分はそのまま追従コストになる
 
 **何を `shared/` へ上げるか**は
-[docs/adr/009_20260912_shared_layer_and_deferred_decisions.md](../../docs/adr/009_20260912_shared_layer_and_deferred_decisions.md)
+[docs/_archive/adr/009_20260912_shared_layer_and_deferred_decisions.md](../../docs/_archive/adr/009_20260912_shared_layer_and_deferred_decisions.md)
 にある。基準は一言でいえば「同じ**判断**が2つあるなら上げる、同じ**事実**が
 2つあるだけなら上げない」で、同じ文書に `libs/` / `@defer` / zoneless を
 **いま動かさないと決めた理由と、再開する条件**も書いてある。
@@ -209,7 +209,7 @@ features/<feature-name>/
 - **`webapp-common` 配下は ClearML の命名が混在しているが、凍結領域なので統一対象外**
 
 **なぜこの形なのか**は
-[docs/adr/007_20260912_angular_feature_composition.md](../../docs/adr/007_20260912_angular_feature_composition.md)
+[docs/_archive/adr/007_20260912_angular_feature_composition.md](../../docs/_archive/adr/007_20260912_angular_feature_composition.md)
 にある（standalone / Signals と NgRx の責務 / lazy route の provider /
 失敗の扱い）。ここは形、ADR は理由で、二重には書かない。
 

@@ -15,7 +15,7 @@
 `prediction_api/openapi.json` は公開しているAPIの記録である。コードから
 生成されるので手で書かない（`pnpm serving:openapi:update`）。一致しなく
 なったら `services:test` が落ちる。判断の経緯は
-`docs/adr/006_20260911_published_api_snapshot.md` にある。
+`docs/_archive/adr/006_20260911_published_api_snapshot.md` にある。
 
 `ops_exporter` は読み取りしか行わない。監視対象を変えられる監視は、
 システムが壊れる経路をもう1つ増やすためである。

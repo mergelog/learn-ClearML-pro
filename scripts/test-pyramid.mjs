@@ -189,7 +189,7 @@ async function check() {
     found.forEach((line) => console.error(`  ${line}`));
     console.error(
       `\n決めた置き場所は ${DEFINITION_FILE} に、決めた理由は` +
-        '\ndocs/adr/005_20260911_test_pyramid.md にある。' +
+        '\ndocs/_archive/adr/005_20260911_test_pyramid.md にある。' +
         'テストを足す前に、どの層で\n確かめるべきかを先に決めること。',
     );
     return EXIT_FAILURE;

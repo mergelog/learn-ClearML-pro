@@ -14,7 +14,7 @@ import type {Page, Route} from '@playwright/test';
  * 画面が誤った条件で問い合わせていても気付けないテストになる。
  *
  * ClearML Serverは立てない。E2Eが答えるのは「縦に繋がっているか」であって、
- * サーバが正しいかではない（`docs/adr/005_20260911_test_pyramid.md`）。
+ * サーバが正しいかではない（`docs/_archive/adr/005_20260911_test_pyramid.md`）。
  */
 
 const company = {id: 'test-company', name: 'Test company'};

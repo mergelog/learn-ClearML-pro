@@ -22,7 +22,7 @@
  * 走らせ方:
  *   node scripts/flaky.mjs run [--times 5]
  *
- * 見つけたときの手順は docs/runbooks/009_20260912_flaky_tests.md にある。
+ * 見つけたときの手順は docs/_archive/runbooks/009_20260912_flaky_tests.md にある。
  * CI では走らせない（同じ試験を5回走らせる分だけ遅くなる）。疑いが出たときに
  * 手元で回す。
  */

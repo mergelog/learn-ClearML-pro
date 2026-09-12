@@ -153,7 +153,7 @@ corepack pnpm serving:openapi:update
 ```
 
 判断の経緯は
-[docs/adr/006_20260911_published_api_snapshot.md](../adr/006_20260911_published_api_snapshot.md)
+[docs/_archive/adr/006_20260911_published_api_snapshot.md](../adr/006_20260911_published_api_snapshot.md)
 にある。
 
 ## 5. モデルを入れ替える / 戻す

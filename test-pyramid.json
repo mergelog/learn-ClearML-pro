@@ -1,5 +1,5 @@
 {
-  "$comment": "テストの層の定義。何をどの層で確かめるかを決めた記録であり、scripts/test-pyramid.mjs がこの宣言と実際のテストの置き場所を突き合わせる。判断の経緯は docs/adr/005_20260911_test_pyramid.md にある。",
+  "$comment": "テストの層の定義。何をどの層で確かめるかを決めた記録であり、scripts/test-pyramid.mjs がこの宣言と実際のテストの置き場所を突き合わせる。判断の経緯は docs/_archive/adr/005_20260911_test_pyramid.md にある。",
   "discovery": {
     "patterns": ["test_*.py", "*.spec.ts", "*.test.ts", "*.test.mjs", "*.spec.mjs"],
     "skip": [

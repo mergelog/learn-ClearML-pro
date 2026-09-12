@@ -135,7 +135,7 @@ jobs:
 
       # テストが、決めた層に置かれているか。どの層で何を確かめるかは
       # `test-pyramid.json` にあり、決めた理由は
-      # `docs/adr/005_20260911_test_pyramid.md` にある。
+      # `docs/_archive/adr/005_20260911_test_pyramid.md` にある。
       - name: Tests sit in the layer they were meant for
         run: pnpm run test:pyramid
 

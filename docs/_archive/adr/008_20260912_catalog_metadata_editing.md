@@ -3,7 +3,7 @@
 - 状態: 採用
 - 日付: 2026-09-12
 - 対象: `apps/web/src/app/features/data-catalog`（tags と description の書き込み）
-- 関連: 計画書 Stage N-8、`docs/adr/007_20260912_angular_feature_composition.md`、
+- 関連: 計画書 Stage N-8、`docs/_archive/adr/007_20260912_angular_feature_composition.md`、
   `x-plan-改訂/00_プラン.md` §4.4
 
 ## 背景

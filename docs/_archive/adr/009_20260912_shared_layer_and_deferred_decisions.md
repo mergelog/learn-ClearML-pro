@@ -3,9 +3,9 @@
 - 状態: 採用
 - 日付: 2026-09-12
 - 対象: `apps/web/src/app/shared/**`（自作分）、`libs/` の新設、`@defer`、zoneless
-- 関連: `docs/adr/003_20260908_angular_boundaries_and_strict.md`（凍結領域）、
-  `docs/adr/005_20260911_test_pyramid.md`（テストの層）、
-  `docs/adr/007_20260912_angular_feature_composition.md`（feature の組み立て方）、
+- 関連: `docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md`（凍結領域）、
+  `docs/_archive/adr/005_20260911_test_pyramid.md`（テストの層）、
+  `docs/_archive/adr/007_20260912_angular_feature_composition.md`（feature の組み立て方）、
   `apps/web/README.md`（「ディレクトリ構成」）、
   `x-plan-改訂/00_プラン.md` §6（Stage P の狙い）
 

@@ -12,7 +12,7 @@ const REFRESH_INTERVAL_MS = 5_000;
  * この画面が「開けること」と「何を出すか」を確かめる。
  *
  * ここで確かめないのは、Pipelineが本当に走ることである。それは
- * `docs/runbooks/002_20260908_training_pipeline.md` の手順で確かめる範囲で、
+ * `docs/_archive/runbooks/002_20260908_training_pipeline.md` の手順で確かめる範囲で、
  * ブラウザから起動すると1回あたり数分かかるためE2Eには載せない。
  *
  * ここで確かめるのは、ClearMLの応答をどう画面へ写すか、そして

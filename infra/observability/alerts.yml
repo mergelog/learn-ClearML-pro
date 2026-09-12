@@ -22,7 +22,7 @@ groups:
           description: >-
             2分以上スクレイプできていない。プロセスが落ちたか、
             モデルを読み込めずに起動に失敗している。
-          runbook: docs/runbooks/006_20260908_observability.md#推論サービスが応答しない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#推論サービスが応答しない
 
       - alert: PredictionServiceHasNoModel
         expr: prediction_model_loaded == 0
@@ -32,7 +32,7 @@ groups:
         annotations:
           summary: 推論サービスが提供できるモデルを持っていない
           description: production に昇格したモデルが無いか、読み込みに失敗している。
-          runbook: docs/runbooks/006_20260908_observability.md#提供できるモデルがない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#提供できるモデルがない
 
       - alert: PredictionErrorRateHigh
         expr: >-
@@ -46,7 +46,7 @@ groups:
           description: >-
             サービス側の失敗（5xx）の割合。入力の誤り（4xx）は含めない。
             含めると、呼び出し側の不具合でこちらが起こされる。
-          runbook: docs/runbooks/006_20260908_observability.md#失敗率が上がった
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#失敗率が上がった
 
       - alert: PredictionLatencyHigh
         # 95パーセンタイル。平均だと、遅い一部の呼び出しが埋もれる。
@@ -61,7 +61,7 @@ groups:
         annotations:
           summary: 推論の応答が遅くなっている
           description: 95パーセンタイルが1秒を超えた状態が10分続いている。
-          runbook: docs/runbooks/006_20260908_observability.md#応答が遅い
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#応答が遅い
 
       - alert: PredictionDistributionShifted
         # 学習時に見た不良率と、いま返している不良率の差。
@@ -76,7 +76,7 @@ groups:
           description: >-
             モデルは動いているが、返している不良の割合が学習時と20ポイント以上違う。
             工程が変わったか、入力の質が変わった可能性がある。
-          runbook: docs/runbooks/006_20260908_observability.md#予測の分布が変わった
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#予測の分布が変わった
 
   - name: training
     rules:
@@ -88,7 +88,7 @@ groups:
         annotations:
           summary: ClearML Serverを読めていない
           description: 学習側の状態が5分以上取得できていない。
-          runbook: docs/runbooks/006_20260908_observability.md#clearml-serverが読めない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#clearml-serverが読めない
 
       - alert: QueueUnattended
         # 待っている仕事があるのに、聞いているAgentがいない。
@@ -100,7 +100,7 @@ groups:
         annotations:
           summary: 誰も見ていないQueueに仕事が溜まっている
           description: Agentが停止しているか、購読するQueue名が違っている。
-          runbook: docs/runbooks/006_20260908_observability.md#queueが捌けない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#queueが捌けない
 
       - alert: QueueBacklogGrowing
         expr: clearml_queue_pending_tasks > 5
@@ -110,7 +110,7 @@ groups:
         annotations:
           summary: Queueの滞留が続いている
           description: Agentは動いているが処理が追いついていない。
-          runbook: docs/runbooks/006_20260908_observability.md#queueが捌けない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#queueが捌けない
 
       - alert: PipelineFailuresRecurring
         expr: clearml_tasks_failed_recent > 2
@@ -122,7 +122,7 @@ groups:
           description: >-
             直近30分で3件以上のTaskが失敗している。Datasetの品質か、
             Agentの実行環境を疑う。
-          runbook: docs/runbooks/006_20260908_observability.md#taskが繰り返し失敗する
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#taskが繰り返し失敗する
 
   - name: host
     rules:
@@ -142,7 +142,7 @@ groups:
           description: >-
             Elasticsearch はディスクが逼迫すると索引を読み取り専用にする。
             推論より先に、学習と画面が静かに壊れる。
-          runbook: docs/runbooks/006_20260908_observability.md#ホストの資源が足りない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#ホストの資源が足りない
 
       - alert: HostMemoryExhausted
         expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
@@ -154,4 +154,4 @@ groups:
           description: >-
             学習・推論・監視が同じホストに載っている。OOM killer が選ぶのは
             いちばん大きなプロセスであって、いちばん重要でないプロセスではない。
-          runbook: docs/runbooks/006_20260908_observability.md#ホストの資源が足りない
+          runbook: docs/_archive/runbooks/006_20260908_observability.md#ホストの資源が足りない
