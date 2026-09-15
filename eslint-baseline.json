@@ -1,0 +1,218 @@
+{
+  "description": "Angular Webに残るESLint違反の基準値。増やす変更はscripts/eslint-baseline.mjs checkで失敗する。",
+  "updatedAt": "2026-09-15",
+  "totals": {
+    "errors": 3135,
+    "warnings": 1053
+  },
+  "byRule": {
+    "(parse-error)": {
+      "errors": 0,
+      "warnings": 56
+    },
+    "@angular-eslint/component-selector": {
+      "errors": 3,
+      "warnings": 0
+    },
+    "@angular-eslint/directive-selector": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "@angular-eslint/no-output-on-prefix": {
+      "errors": 4,
+      "warnings": 0
+    },
+    "@angular-eslint/prefer-inject": {
+      "errors": 156,
+      "warnings": 0
+    },
+    "@angular-eslint/prefer-on-push-component-change-detection": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@angular-eslint/template/alt-text": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@angular-eslint/template/click-events-have-key-events": {
+      "errors": 98,
+      "warnings": 0
+    },
+    "@angular-eslint/template/elements-content": {
+      "errors": 7,
+      "warnings": 0
+    },
+    "@angular-eslint/template/interactive-supports-focus": {
+      "errors": 96,
+      "warnings": 0
+    },
+    "@angular-eslint/template/label-has-associated-control": {
+      "errors": 4,
+      "warnings": 0
+    },
+    "@angular-eslint/template/mouse-events-have-key-events": {
+      "errors": 13,
+      "warnings": 0
+    },
+    "@angular-eslint/template/no-any": {
+      "errors": 86,
+      "warnings": 0
+    },
+    "@angular-eslint/template/prefer-self-closing-tags": {
+      "errors": 0,
+      "warnings": 997
+    },
+    "@ngrx/avoid-combining-selectors": {
+      "errors": 18,
+      "warnings": 0
+    },
+    "@ngrx/avoid-dispatching-multiple-actions-sequentially": {
+      "errors": 137,
+      "warnings": 0
+    },
+    "@ngrx/avoid-mapping-selectors": {
+      "errors": 12,
+      "warnings": 0
+    },
+    "@ngrx/good-action-hygiene": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "@ngrx/no-dispatch-in-effects": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@ngrx/no-store-subscription": {
+      "errors": 11,
+      "warnings": 0
+    },
+    "@ngrx/no-typed-global-store": {
+      "errors": 3,
+      "warnings": 0
+    },
+    "@ngrx/on-function-explicit-return-type": {
+      "errors": 22,
+      "warnings": 0
+    },
+    "@ngrx/prefer-concat-latest-from": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "@ngrx/prefer-inline-action-props": {
+      "errors": 11,
+      "warnings": 0
+    },
+    "@ngrx/prefix-selectors-with-select": {
+      "errors": 7,
+      "warnings": 0
+    },
+    "@ngrx/select-style": {
+      "errors": 5,
+      "warnings": 0
+    },
+    "@typescript-eslint/adjacent-overload-signatures": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@typescript-eslint/array-type": {
+      "errors": 475,
+      "warnings": 0
+    },
+    "@typescript-eslint/ban-ts-comment": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@typescript-eslint/class-literal-property-style": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "errors": 73,
+      "warnings": 0
+    },
+    "@typescript-eslint/consistent-type-assertions": {
+      "errors": 5,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-empty-function": {
+      "errors": 38,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-explicit-any": {
+      "errors": 1034,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-inferrable-types": {
+      "errors": 171,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-namespace": {
+      "errors": 16,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-unsafe-function-type": {
+      "errors": 4,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-unused-expressions": {
+      "errors": 33,
+      "warnings": 0
+    },
+    "@typescript-eslint/no-unused-vars": {
+      "errors": 108,
+      "warnings": 0
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "errors": 2,
+      "warnings": 0
+    },
+    "no-case-declarations": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-console": {
+      "errors": 13,
+      "warnings": 0
+    },
+    "no-control-regex": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-empty": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-prototype-builtins": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "no-unsafe-optional-chaining": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "no-useless-assignment": {
+      "errors": 26,
+      "warnings": 0
+    },
+    "no-useless-escape": {
+      "errors": 24,
+      "warnings": 0
+    },
+    "no-var": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "prefer-const": {
+      "errors": 5,
+      "warnings": 0
+    },
+    "prefer-rest-params": {
+      "errors": 1,
+      "warnings": 0
+    },
+    "quotes": {
+      "errors": 379,
+      "warnings": 0
+    }
+  }
+}

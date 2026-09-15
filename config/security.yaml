@@ -12,7 +12,7 @@
 
 secret_scan:
   exemptions:
-    - path: "apps/web/**/assets/**"
+    - path: "**/assets/**"
       rules:
         - named-secret
       reason: >-

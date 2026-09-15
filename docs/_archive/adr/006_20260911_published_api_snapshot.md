@@ -13,7 +13,7 @@ W12 の原文は「OpenAPI / JSON Schema による consumer-provider contract te
 
 | 呼んでいるもの | 実体 |
 | --- | --- |
-| `apps/web` | 呼んでいない（`features/serving/` は `empty-state` の1つだけ） |
+| `Angular Web` | 呼んでいない（`features/serving/` は `empty-state` の1つだけ） |
 | runbook 004 | `curl` の例が数本 |
 | `services/tests` | サービス自身のテスト |
 

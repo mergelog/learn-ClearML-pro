@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": [
+      "node",
+      "vitest/globals",
+      "@playwright/test"
+    ]
+  },
+  "include": [
+    "src/app/shared/clearml/**/*.ts",
+    "src/tests/features/quality-pipeline/**/*.ts",
+    "src/tests/features/data-catalog/**/*.ts",
+    "e2e/**/*.ts"
+  ]
+}

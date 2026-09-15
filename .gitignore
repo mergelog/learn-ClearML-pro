@@ -1,26 +1,63 @@
-# リポジトリ横断の関心事だけをここに置く。
-# apps/web に固有のものは apps/web/.gitignore にある（二重に書かない）。
+# Angular output and caches
+/build*
+/dist
+/tmp
+/out-tsc
+/gen-code
+/src/__ngcc_entry_points__.json
+/.angular
+/.sass-cache
+/connect.lock
+/coverage
+/reports
+/playwright-report
+/test-results
+/.stryker-tmp
+/libpeerconnection.log
+/typings
 
-# 依存と仮想環境
-node_modules/
-.venv/
+# Dependencies and Python environments
+/node_modules
+/.venv
 
-# エディタ
-.idea/
-.vscode/
-
-# Python
-.coverage
-.mypy_cache/
-.ruff_cache/
+# Python output and caches
+/.coverage
+/.mypy_cache
+/.pytest_cache
+/.ruff_cache
+/.generated
 __pycache__/
 *.py[cod]
 
-# 生成物
-.generated/
+# Credentials and local configuration
+/.env
+/src/credentials.json
+/clearml.conf
+/AGENTS.local.md
+/___.git
 
-# 資格情報・ローカル設定（追跡してはいけない）
-.env
-clearml.conf
-AGENTS.local.md
-___.git
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vim/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# E2E generated files
+/e2e/*.js
+/e2e/*.map
+
+# Logs and system files
+npm-debug.log
+testem.log
+yarn-error.log
+.DS_Store
+Thumbs.db

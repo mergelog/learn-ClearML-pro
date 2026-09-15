@@ -37,7 +37,7 @@ const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** 何を繰り返すか。いまは E2E だけが対象である。 */
 const TARGET = {
   script: 'web:e2e',
-  report: 'apps/web/reports/e2e/playwright.xml',
+  report: 'reports/e2e/playwright.xml',
 };
 
 const DEFAULT_TIMES = 5;

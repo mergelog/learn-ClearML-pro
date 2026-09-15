@@ -1,7 +1,7 @@
 /**
  * 宣言ファイルに書かれた glob を正規表現へ写す。
  *
- * `apps/web/web-boundaries.json`、`apps/web/tsconfig.strict.json` の `include`、
+ * `web-boundaries.json`、`tsconfig.strict.json` の `include`、
  * `test-pyramid.json` の3つが、検査対象を glob で宣言する。同じ書き方が
  * 場所によって違う意味にならないよう、変換はここ1か所に置く。
  *

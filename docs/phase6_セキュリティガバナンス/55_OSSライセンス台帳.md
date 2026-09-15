@@ -84,10 +84,10 @@ lock が決めている依存のライセンスを、いまある道具で機械
 
 | 対象 | ライセンス | 根拠 | 生じる義務 |
 | --- | --- | --- | --- |
-| ClearML Web（`apps/web/`。fork して取り込み） | Apache License 2.0 | `apps/web/LICENSE` | 再配布時に、ライセンス文と著作権表示の同梱、変更したファイルの告知 |
+| ClearML Web（``。fork して取り込み） | Apache License 2.0 | `LICENSE` | 再配布時に、ライセンス文と著作権表示の同梱、変更したファイルの告知 |
 | ClearML SDK（`clearml`） | Apache License 2.0 | パッケージの metadata | 同上 |
 
-`apps/web/package.json` の `license` は空文字列である。fork 元のライセンスは `apps/web/LICENSE`
+`package.json` の `license` は空文字列である。fork 元のライセンスは `LICENSE`
 に残っているため、ライセンスが不明なわけではない。ただし、パッケージの宣言としては空であり、
 機械的に読む道具はここを見る。
 
@@ -96,7 +96,7 @@ lock が決めている依存のライセンスを、いまある道具で機械
 
 ### 4.4 Angular アプリに同梱されている第三者ライブラリ
 
-`apps/web/**/assets/**` には、plotly と ace-builds を含む第三者ライブラリが、ファイルとして
+`**/assets/**` には、plotly と ace-builds を含む第三者ライブラリが、ファイルとして
 置かれている。これらは lock に現れないため、SBOM にも入らない。秘密検査ではこの範囲を
 理由付きで除外しており（`config/security.yaml`）、除外の理由に「持ち込んだ第三者ライブラリ」と
 書いてある。つまり、第三者のものであることは把握されているが、ライセンスは確認していない。
@@ -111,7 +111,7 @@ lock が決めている依存のライセンスを、いまある道具で機械
    npm は `package.json` の `license` を読む
 2. 生成された一覧から、SPDX 識別子が取れなかったものだけを手で確認する
 3. 配布を始める対象（イメージ、ブラウザへの生成物）に含まれるものを先に確認する
-4. `apps/web/**/assets/**` の同梱ライブラリを、ファイル単位で確認する
+4. `**/assets/**` の同梱ライブラリを、ファイル単位で確認する
 
 この順序の理由は、3 が義務の生じる範囲であり、1 と 2 はその範囲を特定するための作業であること
 による。
@@ -130,8 +130,8 @@ lock が決めている依存のライセンスを、いまある道具で機械
 * SBOM のライセンス欄（56 §6 と同じ項目）
 * このリポジトリ自体のライセンス。ClearML Web を fork して含むため、Apache License 2.0 との
   両立を確認してから決める
-* `apps/web/package.json` の `license` を埋めるかどうか
-* `apps/web/**/assets/**` に同梱されている第三者ライブラリの一覧とライセンス
+* `package.json` の `license` を埋めるかどうか
+* `**/assets/**` に同梱されている第三者ライブラリの一覧とライセンス
 * コンテナイメージを配布する場合の、OS パッケージのライセンスの扱い
 * 禁止するライセンスの一覧（copyleft の扱い）。配布の方針が決まるまで定めない
 
@@ -139,8 +139,8 @@ lock が決めている依存のライセンスを、いまある道具で機械
 
 * `56_SBOM管理方針.md`、`54_脆弱性管理方針.md`、`50_セキュリティ設計書.md`
 * `../phase4_テスト品質保証/33_リリース判定基準.md` §4.1（項目18）・§4.7
-* `apps/web/LICENSE`、`apps/web/package.json`、`package.json`
-* `config/security.yaml`（`apps/web/**/assets/**` の除外理由）
+* `LICENSE`、`package.json`、`package.json`
+* `config/security.yaml`（`**/assets/**` の除外理由）
 * `tools/supply_chain/sbom.py`
 
 ## 8. 更新履歴

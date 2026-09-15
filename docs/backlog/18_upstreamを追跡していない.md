@@ -12,9 +12,9 @@
 `x-plan-改訂/_old/20_ドキュメント作成プラン.md` §17 の完了条件「ClearML upstream 更新時の影響範囲を検討できる」が
 未チェックのまま残っているのはこのためである。
 
-`apps/web` は ClearML Web の fork であり、そこへ自作の feature を足してある。
+`Angular Web` は ClearML Web の fork であり、そこへ自作の feature を足してある。
 upstream に更新が入ったことを知る手段が現在は無い。fork 元のリポジトリを remote として登録しておらず、
-版を突き合わせる検査も走っていない。`apps/web/package.json` の `version` は `2.5.0` だが、
+版を突き合わせる検査も走っていない。`package.json` の `version` は `2.5.0` だが、
 この値が fork した時点の upstream の版と一致するという確認は取っていない。
 
 影響範囲を検討できないのは、差分を取る相手が手元に無いからである。

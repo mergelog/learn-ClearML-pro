@@ -65,14 +65,14 @@ test('コメントを落としても行番号が変わらない', () => {
 
 test('このリポジトリの tsconfig を読める', async () => {
   const {readFile} = await import('node:fs/promises');
-  const contents = await readFile(new URL('../../apps/web/tsconfig.json', import.meta.url), 'utf8');
+  const contents = await readFile(new URL('../../tsconfig.json', import.meta.url), 'utf8');
 
   assert.equal(parseJsonc(contents).compilerOptions.paths['@common/*'][0], 'src/app/webapp-common/*');
 });
 
 test('移行済みの範囲の宣言をそのまま読める', async () => {
   const {readFile} = await import('node:fs/promises');
-  const url = new URL('../../apps/web/tsconfig.strict.json', import.meta.url);
+  const url = new URL('../../tsconfig.strict.json', import.meta.url);
 
   assert.ok(parseJsonc(await readFile(url, 'utf8')).include.every((glob) => glob.endsWith('*.ts')));
 });

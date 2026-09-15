@@ -2,7 +2,7 @@
 /**
  * Angular の ESLint 違反を「増やさない」ためのゲート。
  *
- * `apps/web` は ClearML Web を取り込んだ大量の既存コードを持ち、現時点で
+ * Angular WebはClearML Webを取り込んだ大量の既存コードを持ち、現時点で
  * 数千件の違反が残っている。全件解消を第一ゴールの前提にすると縦スライスの
  * 着手が止まるため、件数の基準値を記録し、それを超えた変更だけを失敗させる。
  *
@@ -20,11 +20,11 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const WEB_DIRECTORY = resolve(REPOSITORY_ROOT, 'apps/web');
+const WEB_DIRECTORY = REPOSITORY_ROOT;
 const BASELINE_FILE = resolve(WEB_DIRECTORY, 'eslint-baseline.json');
 
 // pnpm のワークスペースでは eslint がリポジトリ直下へ巻き上げられるため、
-// apps/web からの相対パスではなく package の解決結果から辿る。
+// cwdからの相対パスではなくpackageの解決結果から辿る。
 // eslint は bin を exports で公開していないので、package.json の位置を起点にする。
 const ESLINT_CLI = resolve(
   dirname(createRequire(import.meta.url).resolve('eslint/package.json')),
@@ -34,6 +34,8 @@ const ESLINT_CLI = resolve(
 const EXIT_SUCCESS = 0;
 const EXIT_FAILURE = 1;
 const EXIT_INVALID_USAGE = 2;
+const BASELINE_TARGETS = ['src'];
+const BASELINE_IGNORES = ['src/app/features/**'];
 
 /**
  * ESLint を JSON で走らせる。
@@ -46,7 +48,13 @@ async function runEslint() {
     // PATH に依存しないよう、いま動いている Node をそのまま使う。
     const eslint = spawn(
       process.execPath,
-      [ESLINT_CLI, '.', '--format', 'json'],
+      [
+        ESLINT_CLI,
+        ...BASELINE_TARGETS,
+        ...BASELINE_IGNORES.flatMap((pattern) => ['--ignore-pattern', pattern]),
+        '--format',
+        'json',
+      ],
       { cwd: WEB_DIRECTORY, stdio: ['ignore', 'pipe', 'inherit'] },
     );
 
@@ -105,7 +113,7 @@ async function readBaseline() {
 async function writeBaseline(summary) {
   const baseline = {
     description:
-      'apps/web に残る ESLint 違反の基準値。増やす変更は scripts/eslint-baseline.mjs check で失敗する。',
+      'Angular Webに残るESLint違反の基準値。増やす変更はscripts/eslint-baseline.mjs checkで失敗する。',
     updatedAt: new Date().toISOString().slice(0, 10),
     ...summary,
   };

@@ -2,13 +2,13 @@
 
 - 状態: 採用
 - 日付: 2026-09-12
-- 対象: `apps/web/src/app/features/data-catalog`（tags と description の書き込み）
+- 対象: `src/app/features/data-catalog`（tags と description の書き込み）
 - 関連: 計画書 Stage N-8、`docs/_archive/adr/007_20260912_angular_feature_composition.md`、
   `x-plan-改訂/00_プラン.md` §4.4
 
 ## 背景
 
-データカタログは **`apps/web` の自作分で初めてサーバの状態を書き換える画面**である。
+データカタログは **`Angular Web` の自作分で初めてサーバの状態を書き換える画面**である。
 `quality-pipeline` の起動・停止は ClearML への操作であって、台帳そのものの編集ではない。
 
 書き込みが入ると、それまで無かった2つの問いが生まれる。

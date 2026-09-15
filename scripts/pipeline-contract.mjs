@@ -2,7 +2,7 @@
 /**
  * 画面とPython側が同じ文字列を指していることを確かめるゲート。
  *
- * `apps/web` の Quality pipeline 画面は、ClearML上のプロジェクト名・Pipeline名・
+ * `Angular Web` の Quality pipeline 画面は、ClearML上のプロジェクト名・Pipeline名・
  * Queue名・モデル名・タグ・ステップ名で対象を特定している。同じ文字列は
  * `ml/` 側にもあり、そちらが実際にTaskやモデルを作っている側である。
  *
@@ -26,7 +26,7 @@ import {fileURLToPath} from 'node:url';
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const TYPESCRIPT_SOURCE =
-  'apps/web/src/app/features/quality-pipeline/quality-pipeline.consts.ts';
+  'src/app/features/quality-pipeline/quality-pipeline.consts.ts';
 
 const EXIT_SUCCESS = 0;
 const EXIT_FAILURE = 1;

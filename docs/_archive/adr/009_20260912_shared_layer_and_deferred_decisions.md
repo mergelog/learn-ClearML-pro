@@ -2,11 +2,11 @@
 
 - 状態: 採用
 - 日付: 2026-09-12
-- 対象: `apps/web/src/app/shared/**`（自作分）、`libs/` の新設、`@defer`、zoneless
+- 対象: `src/app/shared/**`（自作分）、`libs/` の新設、`@defer`、zoneless
 - 関連: `docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md`（凍結領域）、
   `docs/_archive/adr/005_20260911_test_pyramid.md`（テストの層）、
   `docs/_archive/adr/007_20260912_angular_feature_composition.md`（feature の組み立て方）、
-  `apps/web/README.md`（「ディレクトリ構成」）、
+  `README.md`（「ディレクトリ構成」）、
   `x-plan-改訂/00_プラン.md` §6（Stage P の狙い）
 
 ## 背景
@@ -68,7 +68,7 @@ zoneless へ動くかを**決められなかった**。共有するものが1つ
 
 | トリガー | 実測（2026-09-12） | 引かれたか |
 | --- | --- | --- |
-| ① 2本目のデプロイ単位 | 配信するのは `apps/web` の1つだけ。`services/` は Python で別の配信物であり、コードを共有していない | 否 |
+| ① 2本目のデプロイ単位 | 配信するのは `Angular Web` の1つだけ。`services/` は Python で別の配信物であり、コードを共有していない | 否 |
 | ② `shared/` が自作100ファイル超 | 自作分は2ファイル（`clearml-failure.ts` + spec）。`shared/` 全体でも12ファイル | 否 |
 | ③ feature の所有権が分かれる | 分かれていない | 否 |
 
@@ -133,9 +133,9 @@ zoneless で本当に問題になるのは**変更検知が zone 由来の再評
 
 - `shared/` に自作コードが入ったので、ゲートの受け皿を2つ足した。
   **feature を足すときと同じ手順である**（Stage N-0 と同じ取りこぼし方をする）
-  - `apps/web/tsconfig.strict.json` の `include` に `src/app/shared/clearml/**/*.ts`
+  - `tsconfig.strict.json` の `include` に `src/app/shared/clearml/**/*.ts`
   - `test-pyramid.json` の `web-unit` の `include` と、`web-unit-vendor` の
-    `exclude` の両方に `apps/web/src/app/shared/clearml/**/*.spec.ts`
+    `exclude` の両方に `src/app/shared/clearml/**/*.spec.ts`
 - 失敗の文言のテストは共有層に1つだけになった（8ケース）。両 feature の
   Effects の spec は「失敗が action になること」を見ており、文言そのものは見ない
 - `libs/` / `@defer` / zoneless は**再評価の条件つきで閉じた**。条件を満たさない

@@ -41,7 +41,8 @@ Workers・Queues画面: https://www.clear.ml/docs/latest/docs/webapp/webapp_work
 
 ```text
 .
-├── apps/web/             # Angular 22版 ClearML Web
+├── src/                  # Angular 22版 ClearML Web
+├── e2e/                  # AngularのE2Eテスト
 ├── docs/                 # 体系資料(phase*)、未解決ストーリー(backlog)、凍結資料(_archive)
 ├── infra/clearml/        # ClearML ServerとAgent用Docker Compose
 ├── infra/training/       # 学習・Agentイメージのビルド定義
@@ -133,21 +134,21 @@ corepack pnpm web:e2e
 なります。CIで web ジョブへ足さないのも同じ理由の裏返しで、lintや単体テストの
 結果がE2Eの待ち時間の後ろに隠れます。
 
-ClearMLのAPI応答は `apps/web/e2e/fixtures` が差し替えるので、backendは
+ClearMLのAPI応答は `e2e/fixtures` が差し替えるので、backendは
 要りません。Playwrightは `CI` が立っているときだけdev serverを自前で起動し
-（`apps/web/playwright.config.ts`）、手元では起動済みのものを使い回します。
+（`playwright.config.ts`）、手元では起動済みのものを使い回します。
 **ソースを変えてから測るときは `ng serve` を落としてください。**
 落とさないと、直したはずの変更が反映されていない結果を見ます。
 
 `verify` の外にあっても、CIから落ちたときに気付けないままにはしません。
 `ci:parity` の `COVERAGE` が `web:e2e` と `e2e` ジョブの対応を固定しています。
 
-`apps/web/e2e/accessibility.spec.ts` は、**自作画面**（`sm-quality-pipeline-page`
+`e2e/accessibility.spec.ts` は、**自作画面**（`sm-quality-pipeline-page`
 の中）に axe の違反が無いことを見ます。取り込んだ ClearML Web の外枠には違反が
 残っていますが、そこは凍結領域で、直しても取り込み直しのたびに消えます。
 自分たちが書いた範囲は baseline を作らず0件で固定します。
 
-`apps/web/e2e/smoke.spec.ts` は、1本の流れ（Dataset登録 → Queue学習 → 比較 →
+`e2e/smoke.spec.ts` は、1本の流れ（Dataset登録 → Queue学習 → 比較 →
 昇格 → 推論への受け渡し）が縦に繋がっていることだけを5件で見ます。すべての
 画面が `e2e/fixtures/smoke.fixture.ts` の**同じ1つの世界**を見るので、どこかで
 取り違えが起きれば後ろの画面が別のものを出します。最後の節目が推論そのもの
@@ -204,12 +205,12 @@ E2Eが答えるのは「繋がっているか」だけです。
 provider / 失敗の扱い）は
 [docs/_archive/adr/007_20260912_angular_feature_composition.md](docs/_archive/adr/007_20260912_angular_feature_composition.md)
 にあります。形（ディレクトリ構成・featureの標準形・命名）は
-[apps/web/README.md](apps/web/README.md) が正で、ADRはそこから起こした
+`src/app/features` の既存構成を正とし、ADRはそこから起こした
 **理由**だけを持ちます。
 
 ### Angularの品質ゲート
 
-`apps/web` はClearML Webを取り込んだ既存コードを多く含みます。全件解消を
+Angular WebはClearML Webを取り込んだ既存コードを多く含みます。全件解消を
 待たずに開発を進めるため、現状を基準値として記録し、**そこから悪化する変更だけ**
 を失敗させます。判断の経緯は
 [docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md](docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md)
@@ -220,16 +221,16 @@ provider / 失敗の扱い）は
 | ゲート自身 | `pnpm web:gates:test` | 検査スクリプトの読み取りが壊れている | `scripts/tests/` |
 | CIの一致 | `pnpm ci:parity` | `verify` にある検証が `ci.yml` から落ちている | `scripts/ci-parity.mjs` の `COVERAGE` |
 | テストの層 | `pnpm test:pyramid` | テストが決めた層の外にある / E2Eが上限を超えた | `test-pyramid.json` |
-| lint | `pnpm web:lint:baseline` | 違反件数が基準値を超える | `apps/web/eslint-baseline.json` |
-| 依存境界 | `pnpm web:boundaries` | 既知の一覧に無い禁止依存が現れる | `apps/web/web-boundaries.json` |
-| 型 | `pnpm web:typecheck:strict` | 移行済みの範囲に `strict` のエラーがある | `apps/web/tsconfig.strict.json` |
-| 大きさ | `pnpm web:build` | initial / 各chunkがbudgetを超える | `apps/web/angular.json` |
+| lint | `pnpm web:lint:baseline` | 違反件数が基準値を超える | `eslint-baseline.json` |
+| 依存境界 | `pnpm web:boundaries` | 既知の一覧に無い禁止依存が現れる | `web-boundaries.json` |
+| 型 | `pnpm web:typecheck:strict` | 移行済みの範囲に `strict` のエラーがある | `tsconfig.strict.json` |
+| 大きさ | `pnpm web:build` | initial / 各chunkがbudgetを超える | `angular.json` |
 
 ESLint違反はerror 3,198件・warning 1,087件、禁止依存は217件が既知として
 記録されています。いずれも取り込んだコードのもので、自分たちで書いた
 `src/app/features/quality-pipeline` には1件もありません。
 
-`strict` はfeature単位で進めます。移行済みの範囲は `apps/web/tsconfig.strict.json`
+`strict` はfeature単位で進めます。移行済みの範囲は `tsconfig.strict.json`
 の `include` に書き、その範囲のエラーだけが失敗になります。触るfeatureを
 増やすときは、まず `include` へ足して通るまで直します。
 
@@ -457,7 +458,7 @@ corepack pnpm sec:token -- --name batch-scoring --role predictor
 
 ```bash
 corepack pnpm sec:scan                        # 追跡されているファイル（verifyとCIに入っている）
-corepack pnpm sec:scan:paths apps/web/build   # ビルド生成物
+corepack pnpm sec:scan:paths build   # ビルド生成物
 corepack pnpm sec:scan:clearml                # Taskのパラメータとログ
 ```
 
@@ -487,16 +488,15 @@ corepack pnpm sec:gate    # 出してよいかを決める。criticalは通さ�
 
 ```bash
 cp .env.example .env
-cp apps/web/.env.example apps/web/.env
 ```
 
-PrimeUIのライセンスキーは `apps/web/.env` に設定します。
+PrimeUIのライセンスキーは `.env` に設定します。
 
 ```dotenv
 PRIMEUI_LICENSE=取得したライセンスキー
 ```
 
-この値はAngularのブラウザ向けバンドルに含まれます。`apps/web/.env` にはPrimeUIライセンスキー以外の秘密情報を設定しないでください。
+この値はAngularのブラウザ向けバンドルに含まれます。`.env` にはPrimeUIライセンスキー以外の秘密情報を設定しないでください。
 
 依存パッケージをインストールします。
 
@@ -796,7 +796,7 @@ corepack pnpm sec:tokens -- --rotate
 
 # 秘密の検査（リポジトリ / 生成物 / Taskの記録）
 corepack pnpm sec:scan
-corepack pnpm sec:scan:paths apps/web/build
+corepack pnpm sec:scan:paths build
 corepack pnpm sec:scan:clearml
 
 # 供給網（部品表 / 脆弱性の問い合わせ / リリースゲート）
@@ -855,7 +855,7 @@ corepack pnpm backend:down
 | `EXPERIMENT_ENVIRONMENT` | `dev` | ハイパーパラメータ探索がどの環境の予算で走るか。`dev` / `staging` / `production`。`--environment` を渡すとそちらが優先される |
 | `SEMICONDUCTOR_SEED_OUTPUT` | `.generated/semiconductor` | 半導体seedの出力先 |
 | `SEMICONDUCTOR_RANDOM_SEED` | `20260904` | 半導体seedが生成するデータのrandom seed |
-| `PRIMEUI_LICENSE` | 未設定 | `apps/web/.env`。PrimeUIのライセンスキー |
+| `PRIMEUI_LICENSE` | 未設定 | `.env`。PrimeUIのライセンスキー |
 | `CLEARML_WEB_COMPANY_ID` | `d1bd92a3b039400cbafc60a7a5b1e52b` | Web画面が使うClearMLのcompany ID |
 | `BIND_ADDRESS` | `127.0.0.1` | `.env`。推論・監視がホスト上で待ち受けるアドレス。`0.0.0.0` にすると同じLANの誰でも到達できる |
 | `PREDICTION_API_CLIENTS` | 未設定 | `.env`。推論サービスを呼んでよい者。`name:role:fingerprint` を `;` 区切り。空だと起動しない。ローカルは `backend:up` が生成物から渡す |
@@ -899,8 +899,8 @@ CLEARML_ALLOW_ENV_CREDENTIALS=1 corepack pnpm ml:model status
 
 Web画面はコンパイル時の定数ではなく、実行時に取得する `credentials.json` を読みます。
 このファイルは `web:start`（開発サーバ）が
-[apps/web/scripts/generate-credentials.mjs](apps/web/scripts/generate-credentials.mjs) で
-`apps/web/src/credentials.json` へ毎回書き出すもので、リポジトリには追跡されません。
+[scripts/generate-credentials.mjs](scripts/generate-credentials.mjs) で
+`src/credentials.json` へ毎回書き出すもので、リポジトリには追跡されません。
 
 **本番ビルド（`pnpm web:build`）はこのファイルを含みません。** 資格情報を
 ブラウザへ配る成果物を作らないためで、生成物に残っていないことを
@@ -954,7 +954,7 @@ GRAFANA_PORT=3000
 corepack pnpm ops:smoke
 ```
 
-Angularのポートは [apps/web/package.json](apps/web/package.json) の `start` コマンドで設定しています。
+Angularのポートは [package.json](package.json) の `start` コマンドで設定しています。
 `../001-learn-ClearML` も 4200 を使うため、同時には起動できません。
 
 ## ブラウザに400エラーが表示される場合
@@ -967,7 +967,7 @@ ChromeのDevToolsで `Application`、`Storage` の順に開き、
 `Clear site data` を実行してCookieとLocal Storageを削除してから、ページを再読み込みしてください。
 
 ログイン画面が `401 Unauthorized (invalid credentials)` になる場合は、
-`apps/web/src/credentials.json` が空のまま生成された可能性があります。
+`src/credentials.json` が空のまま生成された可能性があります。
 このリポジトリの `./clearml.conf` に `api.credentials` を用意したうえで、
 `corepack pnpm web:start` を実行し直してください。**`~/clearml.conf` は
 `../001-learn-ClearML` 用で、こちらの生成は読みません**（[Web画面の認証情報](#web画面の認証情報)）。
@@ -979,6 +979,6 @@ ChromeのDevToolsで `Application`、`Storage` の順に開き、
 
 ## 補足
 
-- Angular開発サーバーからのAPIリクエストは `apps/web/proxy.config.mjs` により `http://localhost:8008` へ転送されます。
+- Angular開発サーバーからのAPIリクエストは `proxy.config.mjs` により `http://localhost:8008` へ転送されます。
 - ClearMLのデータはDockerのnamed volumeに保存されます。
 - `backend:down` ではデータは削除されません。

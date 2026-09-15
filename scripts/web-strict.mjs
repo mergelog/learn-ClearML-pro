@@ -2,10 +2,10 @@
 /**
  * TypeScript の `strict` を feature 単位で進めるためのゲート。
  *
- * `apps/web` は取り込んだClearML Webを土台にしており、リポジトリ全体で
+ * Angular Webは取り込んだClearML Webを土台にしており、リポジトリ全体で
  * `strict` を有効にすると500件以上の型エラーが出る。全件解消を待つと
  * 新しく書くコードにも `strict` が効かないままになるため、
- * 「移行済みの範囲」を `apps/web/tsconfig.strict.json` の `include` で宣言し、
+ * 「移行済みの範囲」を `tsconfig.strict.json` の `include` で宣言し、
  * その範囲のエラーだけを失敗として扱う。
  *
  * tsc は `include` の外にあるファイルでも、import されていれば型を検査して
@@ -29,7 +29,7 @@ import {globToRegExp} from './lib/glob.mjs';
 import {parseJsonc} from './lib/jsonc.mjs';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const WEB_DIRECTORY = resolve(REPOSITORY_ROOT, 'apps/web');
+const WEB_DIRECTORY = REPOSITORY_ROOT;
 const STRICT_TSCONFIG = 'tsconfig.strict.json';
 
 const EXIT_SUCCESS = 0;

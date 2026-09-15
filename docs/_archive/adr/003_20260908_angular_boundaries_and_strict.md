@@ -2,13 +2,13 @@
 
 - 状態: 採用
 - 日付: 2026-09-08
-- 対象: `apps/web`（取り込んだClearML Webを土台にしたAngularアプリ）
+- 対象: `Angular Web`（取り込んだClearML Webを土台にしたAngularアプリ）
 - 関連: 計画書 P2-10、`docs/_archive/adr/002_20260908_service_authorization.md`、
   `docs/_archive/security/001_20260908_threat_model.md`
 
 ## 背景
 
-`apps/web` は自分たちで書き起こしたアプリではなく、ClearML Web（Angular 22）を
+`Angular Web` は自分たちで書き起こしたアプリではなく、ClearML Web（Angular 22）を
 取り込んだものである。規模は `src/app` だけで数千ファイルあり、次の状態にある。
 
 - `tsconfig.json` の `strict` が `false`。全体で有効にすると型エラーが365件出る
@@ -39,7 +39,7 @@ CIで失敗させる。自分たちで書いた範囲には、最初から最終
 
 ### 1. `strict` は範囲を宣言して進める
 
-移行済みの範囲は `apps/web/tsconfig.strict.json` の `include` に書く。
+移行済みの範囲は `tsconfig.strict.json` の `include` に書く。
 現在の範囲は次の2つで、いずれも自分たちが書いた範囲である。
 
 - `src/app/features/quality-pipeline/**/*.ts`
@@ -53,7 +53,7 @@ CIで失敗させる。自分たちで書いた範囲には、最初から最終
 ### 2. feature 間の禁止依存を静的に検査する
 
 `scripts/web-boundaries.mjs` が3つの規則を検査する。規則と既知の違反は
-`apps/web/web-boundaries.json` に置く。
+`web-boundaries.json` に置く。
 
 | 規則 | 内容 | 既知の違反 |
 | --- | --- | --- |
@@ -85,7 +85,7 @@ CIで失敗させる。自分たちで書いた範囲には、最初から最終
 
 生成物に何も残っていないことは、W10で作った走査器で確かめる。
 `pnpm verify:web` と CI の web ジョブが、production build の直後に
-`tools.security.cli paths apps/web/build` を走らせる。
+`tools.security.cli paths build` を走らせる。
 
 ## 検討した選択肢
 

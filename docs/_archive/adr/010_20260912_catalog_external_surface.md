@@ -2,7 +2,7 @@
 
 - 状態: 採用
 - 日付: 2026-09-12
-- 対象: `apps/web/src/app/features/data-catalog`（外向きの面）
+- 対象: `src/app/features/data-catalog`（外向きの面）
 - 関連: 計画書 `x-plan-改訂/00_プラン.md` §1.1 / §5、
   `docs/_archive/adr/006_20260911_published_api_snapshot.md`（公開した形の守り方）、
   `docs/_archive/adr/002_20260908_service_authorization.md`（サービスの認可）、
@@ -27,7 +27,7 @@ Stage N で台帳（`data-catalog`）ができ、資産（Dataset / Model / Run�
 
 - **出すのは `CatalogAsset` であって、ClearML API の応答そのものではない**（§5）。
   生の応答を出すと、ClearML 追従で外部が壊れる
-- P-3 で `libs/` を切らないと決めたので、置き場所は `apps/web` の中か
+- P-3 で `libs/` を切らないと決めたので、置き場所は `Angular Web` の中か
   `services/` 側かの二択である（ADR 009）
 - 出口を守る流儀は ADR 006 が既に持っている。**新しい流儀を作らない**
 

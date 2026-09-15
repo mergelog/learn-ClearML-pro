@@ -3,7 +3,7 @@
 「画面のボタンを押してからモデルが登録されるまで」に何が起きているかを、
 コードの位置と対応させて追えるようにした資料。
 
-対象は `apps/web/src/app/features/quality-pipeline/`（新規に追加した画面）と、
+対象は `src/app/features/quality-pipeline/`（新規に追加した画面）と、
 それが呼ぶClearML APIから先である。
 
 ## 1. 全体のシーケンス

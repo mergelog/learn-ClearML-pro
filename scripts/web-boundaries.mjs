@@ -5,7 +5,7 @@
  * ESLint の `no-restricted-imports` でも近いことはできるが、
  * 「feature A は feature B を import してはならない」のように
  * *呼び出し元によって禁止先が変わる* 規則は書けない。ここではその形を含む
- * 3種類の規則を、`apps/web/web-boundaries.json` の宣言から検査する。
+ * 3種類の規則を、`web-boundaries.json` の宣言から検査する。
  *
  * 使い方:
  *   node scripts/web-boundaries.mjs check     既知の違反と比較する（CIとローカル共通）
@@ -26,7 +26,7 @@ import {globToRegExp, matchesAny} from './lib/glob.mjs';
 import {parseJsonc} from './lib/jsonc.mjs';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const WEB_DIRECTORY = resolve(REPOSITORY_ROOT, 'apps/web');
+const WEB_DIRECTORY = REPOSITORY_ROOT;
 const RULES_FILE = resolve(WEB_DIRECTORY, 'web-boundaries.json');
 const TSCONFIG_FILE = resolve(WEB_DIRECTORY, 'tsconfig.json');
 
@@ -34,14 +34,16 @@ const EXIT_SUCCESS = 0;
 const EXIT_FAILURE = 1;
 const EXIT_INVALID_USAGE = 2;
 
-const SOURCE_ROOT = 'src';
+const SOURCE_DIRECTORIES = [
+  resolve(WEB_DIRECTORY, 'src'),
+];
 const SOURCE_SUFFIXES = ['.ts'];
 const SKIPPED_DIRECTORIES = new Set(['node_modules', '.angular', '.stryker-tmp', 'assets']);
 
 /**
  * `from '...'`、`export ... from '...'`、`import('...')` の3形を拾う。
  *
- * TypeScriptのパーサを使えば正確だが、この検査のために `apps/web` の外へ
+ * TypeScriptのパーサを使えば正確だが、この検査のためだけに依存を
  * 依存を増やしたくない。行コメント・ブロックコメントを落としてから当てる。
  */
 const STATIC_IMPORT = /(?:^|[\s;}])(?:import|export)\s[^;]*?from\s*['"]([^'"]+)['"]/gs;
@@ -65,7 +67,7 @@ async function readPathAliases() {
 
   return Object.entries(paths).map(([alias, targets]) => ({
     prefix: alias.replace(/\*$/, ''),
-    target: targets[0].replace(/\*$/, ''),
+    target: resolve(WEB_DIRECTORY, targets[0].replace(/\*$/, '')),
   }));
 }
 
@@ -112,7 +114,7 @@ function importSpecifiers(contents) {
  */
 function resolveSpecifier(specifier, sourcePath, aliases) {
   if (specifier.startsWith('.')) {
-    return toPosix(relative(WEB_DIRECTORY, resolve(dirname(sourcePath), specifier)));
+    return toBoundaryPath(resolve(dirname(sourcePath), specifier));
   }
 
   const alias = aliases.find(({prefix}) => specifier.startsWith(prefix));
@@ -120,10 +122,17 @@ function resolveSpecifier(specifier, sourcePath, aliases) {
     return null;
   }
 
-  return toPosix(join(alias.target, specifier.slice(alias.prefix.length)));
+  return toBoundaryPath(join(alias.target, specifier.slice(alias.prefix.length)));
 }
 
 const toPosix = (path) => path.split('\\').join('/');
+
+/**
+ * Webプロジェクト内のパスを `src/...` 形式へ正規化する。
+ */
+function toBoundaryPath(path) {
+  return toPosix(relative(REPOSITORY_ROOT, path));
+}
 
 
 /**
@@ -156,11 +165,11 @@ function violationsOf(rule, file, target, featureRoot) {
 
 async function findViolations(rules) {
   const aliases = await readPathAliases();
-  const files = await collectSourceFiles(resolve(WEB_DIRECTORY, SOURCE_ROOT));
+  const files = (await Promise.all(SOURCE_DIRECTORIES.map(collectSourceFiles))).flat();
   const found = new Map(rules.rules.map((rule) => [rule.id, new Set()]));
 
   for (const absolutePath of files) {
-    const file = toPosix(relative(WEB_DIRECTORY, absolutePath));
+    const file = toBoundaryPath(absolutePath);
     const contents = await readFile(absolutePath, 'utf8');
 
     for (const specifier of importSpecifiers(contents)) {

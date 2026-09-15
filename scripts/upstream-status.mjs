@@ -2,7 +2,7 @@
 /**
  * fork 元（ClearML Web）が進んだかどうかを確かめるゲート。
  *
- * `apps/web` は ClearML Web の fork である。fork 元の更新は、こちらが何も
+ * `Angular Web` は ClearML Web の fork である。fork 元の更新は、こちらが何も
  * しなくても入る。入ったことに気付かなければ、脆弱性の修正も取り込まないまま
  * 進む。71 の R-01・R-02 は、この「見ていない」状態そのものである。
  *
@@ -33,7 +33,7 @@ const run = promisify(execFile);
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const DECLARATION = 'upstream.json';
-const WEB_PACKAGE_JSON = 'apps/web/package.json';
+const WEB_PACKAGE_JSON = 'package.json';
 
 const EXIT_SUCCESS = 0;
 const EXIT_FAILURE = 1;

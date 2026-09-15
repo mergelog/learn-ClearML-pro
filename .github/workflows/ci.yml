@@ -253,11 +253,11 @@ jobs:
 
       # ブラウザ本体と、その実行に要るOSのライブラリはリポジトリに入っていない。
       - name: Install the browser
-        run: pnpm --dir apps/web e2e:install
+        run: pnpm e2e:install
 
       # `CI` により `reuseExistingServer` が false になり、Playwright が
       # `corepack pnpm start` で dev server を自前で起動する
-      # （`apps/web/playwright.config.ts`）。`start` は先に `config:credentials`
+      # （`playwright.config.ts`）。`start` は先に `config:credentials`
       # を走らせるが、`clearml.conf` が無い CI では空の資格情報を書き出して
       # 続行する。API 応答は `e2e/fixtures` が差し替えるので backend は要らない。
       #
@@ -273,9 +273,9 @@ jobs:
         with:
           name: e2e
           path: |
-            apps/web/playwright-report
-            apps/web/reports/e2e
-            apps/web/test-results
+            playwright-report
+            reports/e2e
+            test-results
           retention-days: 14
 
   security:

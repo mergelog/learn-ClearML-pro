@@ -22,7 +22,7 @@
 
 本リポジトリ（`https://github.com/mergelog/learn-ClearML-pro`）を対象とする。
 
-`apps/web` は ClearML Web の作業ツリーをそのまま取り込んだものである。submodule ではなく、
+`Angular Web` は ClearML Web の作業ツリーをそのまま取り込んだものである。submodule ではなく、
 2588ファイルが本リポジトリの追跡対象に入っている。上流のリモートは登録されていない。
 
 ## 3. 前提
@@ -88,8 +88,8 @@ CI は pull request と `main` への push で走る。
 | ファイル | 比べる対象 |
 | --- | --- |
 | `services/prediction_api/openapi.json` | 公開している API の形。黙って変わらないために置く（ADR 006） |
-| `apps/web/eslint-baseline.json` | lint 違反の件数。増えたときだけ落とすために置く |
-| `apps/web/web-boundaries.json` | 既知の依存違反。増えたときだけ落とすために置く |
+| `eslint-baseline.json` | lint 違反の件数。増えたときだけ落とすために置く |
+| `web-boundaries.json` | 既知の依存違反。増えたときだけ落とすために置く |
 | `requirements/*.txt` | 解決済みの依存の版数。手元と Agent で同じものを入れるために置く |
 
 秘密がコミットに混じっていないことは `pnpm run sec:scan` が見る。
@@ -125,7 +125,7 @@ CI は pull request と `main` への push で走る。
 現在、版は git ではなく ClearML 側（モデルの版と段階タグ）と compose のイメージタグが持っている。
 
 タグを使い始めるときは、タグが何を指すかを先に決める。
-`apps/web` の版、モデルの版、配備したイメージの版は別々に動くため、
+`Angular Web` の版、モデルの版、配備したイメージの版は別々に動くため、
 1つのタグで全部を指そうとすると、どれとも一致しない番号ができる。
 
 ### 4.7 戻し方

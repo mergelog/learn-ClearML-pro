@@ -21,30 +21,30 @@ const layers = [
     id: 'web-unit',
     command: 'web:test',
     counter: 'javascript',
-    include: ['apps/web/src/app/features/quality-pipeline/**/*.spec.ts'],
+    include: ['src/tests/features/quality-pipeline/**/*.spec.ts'],
   },
   {
     id: 'web-unit-vendor',
     command: 'web:test',
     counter: 'javascript',
-    include: ['apps/web/src/**/*.spec.ts'],
-    exclude: ['apps/web/src/app/features/quality-pipeline/**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
+    exclude: ['src/tests/features/quality-pipeline/**/*.spec.ts'],
   },
   {
     id: 'e2e',
     command: 'web:e2e',
     counter: 'javascript',
-    include: ['apps/web/e2e/**/*.spec.ts'],
+    include: ['e2e/**/*.spec.ts'],
     max: 20,
     maxReason: '縦の疎通だけを置く',
   },
 ];
 
-const scripts = {'web:test': 'pnpm --dir apps/web test', 'web:e2e': 'pnpm --dir apps/web e2e'};
+const scripts = {'web:test': 'pnpm test', 'web:e2e': 'pnpm e2e'};
 
-const ours = 'apps/web/src/app/features/quality-pipeline/x.spec.ts';
-const vendor = 'apps/web/src/app/webapp-common/y.spec.ts';
-const e2e = 'apps/web/e2e/z.spec.ts';
+const ours = 'src/tests/features/quality-pipeline/x.spec.ts';
+const vendor = 'src/app/webapp-common/y.spec.ts';
+const e2e = 'e2e/z.spec.ts';
 
 test('exclude を書いた層は、より狭い層に譲る', () => {
   assert.deepEqual(layersOf(ours, layers).map((layer) => layer.id), ['web-unit']);
@@ -135,7 +135,7 @@ test('取り込んだ依存の中にあるテストを、自分たちのもの�
       'ml/tests/test_a.py': 'def test_one():\n    pass\n',
       'node_modules/pkg/tests/test_b.py': 'def test_two():\n    pass\n',
       '.venv/lib/test_c.py': 'def test_three():\n    pass\n',
-      'apps/web/README.md': 'テストではない',
+      'README.md': 'テストではない',
     },
     async (root) => {
       const found = await collectTestFiles(root, {
@@ -165,7 +165,7 @@ test('Python は def test_ の行を、TypeScript は it / test の行を1件と
         '    # def test_commented_out(self):',
         '',
       ].join('\n'),
-      'apps/web/e2e/a.spec.ts': [
+      'e2e/a.spec.ts': [
         "test.describe('group', () => {",
         '  test.beforeEach(async () => {});',
         "  test('one', async () => {});",
@@ -181,7 +181,7 @@ test('Python は def test_ の行を、TypeScript は it / test の行を1件と
       // 註釈の中の定義は数えない。修飾子の付いたものは数える。
       assert.equal(await count(root, python, ['ml/tests/test_a.py']), 2);
       // describe と beforeEach は、確かめていることが1件増えたわけではない。
-      assert.equal(await count(root, javascript, ['apps/web/e2e/a.spec.ts']), 3);
+      assert.equal(await count(root, javascript, ['e2e/a.spec.ts']), 3);
     },
   );
 });

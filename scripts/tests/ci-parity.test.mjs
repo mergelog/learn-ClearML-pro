@@ -59,15 +59,15 @@ test('`pnpm run` の連結だけの script は、末端まで展開する', () =
     'verify:web': 'pnpm run web:test',
     'py:lint': '.venv/bin/python -m ruff check .',
     'py:coverage': '.venv/bin/python -m coverage run -m unittest discover -s ml/tests',
-    'web:test': 'pnpm --dir apps/web test',
+    'web:test': 'pnpm test',
   };
 
   assert.deepEqual(expand('verify', scripts), ['py:lint', 'py:coverage', 'web:test']);
 });
 
 test('実コマンドを含む script は、そこで展開を止める', () => {
-  // `pnpm --dir apps/web test` は `pnpm run` ではない。中を覗きに行かない。
-  const scripts = {'web:test': 'pnpm --dir apps/web test'};
+  // `pnpm test` は `pnpm run <name>` の形ではない。中を覗きに行かない。
+  const scripts = {'web:test': 'pnpm test'};
 
   assert.deepEqual(expand('web:test', scripts), ['web:test']);
 });
@@ -118,7 +118,7 @@ test('単体で書いた項目は、出所を二度言わずに報告する', ()
   // 「web:e2e が走っていない（web:e2e に入っている）」は読み手に何も足さない。
   const found = differences(
     [{chain: 'web:e2e', job: 'e2e'}],
-    {'web:e2e': 'pnpm --dir apps/web e2e'},
+    {'web:e2e': 'pnpm e2e'},
     new Map([['e2e', []]]),
   );
 

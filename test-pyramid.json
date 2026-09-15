@@ -60,9 +60,9 @@
       "command": "web:test",
       "counter": "javascript",
       "include": [
-        "apps/web/src/app/shared/clearml/**/*.spec.ts",
-        "apps/web/src/app/features/quality-pipeline/**/*.spec.ts",
-        "apps/web/src/app/features/data-catalog/**/*.spec.ts"
+        "src/app/shared/clearml/**/*.spec.ts",
+        "src/tests/features/quality-pipeline/**/*.spec.ts",
+        "src/tests/features/data-catalog/**/*.spec.ts"
       ],
       "verifies": "presentational の表示判断（桁・空・打ち切り・UTC）、container と state の結線、data-access の変換、reducer / effects の遷移、および自作の共有層（`shared/clearml`）の判断",
       "excludes": "実際の HTTP、ルーティング、本番ビルドの成立、画面全体の見た目"
@@ -72,11 +72,11 @@
       "name": "Angular の単体（取り込み）",
       "command": "web:test",
       "counter": "javascript",
-      "include": ["apps/web/src/**/*.spec.ts"],
+      "include": ["src/**/*.spec.ts"],
       "exclude": [
-        "apps/web/src/app/shared/clearml/**/*.spec.ts",
-        "apps/web/src/app/features/quality-pipeline/**/*.spec.ts",
-        "apps/web/src/app/features/data-catalog/**/*.spec.ts"
+        "src/app/shared/clearml/**/*.spec.ts",
+        "src/tests/features/quality-pipeline/**/*.spec.ts",
+        "src/tests/features/data-catalog/**/*.spec.ts"
       ],
       "verifies": "取り込んだ ClearML Web が持っていたテスト。回帰の網としてそのまま走らせる",
       "excludes": "自分たちの判断。ここへ新しいテストを足さない（自作の範囲は web-unit へ置く）"
@@ -86,7 +86,7 @@
       "name": "E2E（Playwright）",
       "command": "web:e2e",
       "counter": "javascript",
-      "include": ["apps/web/e2e/**/*.spec.ts"],
+      "include": ["e2e/**/*.spec.ts"],
       "verifies": "画面が起動し、route から操作、表示までが縦に繋がっていること。API 応答は `e2e/fixtures` が差し替える",
       "excludes": "業務ルールの網羅。分岐を1つ増やすたびにここを増やさない（下の層で確かめる）",
       "max": 30,

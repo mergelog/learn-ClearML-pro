@@ -2,10 +2,10 @@
 
 - 状態: 採用
 - 日付: 2026-09-12
-- 対象: `apps/web/src/app/features/**`（自作分。`quality-pipeline` と `data-catalog` の2つ）
-  および自作の共有層 `apps/web/src/app/shared/**`
+- 対象: `src/app/features/**`（自作分。`quality-pipeline` と `data-catalog` の2つ）
+  および自作の共有層 `src/app/shared/**`
 - 関連: 計画書 W12-10、`docs/_archive/adr/003_20260908_angular_boundaries_and_strict.md`、
-  `apps/web/README.md`（「ディレクトリ構成」「feature の標準形」
+  `README.md`（「ディレクトリ構成」「feature の標準形」
   「変更検知とコンポーネントの命名」）、
   `docs/_archive/adr/009_20260912_shared_layer_and_deferred_decisions.md`（Stage P の判定）
 
@@ -19,7 +19,7 @@
 なる。ここを都度決めると、feature が2つ目・3つ目と増えたときに書き方が割れる。
 割れた書き方は、規約が無いことより読み手を迷わせる。
 
-`apps/web/README.md` には**形**（ディレクトリ構成・feature の標準形・命名）が
+`README.md` には**形**（ディレクトリ構成・feature の標準形・命名）が
 既に書いてある。ここに書くのは、その形を選んだ**理由**と、形だけでは決まらない
 4つの判断である。二重に書かない。
 
@@ -128,7 +128,7 @@ Effects の中で決める。
 - **3つ目からは、この文書は実例ではなく規約として読む。** 沿わない書き方を
   するなら、先にこの文書を直す
 - `store.selectSignal` に揃えているため、container の単体テストは state を
-  差し替えるだけで書ける（`apps/web` 単体の層。ADR 005）
+  差し替えるだけで書ける（`Angular Web` 単体の層。ADR 005）
 - 失敗を state に載せる形にしているので、失敗時の表示は E2E ではなく
   単体テストで確かめられる。E2E が見るのは「説明が支援技術へ届くか」だけである
 

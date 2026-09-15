@@ -22,7 +22,7 @@
 
 ## 2. 適用範囲
 
-対象は本リポジトリで作る成果物である。実装（`ml` / `services` / `tools` / `apps/web` / `infra`）、
+対象は本リポジトリで作る成果物である。実装（`ml` / `services` / `tools` / `Angular Web` / `infra`）、
 文書（`docs/**`）、実機確認の3種類を扱う。
 
 工数と日程は対象外とする。単独の学習プロジェクトであり、作業時間を測っていない。
@@ -45,7 +45,7 @@
 | W1 | 基盤構築 | `infra/clearml/compose.yaml`、`scripts/backend-up.sh` | 完了 |
 | W2 | ML 処理の実装 | `ml/`（学習・パイプライン・評価・モデル管理・探索・品質判定） | 完了 |
 | W3 | サービスの実装 | `services/prediction_api`、`services/ops_exporter` | 完了 |
-| W4 | 画面の実装 | `apps/web`（ClearML Web の fork と自作 feature） | 完了 |
+| W4 | 画面の実装 | `Angular Web`（ClearML Web の fork と自作 feature） | 完了 |
 | W5 | 検証の仕組み | `pnpm verify`、CI の5ジョブ、4つのゲート | 完了 |
 | W6 | 運用手順 | `docs/_archive/runbooks/` 9本 | 完了（積み残しは W8） |
 | W7 | 体系文書 | `docs/phase1`〜`phase8` の48本 | 進行中（§4.3） |
