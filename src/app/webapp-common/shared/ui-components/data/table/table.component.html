@@ -37,13 +37,13 @@
     (onColResize)="colResize($event)">
     <ng-template #emptymessage>
       <tr class="no-data-row" [style.height.px]="rowHeight()" [style.line-height.px]="30">
-        <div [class.simple]="simple()" class="no-data-wrapper" [style.top.px]="this.scrollable && noDataTop">
+        <div [class.simple]="simple()" class="no-data-wrapper" [style.top.px]="scrollable() ? noDataTop : null">
           @if (!tableSate().loading() && !noDataTemplate()) {
             <span class="no-data">No data to show</span>
           }
         </div>
         @if (!tableSate().loading() && noDataTemplate()) {
-          <ng-container *ngTemplateOutlet="noDataTemplate(); context: {noDataTop: this.scrollable && noDataTop, minimizedView: minimizedView()}"></ng-container>
+          <ng-container *ngTemplateOutlet="noDataTemplate(); context: {noDataTop: scrollable() ? noDataTop : null, minimizedView: minimizedView()}"></ng-container>
         }
       </tr>
     </ng-template>
@@ -63,7 +63,7 @@
                   [class.selected-col-header]="col?.disablePointerEvents"
                   [pReorderableColumnDisabled]="!reorderableColumns() || col?.disableDrag"
                   [pResizableColumnDisabled]="col?.disableDrag"
-                  [style.max-width]="col.style?.maxWidth ?? (!resizableColumns() && columnResizeMode() === 'fit' && col.style?.width)"
+                  [style.max-width]="col.style?.maxWidth ?? (!resizableColumns() && columnResizeMode() === 'fit' ? col.style?.width : null)"
                   [style.min-width]="col.style?.minWidth"
                   [style.width]="col.style?.width"
                   [class.p-datatable-frozen-column]="col?.frozen"
@@ -147,7 +147,7 @@
               [class.p-datatable-frozen-column-left]="col?.frozen && col?.alignFrozen !== 'right'"
               [class.p-datatable-frozen-column-right]="col?.frozen && col?.alignFrozen === 'right'"
               [style.min-width]="col.style?.minWidth"
-              [style.max-width]="col.style?.maxWidth ?? (!resizableColumns() && columnResizeMode() === 'fit' && col.style?.width)"
+              [style.max-width]="col.style?.maxWidth ?? (!resizableColumns() && columnResizeMode() === 'fit' ? col.style?.width : null)"
               [style.width]="col.style?.width">
               @if (bodyTemplate) {
                 <ng-container
