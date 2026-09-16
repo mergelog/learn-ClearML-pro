@@ -1,0 +1,19 @@
+{
+  "name": "md-to-html",
+  "version": "1.0.0",
+  "private": true,
+  "description": "指定したMarkdownファイル、またはフォルダ配下のMarkdownを一括でHTML化するCLIツール",
+  "type": "module",
+  "bin": {
+    "md-to-html": "./bin/md-to-html.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node ./bin/md-to-html.mjs"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0"
+  }
+}
