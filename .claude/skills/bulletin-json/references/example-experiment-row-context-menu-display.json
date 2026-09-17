@@ -1,0 +1,268 @@
+[
+  {
+    "hr": "index:0, --------------------------------------------------",
+    "name": "行の右クリックを検出",
+    "trigger": {
+      "呼び出し元": "ユーザー",
+      "イベント": "実験一覧の行を右クリック",
+      "接続根拠": "行の pContextMenuRow が対象の rowData をPrimeNGへ登録"
+    },
+    "implementation": {
+      "コンポーネント": "TableComponent",
+      "実装箇所": [
+        {
+          "シンボル": "pContextMenuRow",
+          "リンク": "code -g src/app/webapp-common/shared/ui-components/data/table/table.component.html:127"
+        },
+        {
+          "シンボル": "onContextMenuSelect",
+          "リンク": "code -g src/app/webapp-common/shared/ui-components/data/table/table.component.html:36"
+        }
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "各一覧画面で再利用される共通テーブル",
+      "データ受取元": "ExperimentsTableComponent",
+      "受取データ": ["実験の行データ", "列定義", "選択状態"],
+      "通知先": "ExperimentsTableComponent",
+      "通知内容": "rowRightClick"
+    },
+    "process": {
+      "使用技術": ["PrimeNG p-table", "pContextMenuRow", "onContextMenuSelect"],
+      "コード": "(onContextMenuSelect)=\"openContext($event)\"",
+      "処理内容": "PrimeNGが右クリックされた行とMouseEventを特定し、openContext()を呼ぶ",
+      "補足": "p-context-menuはd-none。表示ではなくイベント検出に使用"
+    },
+    "effects": [
+      {
+        "影響名": "TableComponent.openContext()を実行",
+        "画面変更": false
+      }
+    ]
+  },
+  {
+    "hr": "index:1, --------------------------------------------------",
+    "name": "右クリック情報を実験テーブルへ返す",
+    "trigger": {
+      "呼び出し元インデックス": 0,
+      "呼び出し元": "TableComponent template",
+      "イベント": "onContextMenuSelect",
+      "接続根拠": "テンプレートからopenContext($event)を直接呼び出す"
+    },
+    "implementation": {
+      "コンポーネント": "TableComponent",
+      "メソッド": "openContext",
+      "リンク一覧": [
+        "code -g src/app/webapp-common/shared/ui-components/data/table/table.component.ts:421",
+        "code -g src/app/webapp-common/shared/ui-components/data/table/table.component.ts:174",
+        "code -g src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:31"
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "共通テーブル",
+      "この地点の役割": "PrimeNGイベントをアプリ用イベントへ変換する中継点",
+      "データ受取元": "PrimeNG",
+      "受取データ": ["originalEvent", "rowData", "single"],
+      "通知先": "ExperimentsTableComponent",
+      "通知内容": "rowRightClick"
+    },
+    "process": {
+      "使用技術": ["Angular EventEmitter", "@Output"],
+      "コード": "rowRightClick.emit({e: originalEvent, rowData: data, single})",
+      "処理内容": "PrimeNG固有のイベントをアプリ側が扱う形式へ変換してemit",
+      "後処理": [
+        "PrimeNGのcontextMenuSelectionをnullへ戻す",
+        "非表示のp-context-menuを閉じる"
+      ]
+    },
+    "effects": [
+      { "影響名": "右クリック処理の担当が共通テーブルから実験テーブルへ移る" }
+    ]
+  },
+  {
+    "hr": "index:2, --------------------------------------------------",
+    "name": "対象実験と表示座標を確定",
+    "trigger": {
+      "呼び出し元インデックス": 1,
+      "呼び出し元": "TableComponent.openContext()",
+      "イベント": "rowRightClick",
+      "接続根拠": "(rowRightClick)=\"openContextMenu($event)\""
+    },
+    "implementation": {
+      "コンポーネント": "ExperimentsTableComponent",
+      "メソッド": "openContextMenu",
+      "リンク一覧": [
+        "code -g src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:349",
+        "code -g src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:197",
+        "code -g src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:165"
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "実験固有の一覧、セル、選択状態、カード表示",
+      "データ受取元": "ExperimentsComponent",
+      "受取データ": ["experiments", "checkedExperiments", "tableCols"],
+      "通知先": "ExperimentsComponent",
+      "通知内容": ["contextMenu", "experimentsSelectionChanged"]
+    },
+    "process": {
+      "使用技術": ["Angular signal", "Angular output", "MouseEvent"],
+      "処理手順": [
+        "右クリックされた実験をcontextExperimentへ保存",
+        "必要ならチェック対象を右クリックした1件へ変更",
+        "preventDefault()でブラウザ標準メニューを抑止",
+        "clientXとclientYをcontextMenu outputで親へ通知"
+      ],
+      "選択分岐": {
+        "チェック済み行": "現在の複数選択を維持",
+        "未チェック行": "選択を右クリックした1件へ変更"
+      },
+      "出力コード": "contextMenu.emit({x: event.clientX, y: event.clientY, single, backdrop})"
+    },
+    "effects": [
+      { "影響名": "メニュー操作の対象実験が決まる" },
+      {
+        "影響名": "未チェック行の場合はチェック状態も変わる",
+        "条件付き": true
+      },
+      { "影響名": "親Componentへ右クリック位置が通知される" }
+    ]
+  },
+  {
+    "hr": "index:3, --------------------------------------------------",
+    "name": "表示対象のメニューComponentを呼ぶ",
+    "trigger": {
+      "呼び出し元インデックス": 2,
+      "呼び出し元": "ExperimentsTableComponent.openContextMenu()",
+      "イベント": "contextMenu",
+      "接続根拠": "(contextMenu)=\"onContextMenuOpen($event)\""
+    },
+    "implementation": {
+      "コンポーネント": "ExperimentsComponent",
+      "メソッド": "onContextMenuOpen",
+      "リンク一覧": [
+        "code -g src/app/webapp-common/experiments/experiments.component.html:111",
+        "code -g src/app/webapp-common/experiments/experiments.component.ts:735",
+        "code -g src/app/webapp-common/experiments/experiments.component.ts:240"
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "検索、一覧、詳細、フッター、メニューを束ねる実験管理画面",
+      "データ受取元": ["NgRx Store", "ExperimentsTableComponent"],
+      "受取データ": ["実験状態", "右クリック座標", "単一行フラグ", "backdropフラグ"],
+      "通知先": "ExperimentMenuExtendedComponent",
+      "通知内容": "outputではなくopenMenu()を直接呼び出す"
+    },
+    "process": {
+      "使用技術": ["viewChild.required", "computed", "Component継承"],
+      "処理手順": [
+        "singleRowContextを更新",
+        "menuBackdropを更新",
+        "contextMenu()から子のメニューComponent参照を取得",
+        "openMenu({x, y})を呼ぶ"
+      ],
+      "コード": "this.contextMenu().openMenu({x, y})"
+    },
+    "precondition": {
+      "説明": "右クリック前にメニューComponentがビュー内へ描画されている",
+      "経路": [
+        "contextMenuExtendedTemplateを定義",
+        "contextMenuTemplate inputで子へ渡す",
+        "ngTemplateOutletで描画"
+      ],
+      "リンク一覧": [
+        "code -g src/app/webapp-common/experiments/experiments.component.html:140",
+        "code -g src/app/webapp-common/experiments/experiments.component.html:94",
+        "code -g src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:1"
+      ]
+    },
+    "effects": [
+      { "影響名": "イベントによる通知から子Componentへのメソッド呼び出しへ移る" },
+      { "影響名": "単一行モードとbackdropの有無が確定する" }
+    ]
+  },
+  {
+    "hr": "index:4, --------------------------------------------------",
+    "name": "非表示トリガーを右クリック位置へ移動",
+    "trigger": {
+      "呼び出し元インデックス": 3,
+      "呼び出し元": "ExperimentsComponent.onContextMenuOpen()",
+      "イベント": "openMenu({x, y})の直接呼び出し",
+      "接続根拠": "ExperimentMenuComponentがBaseContextMenuComponentを継承"
+    },
+    "implementation": {
+      "コンポーネント": "BaseContextMenuComponent",
+      "メソッド": "openMenu",
+      "リンク一覧": [
+        "code -g src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:48",
+        "code -g src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:36",
+        "code -g src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11"
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "自身は表示を持たないコンテキストメニュー共通基底Component",
+      "データ受取元": "ExperimentsComponent",
+      "受取データ": "右クリック座標{x, y}",
+      "通知先": "ExperimentsComponent",
+      "通知内容": ["menuOpened", "menuClosed"]
+    },
+    "process": {
+      "使用技術": ["Angular signal", "viewChild(MatMenuTrigger)", "CSS position: fixed"],
+      "処理手順": [
+        "既存メニューが開いていれば閉じる",
+        "position Signalへ{x, y}を設定",
+        "非表示トリガーのleftとtopへ座標を反映",
+        "座標反映を待つため100ms後に表示処理へ進む"
+      ],
+      "座標の流れ": "MouseEvent.clientX/clientY → position Signal → hidden trigger left/top"
+    },
+    "effects": [
+      { "影響名": "Angular Materialが位置計算に使う基準点が右クリック位置へ移る" },
+      {
+        "影響名": "トリガー自体はvisibility:hiddenのため見えない",
+        "画面変更": false
+      }
+    ]
+  },
+  {
+    "hr": "index:5, --------------------------------------------------",
+    "name": "Angular Materialのメニューを表示",
+    "trigger": {
+      "呼び出し元インデックス": 4,
+      "呼び出し元": "BaseContextMenuComponent.openMenu()",
+      "イベント": "100ms後のコールバック",
+      "接続根拠": "非表示トリガーのmatMenuTriggerForがexperimentMenuを参照"
+    },
+    "implementation": {
+      "コンポーネント": "BaseContextMenuComponent / ExperimentMenuComponent",
+      "メソッド": "MatMenuTrigger.updatePosition / openMenu",
+      "リンク一覧": [
+        "code -g src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:55",
+        "code -g src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11",
+        "code -g src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:18"
+      ]
+    },
+    "componentOverview": {
+      "表示内容": "詳細、キュー操作、共有、削除、アーカイブなどの実験操作メニュー",
+      "データ受取元": "ExperimentsComponent",
+      "受取データ": ["対象実験", "選択実験", "各操作の可否"],
+      "通知先": "ExperimentsComponent",
+      "通知内容": ["menuOpened", "menuClosed", "タグ操作イベント"]
+    },
+    "process": {
+      "使用技術": ["Angular Material MatMenuTrigger", "mat-menu", "Angular CDK Overlay"],
+      "処理手順": [
+        "updatePosition()で移動後のトリガーを基準に位置を再計算",
+        "openMenu()でexperimentMenuをOverlayへ表示",
+        "menuOpened.emit()で表示状態を親へ通知"
+      ]
+    },
+    "effects": [
+      {
+        "影響名": "実験のコンテキストメニューが右クリック位置へ表示される",
+        "画面変更": true
+      },
+      { "影響名": "contextMenuActiveがtrueになり、対象行のハイライトが維持される" }
+    ],
+    "bulletinEnd": "メニュー表示へ到達。メニュー項目クリック後は対象外"
+  }
+]
