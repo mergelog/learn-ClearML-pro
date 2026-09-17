@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-07 フッターまでの経路</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-07 フッターまでの経路</h1>
+<p>2件以上チェックしたときに下から出てくる一括操作バーまで。</p>
+<p><code>sm-entity-footer</code> は常にテンプレートに存在する。出入りしているのは CSS クラスだけで、
+<strong><code>footerState$</code> が値を流し始めるかどうかが実質のスイッチ</strong>になっている。</p>
+<h2>図1: フッターが現れるまで</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant Store as NgRx Store
+    participant Base as BaseEntityPageComponent
+    participant EC as ExperimentsComponent
+    participant Footer as sm-entity-footer
+
+    EC-&gt;&gt;EC: createFooterItemsRunner()（コンストラクタ）
+    EC-&gt;&gt;Base: createFooterItems({selected$, data$, tags$, ...})
+    Base-&gt;&gt;Base: createFooterState() で6本の Observable を combineLatest
+    Note right of Base: debounceTime(100)&lt;br/&gt;filter(選択が2件以上 or 直前が2件以上 or showAll)
+    Base--&gt;&gt;EC: footerState$
+
+    Store--&gt;&gt;EC: checkedExperiments$ が2件以上になる
+    Base--&gt;&gt;Footer: [footerState] に初めて値が届く
+    EC-&gt;&gt;Footer: [footerItems]=footerItems（ボタン定義の配列）
+    EC-&gt;&gt;Footer: class.footer-visible を付ける
+</pre>
+<p><code>footerItems</code> は <code>ShowItemsFooterSelected</code> / <code>ArchiveFooterItem</code> などのクラスの配列で、
+<strong>EC のコンストラクタで一度組み立てるだけ</strong>（Store には入れない）。
+どのボタンを押せるかは <code>footerState.data</code>（Store の <code>selectedExperimentsDisableAvailable</code>）が決める。</p>
+<h2>図2: フッターのボタンが押されたとき</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Footer as sm-entity-footer
+    participant EC as ExperimentsComponent
+    participant Menu as sm-experiment-menu-extended
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Footer: Archive などを押す
+    Footer-&gt;&gt;EC: (footerItemClick) {item, emitValue}
+    EC-&gt;&gt;EC: onFooterHandler() → singleRowContext = false
+    EC-&gt;&gt;EC: switch (item.id)
+    EC-&gt;&gt;Menu: contextMenu().restoreArchive() など&lt;br/&gt;（コンテキストメニューの処理を呼び直す）
+    Menu-&gt;&gt;Store: dispatch（確認ダイアログを経て一括操作の Action）
+    Note over EC,Menu: フッターは自分で Action を作らない。&lt;br/&gt;右クリックメニューと同じ処理に合流させている
+</pre>
+<p>同じ操作を「右クリック」と「フッター」の2箇所から起動できるため、<strong>処理の実体は
+コンテキストメニュー側に1つだけ置き、フッターはそれを呼ぶ</strong>という作りになっている。
+<code>singleRowContext</code> フラグが「1行だけが対象か、チェックした全件が対象か」を切り替える。</p>
+<p>タグ追加だけは例外で、フッターから直接 <code>tagSelected</code> → <code>BaseEntityPageComponent.tagSelected()</code> →
+<code>addTag</code> を dispatch する。</p>
+<h2>状態の要点</h2>
+<ul>
+<li>表示条件: <code>checkedExperiments</code>（Store）が2件以上、または「選択のみ表示」が有効。</li>
+<li>ボタン定義: EC のプロパティ（<code>footerItems</code>）。モード切替時に <code>modeChanged()</code> から作り直す。</li>
+<li>各ボタンの活性: Store の <code>selectedExperimentsDisableAvailable</code>。
+これは <code>setSelectedExperiments</code> の effect が選択内容から毎回計算して Store に戻している。</li>
+</ul>
+<h2>読みどころ</h2>
+<ul>
+<li>フッター呼び出し: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html#L131">experiments.component.html:131</a></li>
+<li>footerState の組み立て: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/base-entity-page.ts#L218">base-entity-page.ts:218</a></li>
+<li>ボタン定義の配列: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L375">experiments.component.ts:375</a></li>
+<li>クリックの振り分け: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L399">experiments.component.ts:399</a></li>
+<li>活性計算の effect: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts#L835">common-experiments-view.effects.ts:835</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

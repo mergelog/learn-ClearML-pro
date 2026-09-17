@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-11 行クリックとダブルクリック</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-11 行クリックとダブルクリック</h1>
+<p>同じ「行を押す」操作が、表示モードで3通りに分かれる。</p>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>結果</th>
+<th>状態の行き先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テーブル表示（広い状態）で1回クリック</td>
+<td>行がハイライトされるだけ</td>
+<td>EC のローカル signal</td>
+</tr>
+<tr>
+<td>縮小表示（情報パネルが開いている）でクリック</td>
+<td>選択が切り替わりパネルが更新</td>
+<td>URL</td>
+</tr>
+<tr>
+<td>ダブルクリック</td>
+<td>情報パネルが開く</td>
+<td>URL</td>
+</tr>
+<tr>
+<td>チェック済みの行をクリック</td>
+<td>コンテキストメニューが開く（05-17）</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2>図1: シングルとダブルの判定</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Tr as tr（p-table の行）
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+
+    User-&gt;&gt;Tr: click
+    Tr-&gt;&gt;SmTable: checkClick({e, data})
+    SmTable-&gt;&gt;SmTable: waitForClick に 250ms タイマーを仕掛ける
+
+    alt 250ms 以内に2回目が来た
+        User-&gt;&gt;Tr: dblclick（または2回目の click）
+        Tr-&gt;&gt;SmTable: checkClick
+        SmTable-&gt;&gt;SmTable: タイマーを破棄
+        SmTable-&gt;&gt;ExpTable: (rowDoubleClicked)
+    else 来なかった
+        SmTable-&gt;&gt;ExpTable: (rowClicked)
+    end
+    Note over SmTable,ExpTable: 縮小表示のときは tr の click 自体を無効化&lt;br/&gt;（!minimizedView() &amp;&amp; checkClick）
+</pre>
+<p>シングルクリックが必ず 250ms 遅れる。<strong>ハイライトの反応が一瞬遅いのは仕様</strong>で、
+ダブルクリックのときにパネルを開く前に一度ハイライトさせないための作り。</p>
+<h2>図2: rowClicked のあと</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    ExpTable-&gt;&gt;ExpTable: tableRowClicked({e, data})
+    ExpTable-&gt;&gt;EC: selectionMode が single なら&lt;br/&gt;(experimentSelectionChanged) {experiment, origin: 'row'}
+    Note right of ExpTable: チェック済みの行なら、続けて&lt;br/&gt;openContextMenu(backdrop: true) も呼ぶ
+
+    EC-&gt;&gt;EC: getTableModeFromURL() が compare なら何もしない
+    EC-&gt;&gt;EC: experimentSelectionChanged()
+
+    alt minimizedView() または openInfo
+        EC-&gt;&gt;Store: dispatch experimentSelectionChanged
+        Note right of Store: ViewEffects が router.navigate&lt;br/&gt;→ URL に experimentId が載る
+    else origin === 'row'
+        EC-&gt;&gt;EC: selectionState().highlited.update(...)
+        Note right of EC: Store に出さないローカル signal。&lt;br/&gt;同じ行をもう一度押すと null に戻る（トグル）
+    end
+</pre>
+<p><code>highlited</code> は <code>computed</code> の中で <code>signal()</code> を作るという珍しい書き方をしている。</p>
+<pre><code>selectionState = computed(() =&gt; ({
+  prevExperiment: this.previousTableExperiment(),
+  highlited: signal(this.selectedTableExperiment() ?? this.previousTableExperiment())
+}));
+highlited = computed(() =&gt; this.tableMode() === 'compare' ? null : this.selectionState().highlited());
+</code></pre>
+<p><code>selectedTableExperiment</code>（Store 由来）が変わるたびに <strong>signal ごと作り直される</strong>ので、
+「Store から来た選択を初期値にして、以降はローカルで上書きできる値」になる。
+比較モードではハイライトを出さないので <code>null</code> を返す。</p>
+<h2>図3: p-table 自身の選択（rowSelectionChanged）</h2>
+<p>行には <code>pSelectableRow</code> も付いているので、PrimeNG 側の選択イベントも同時に流れる。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant Tr as tr（pSelectableRow）
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    Tr-&gt;&gt;PTable: 選択
+    PTable-&gt;&gt;SmTable: (onRowSelect)
+    SmTable-&gt;&gt;SmTable: onRowSelected() で同じ行なら data: null にして返す（選択解除）
+    SmTable-&gt;&gt;ExpTable: (rowSelectionChanged)
+    ExpTable-&gt;&gt;EC: (experimentSelectionChanged) {origin: 'table'}
+    Note over SmTable,EC: origin が 'table' なので EC はハイライト更新をせず、&lt;br/&gt;縮小表示のときだけパネルを切り替える
+</pre>
+<p><code>origin</code> が <code>'row'</code>（人が行をクリック）と <code>'table'</code>（p-table の選択機構やキーボード操作）を
+区別しているのがポイント。同じ output を2つの経路が共有しているため、EC 側で振り分けている。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>クリック判定: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L566">table.component.ts:566</a></li>
+<li>tr のイベント: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html#L124">table.component.html:124</a></li>
+<li>tableRowClicked: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts#L336">experiments-table.component.ts:336</a></li>
+<li>EC の振り分け: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L542">experiments.component.ts:542</a></li>
+<li>highlited の定義: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L232">experiments.component.ts:232</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

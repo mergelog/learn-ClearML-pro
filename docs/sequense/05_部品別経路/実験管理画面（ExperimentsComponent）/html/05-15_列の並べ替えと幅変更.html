@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-15 列の並べ替えと幅変更</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-15 列の並べ替えと幅変更</h1>
+<p><code>th</code> に付いた2つのディレクティブが入口。<strong>似た操作だが保存先が違う</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>保存先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列の移動</td>
+<td>URL の <code>columns</code> ＋ サーバのユーザープリファレンス</td>
+</tr>
+<tr>
+<td>列幅の変更</td>
+<td>サーバのユーザープリファレンスのみ（URL に出ない）</td>
+</tr>
+</tbody>
+</table>
+<h2>図1: 列をドラッグして移動</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Th as th（pReorderableColumn）
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+    participant ViewEff as ViewEffects
+
+    User-&gt;&gt;Th: ヘッダーをドラッグして落とす
+    Note right of Th: col.disableDrag の列は pReorderableColumnDisabled
+    Th-&gt;&gt;PTable: 並べ替え
+    PTable-&gt;&gt;SmTable: (onColReorder) 並び替え後の columns
+    SmTable-&gt;&gt;SmTable: onColReorder() → 列 ID の配列にして resize()
+    SmTable-&gt;&gt;ExpTable: (colReordered) string[]
+    ExpTable-&gt;&gt;EC: (columnsReordered) そのまま素通し
+    EC-&gt;&gt;Store: dispatch setColsOrderForProject({cols: Array.from(new Set([...cols, 'project.name'])), projectId})
+    EC-&gt;&gt;Store: dispatch updateUrlParams
+
+    Store-&gt;&gt;ViewEff: setUserPreferences（setColsOrderForProject を購読）
+    ViewEff-&gt;&gt;ViewEff: userPreferences.setPreferences(パス, 値)
+    Store-&gt;&gt;ViewEff: setURLParams（updateUrlParams を購読）
+    ViewEff-&gt;&gt;Store: encodeColumns() した結果を URL へ
+    Store--&gt;&gt;SmTable: colsOrder() が更新 → effect が orderColumns()
+</pre>
+<p><code>'project.name'</code> を必ず末尾に足しているのは、プロジェクト列が条件次第で表示/非表示に
+なるため（全プロジェクト表示や deep モードのときだけ出る）。
+並び順の配列に居ないと、出てきたときに位置が決まらない。
+<code>new Set</code> を噛ませているのは、すでに並びに居るときに二重登録しないため。</p>
+<p><code>orderColumns()</code> は <code>visibleColumns()</code> の配列を <code>sort()</code> で<strong>破壊的に並べ替えている</strong>。
+<code>computed</code> の戻り値を直接ソートしているので、ここは素直な書き方ではない。</p>
+<h2>図2: 列幅をドラッグして変える</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Th as th（smResizableColumn）
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Th: 境界をドラッグ
+    Th-&gt;&gt;PTable: ResizableColumn の処理（PrimeNG 継承）
+    PTable-&gt;&gt;SmTable: (onColResize) {delta, element}
+    SmTable-&gt;&gt;SmTable: colResize() → data-col-id 属性から列 ID を逆引き
+    SmTable-&gt;&gt;ExpTable: (columnResized) {columnId, widthPx}
+    ExpTable-&gt;&gt;EC: そのまま素通し
+    EC-&gt;&gt;Store: dispatch setColumnWidth({columnId, widthPx, projectId})
+    Store-&gt;&gt;Store: setUserPreferences effect がサーバに保存
+    Note over EC,Store: URL には出ないので、リンクを共有しても幅は伝わらない
+</pre>
+<p>列 ID を DOM の <code>data-col-id</code> 属性から引いているのは、PrimeNG が渡してくるのが
+<code>HTMLElement</code> だけだから。<strong>列オブジェクトを辿れないので DOM に埋めた ID を読む</strong>、という回避。</p>
+<h2>図3: 境界のダブルクリックで自動幅</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Dir as ResizableColumnDirective
+    participant Dummy as 計測用の span
+    participant PTable as p-table
+
+    User-&gt;&gt;Dir: 境界をダブルクリック
+    Dir-&gt;&gt;Dummy: table 要素の中に position: fixed の span を作る
+    Dir-&gt;&gt;Dummy: th と同じ列の td 全部を複製して入れる
+    Note right of Dummy: table の中に作るので&lt;br/&gt;フォントなどのスタイルがそのまま効く
+    Dummy--&gt;&gt;Dir: offsetWidth（= 内容が収まる幅）
+    Dir-&gt;&gt;Dummy: 削除
+    Dir-&gt;&gt;PTable: onColumnResizeBegin / onColumnResize / onColumnResizeEnd を手で呼ぶ
+    Note over Dir,PTable: 人がドラッグしたことにする。以降は図2と同じ
+</pre>
+<h2>図4: メトリクス列の展開ボタン</h2>
+<p>メトリクスのセルにある展開アイコンは、幅を「押し広げる」独自経路を通る。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Metric as sm-hyper-param-metric-column
+    participant ExpTable as sm-experiments-table
+    participant SmTable as sm-table
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;Metric: 展開クリック
+    Metric-&gt;&gt;ExpTable: (expandClicked) {columnId, width}
+    ExpTable-&gt;&gt;ExpTable: columnsWidthChanged() で tableCols() から差分を計算
+    ExpTable-&gt;&gt;SmTable: table().updateColumnsWidth(columnId, width, delta)
+    SmTable-&gt;&gt;SmTable: 受け取った delta は使わず visibleColumns() から計算し直す
+    SmTable-&gt;&gt;SmTable: 当該列を広げ、隣の列を同じ分だけ縮める（最小 30px）
+    SmTable-&gt;&gt;ExpTable: 全列ぶん (columnResized) を emit
+    ExpTable-&gt;&gt;EC: 全列ぶん columnResized
+    EC-&gt;&gt;EC: 列ごとに dispatch setColumnWidth
+    Note over SmTable,EC: 1回の操作で列数ぶんの Action が出る
+</pre>
+<p><code>updateColumnsWidth</code> は先頭で <code>delta = width - parseInt(columns[colIndex].style?.width, 10)</code> と
+<strong>引数の delta を上書きする</strong>。呼び出し側が計算した値は捨てられるので、
+<code>columnsWidthChanged()</code> の差分計算を追っても幅の結果は説明できない。見るなら <code>updateColumnsWidth</code> の中。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>th のディレクティブ: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html#L57">table.component.html:57</a></li>
+<li>onColReorder: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L480">table.component.ts:480</a></li>
+<li>colResize: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L516">table.component.ts:516</a></li>
+<li>updateColumnsWidth: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L530">table.component.ts:530</a></li>
+<li>自動幅の計測: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/resizable-column.directive.ts#L12">resizable-column.directive.ts:12</a></li>
+<li>設定の保存: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts#L145">common-experiments-view.effects.ts:145</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

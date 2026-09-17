@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-10 テーブル操作の一覧</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-10 テーブル操作の一覧</h1>
+<p>ここから 05-20 まではテーブルの操作単位。まず全体の形と一覧を置く。</p>
+<h2>操作の共通形</h2>
+<p>ほとんどの操作が次の形をとる。<strong>3層を下から上に登り、EC で初めて Action になる</strong>。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Part as 列ヘッダー / セル / カード
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table&lt;br/&gt;（+ BaseTableView）
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Part: 操作
+    Part-&gt;&gt;PTable: DOM イベント（またはテンプレート内で直接ハンドラ）
+    PTable-&gt;&gt;SmTable: PrimeNG のイベント
+    SmTable-&gt;&gt;SmTable: 正規化（型を整える・二重クリック判定など）
+    SmTable-&gt;&gt;ExpTable: output
+    ExpTable-&gt;&gt;ExpTable: Task 固有の判断（範囲選択・列 ID 別の分岐）
+    ExpTable-&gt;&gt;EC: output
+    EC-&gt;&gt;Store: dispatch
+    Note over EC,Store: ここで初めて「アプリの状態」になる。&lt;br/&gt;下の3層は誰も Store に書かない
+</pre>
+<p>例外が3つある。覚えておくと迷わない。</p>
+<table>
+<thead>
+<tr>
+<th>例外</th>
+<th>何が違うか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全選択メニュー（05-12）</td>
+<td>experiments-table が自分で <code>store.dispatch()</code> する</td>
+</tr>
+<tr>
+<td>フィルタメニューを開く（05-14）</td>
+<td>同じく experiments-table が dispatch する</td>
+</tr>
+<tr>
+<td>ハイライト行（05-11）</td>
+<td>EC がローカル signal に持ち、Store に出さない</td>
+</tr>
+</tbody>
+</table>
+<p>前2つは <code>BaseTableView</code> が <code>inject(Store)</code> を持っているため。表示部品としては例外的だが、
+「メニューを開いた瞬間に選択肢を取りに行く」だけの用途に限られている。</p>
+<h2>操作別の一覧</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>入口</th>
+<th>経由</th>
+<th>最終的な置き場所</th>
+<th>図</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行を1回クリック（テーブル表示）</td>
+<td><code>tr (click)</code></td>
+<td>checkClick → rowClicked</td>
+<td>EC のローカル signal <code>highlited</code></td>
+<td><a href="./05-11_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A8%E3%83%80%E3%83%96%E3%83%AB%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF.md">05-11</a></td>
+</tr>
+<tr>
+<td>行を1回クリック（縮小表示）</td>
+<td>同上</td>
+<td>同上</td>
+<td>URL（<code>:experimentId</code>）</td>
+<td><a href="./05-11_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A8%E3%83%80%E3%83%96%E3%83%AB%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF.md">05-11</a></td>
+</tr>
+<tr>
+<td>行をダブルクリック</td>
+<td><code>tr (dblclick)</code></td>
+<td>checkClick → rowDoubleClicked</td>
+<td>URL（<code>:experimentId</code>）</td>
+<td><a href="./05-11_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A8%E3%83%80%E3%83%96%E3%83%AB%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF.md">05-11</a></td>
+</tr>
+<tr>
+<td>行のチェックボックス</td>
+<td><code>mat-checkbox (click)</code></td>
+<td>rowSelectedChanged</td>
+<td>Store <code>selectedExperiments</code></td>
+<td><a href="./05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12</a></td>
+</tr>
+<tr>
+<td>Shift + チェック</td>
+<td>同上</td>
+<td>getSelectionRange</td>
+<td>Store <code>selectedExperiments</code></td>
+<td><a href="./05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12</a></td>
+</tr>
+<tr>
+<td>ヘッダーのチェックボックス</td>
+<td>FormControl</td>
+<td>headerCheckboxClicked</td>
+<td>Store <code>selectedExperiments</code></td>
+<td><a href="./05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12</a></td>
+</tr>
+<tr>
+<td>All / All matching filter</td>
+<td>mat-menu</td>
+<td><strong>table が直接 dispatch</strong></td>
+<td>Store（サーバから全件取得）</td>
+<td><a href="./05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12</a></td>
+</tr>
+<tr>
+<td>列のソート</td>
+<td>ソートボタン</td>
+<td>onSortChanged</td>
+<td><strong>URL の <code>order</code></strong></td>
+<td><a href="./05-13_%E5%88%97%E3%82%BD%E3%83%BC%E3%83%88.md">05-13</a></td>
+</tr>
+<tr>
+<td>列のフィルタ</td>
+<td>チェックリスト</td>
+<td>tableFilterChanged</td>
+<td><strong>URL の <code>filter</code></strong></td>
+<td><a href="./05-14_%E5%88%97%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF.md">05-14</a></td>
+</tr>
+<tr>
+<td>フィルタの選択肢検索</td>
+<td>メニュー内の検索欄</td>
+<td>filterSearchChanged</td>
+<td>Store（選択肢のみ）</td>
+<td><a href="./05-14_%E5%88%97%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF.md">05-14</a></td>
+</tr>
+<tr>
+<td>列のドラッグ移動</td>
+<td><code>pReorderableColumn</code></td>
+<td>onColReorder</td>
+<td><strong>URL の <code>columns</code></strong> + サーバ設定</td>
+<td><a href="./05-15_%E5%88%97%E3%81%AE%E4%B8%A6%E3%81%B9%E6%9B%BF%E3%81%88%E3%81%A8%E5%B9%85%E5%A4%89%E6%9B%B4.md">05-15</a></td>
+</tr>
+<tr>
+<td>列幅の変更</td>
+<td><code>smResizableColumn</code></td>
+<td>colResize</td>
+<td>サーバ設定のみ（URL に出ない）</td>
+<td><a href="./05-15_%E5%88%97%E3%81%AE%E4%B8%A6%E3%81%B9%E6%9B%BF%E3%81%88%E3%81%A8%E5%B9%85%E5%A4%89%E6%9B%B4.md">05-15</a></td>
+</tr>
+<tr>
+<td>下端までスクロール</td>
+<td><code>sm-dots-load-more</code></td>
+<td>loadMore</td>
+<td>Store（scrollId で追い読み）</td>
+<td><a href="./05-16_%E8%BF%BD%E3%81%84%E8%AA%AD%E3%81%BF.md">05-16</a></td>
+</tr>
+<tr>
+<td>行の右クリック</td>
+<td><code>pContextMenuRow</code></td>
+<td>openContext</td>
+<td>experiments-table の signal</td>
+<td><a href="./05-17_%E5%8F%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC.md">05-17</a></td>
+</tr>
+<tr>
+<td>上下キー</td>
+<td><code>@HostListener keydown</code></td>
+<td>incrementIndex</td>
+<td>行クリックと同じ経路</td>
+<td><a href="./05-18_%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E6%93%8D%E4%BD%9C%E3%81%A8%E3%83%95%E3%82%A9%E3%83%BC%E3%82%AB%E3%82%B9.md">05-18</a></td>
+</tr>
+<tr>
+<td>カードのクリック</td>
+<td><code>sm-table-card (click)</code></td>
+<td>cardClicked（250ms 判定）</td>
+<td>メニュー or パネル閉じる</td>
+<td><a href="./05-19_%E3%82%AB%E3%83%BC%E3%83%89%E3%83%93%E3%83%A5%E3%83%BC%E3%81%AE%E6%93%8D%E4%BD%9C.md">05-19</a></td>
+</tr>
+<tr>
+<td>CSV（画面上の分）</td>
+<td>ヘッダーのメニュー</td>
+<td><strong>viewChild を2段辿って直接呼ぶ</strong></td>
+<td>ブラウザのダウンロード</td>
+<td><a href="./05-20_CSV%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89.md">05-20</a></td>
+</tr>
+<tr>
+<td>CSV（全件）</td>
+<td>ヘッダーのメニュー</td>
+<td>dispatch</td>
+<td>サーバ側で生成</td>
+<td><a href="./05-20_CSV%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89.md">05-20</a></td>
+</tr>
+</tbody>
+</table>
+<h2>URL を経由する操作に注意</h2>
+<p>ソート・フィルタ・列構成は <strong>Store を直接書き換えない</strong>。
+<code>dispatch</code> → effect が <code>setURLParams</code> → Router がクエリパラメータを書き換え →
+EC がそれを購読して改めて <code>setTableSort</code> などを dispatch、という一周をする。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+    participant ViewEff as CommonExperimentsViewEffects
+    participant RouterEff as RouterEffects
+    participant Router as Angular Router
+
+    EC-&gt;&gt;Store: dispatch tableSortChanged / tableFilterChanged
+    Store-&gt;&gt;ViewEff: 受け取り、現在値と合成
+    ViewEff-&gt;&gt;Store: dispatch setURLParams({orders, filters, update: true})
+    Store-&gt;&gt;RouterEff: 受け取り
+    RouterEff-&gt;&gt;Router: router.navigate([], {queryParams, queryParamsHandling: merge})
+    Router--&gt;&gt;EC: route.queryParams が発火
+    EC-&gt;&gt;Store: dispatch setTableSort / setTableFilters（ここで Store が変わる）
+    Store-&gt;&gt;ViewEff: reFetchExperiment が再取得
+    Note over EC,ViewEff: リロードしても同じ表になる代わりに、&lt;br/&gt;1操作で2周ぶんのログが出る
+</pre>
+<p>この一周があるので、<strong>Store の値を直接書き換えるデバッグは効かない</strong>。URL を見るのが早い。
+EC 側の受け口は <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L284">experiments.component.ts:284</a> の <code>distinctParamsUntilChanged$</code> の購読。</p>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

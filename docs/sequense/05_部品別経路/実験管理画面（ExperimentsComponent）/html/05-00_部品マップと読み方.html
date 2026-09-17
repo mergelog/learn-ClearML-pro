@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-00 部品マップと読み方</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-00 部品マップと読み方</h1>
+<p>この系統（05）は「画面のある部品まで、どのコンポーネントを経由して辿り着くか」だけを追う。
+01 が操作の伝播を追うのに対し、こちらは<strong>部品の住所</strong>を追う資料。</p>
+<h2>部品の住所一覧</h2>
+<table>
+<thead>
+<tr>
+<th>部品</th>
+<th>セレクタ</th>
+<th>誰の中にいるか</th>
+<th>図</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ヘッダー（検索・表示切替・列追加）</td>
+<td><code>sm-experiment-header</code></td>
+<td>EC のテンプレート直下</td>
+<td><a href="./05-01_%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-01</a></td>
+</tr>
+<tr>
+<td>テーブル本体</td>
+<td><code>sm-experiments-table</code> → <code>sm-table</code> → <code>p-table</code></td>
+<td>左ペイン（<code>as-split-area</code>）</td>
+<td><a href="./05-02_%E3%83%86%E3%83%BC%E3%83%96%E3%83%AB%E6%9C%AC%E4%BD%93%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-02</a></td>
+</tr>
+<tr>
+<td>セル</td>
+<td><code>pTemplate=&quot;body&quot;</code> の中身</td>
+<td>p-table の <code>td</code> に投影される</td>
+<td><a href="./05-03_%E3%82%BB%E3%83%AB%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-03</a></td>
+</tr>
+<tr>
+<td>列ヘッダー（ソート・フィルタ）</td>
+<td><code>sm-table-filter-sort</code></td>
+<td>p-table の <code>th</code> に投影される</td>
+<td><a href="./05-04_%E5%88%97%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-04</a></td>
+</tr>
+<tr>
+<td>カード（縮小表示）</td>
+<td><code>sm-table-card</code></td>
+<td>p-table の <code>td</code> に投影される</td>
+<td><a href="./05-05_%E3%82%AB%E3%83%BC%E3%83%89%E3%83%93%E3%83%A5%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-05</a></td>
+</tr>
+<tr>
+<td>情報パネル</td>
+<td><code>router-outlet</code> の中身</td>
+<td>右ペイン（<code>as-split-area</code>）</td>
+<td><a href="./05-06_%E6%83%85%E5%A0%B1%E3%83%91%E3%83%8D%E3%83%AB%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-06</a></td>
+</tr>
+<tr>
+<td>フッター（一括操作バー）</td>
+<td><code>sm-entity-footer</code></td>
+<td>EC のテンプレート直下</td>
+<td><a href="./05-07_%E3%83%95%E3%83%83%E3%82%BF%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-07</a></td>
+</tr>
+<tr>
+<td>コンテキストメニュー</td>
+<td><code>sm-experiment-menu-extended</code></td>
+<td>宣言は EC、実体化は experiments-table</td>
+<td><a href="./05-08_%E3%82%B3%E3%83%B3%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-08</a></td>
+</tr>
+</tbody>
+</table>
+<h2>部品の位置関係</h2>
+<pre class="mermaid">flowchart TB
+    EC[&quot;ExperimentsComponent&lt;br/&gt;（experiments.component.html）&quot;]
+    EC --&gt; Header[&quot;sm-experiment-header&quot;]
+    EC --&gt; Split[&quot;as-split&quot;]
+    EC --&gt; Footer[&quot;sm-entity-footer&quot;]
+    EC --&gt; CtxTpl[&quot;ng-template contextMenuExtendedTemplate&lt;br/&gt;（sm-experiment-menu-extended）&quot;]
+    Split --&gt; Left[&quot;as-split-area 左&quot;]
+    Split --&gt; Right[&quot;as-split-area 右&quot;]
+    Left --&gt; ExpTable[&quot;sm-experiments-table&quot;]
+    Right --&gt; Outlet[&quot;router-outlet&lt;br/&gt;（情報パネル / 比較ビュー）&quot;]
+    ExpTable --&gt; SmTable[&quot;sm-table&quot;]
+    SmTable --&gt; PTable[&quot;p-table（PrimeNG）&quot;]
+    Cells[&quot;セル / 列ヘッダー / カード&quot;]
+    PTable -.-&gt;|テンプレート投影で戻る| Cells
+    CtxTpl -.-&gt;|input で渡して experiments-table が実体化| ExpTable
+</pre>
+<p>矢印が一方向でないのが、この画面を読みにくくしている原因。
+<strong>セル・列ヘッダー・カードは p-table が描くが、中身を書いているのは experiments-table</strong> で、
+<strong>コンテキストメニューは EC が書いているが、実体化するのは experiments-table</strong>。
+この2つの「逆流」を押さえると全体が繋がる。</p>
+<h2>状態の受け取り方（凡例）</h2>
+<p>05 の図では、値がどこから来るかを次の4種類だけで書く。細かい流れは 02 系統を参照。</p>
+<table>
+<thead>
+<tr>
+<th>表記</th>
+<th>意味</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Store</td>
+<td>NgRx Store。<code>store.select()</code> + <code>ngrxPush</code>、または <code>store.selectSignal()</code></td>
+<td><code>experiments$</code>、<code>tableMode()</code></td>
+</tr>
+<tr>
+<td>URL</td>
+<td>クエリパラメータ。原本は URL で、Store は写し</td>
+<td><code>order</code>、<code>filter</code>、<code>columns</code>、<code>archive</code></td>
+</tr>
+<tr>
+<td>signal</td>
+<td>コンポーネント内のローカル signal（Store に出ない）</td>
+<td><code>highlited()</code>、<code>contextExperiment()</code></td>
+</tr>
+<tr>
+<td>field</td>
+<td>ただのプロパティ。変更検知は「イベントが来たついで」に走る</td>
+<td><code>searchValues</code>、<code>contextMenuActive</code></td>
+</tr>
+</tbody>
+</table>
+<p>押さえる原則は2つ。</p>
+<ol>
+<li><strong>サーバから来るデータは必ず Store 経由</strong>。部品は <code>input()</code> で受け取るだけで、自分で取りに行かない。</li>
+<li><strong>並び順・フィルタ・表示列は URL が原本</strong>。操作 → Action → URL 書き換え → URL 監視 → 再取得、と一周する（詳細は <a href="./05-13_%E5%88%97%E3%82%BD%E3%83%BC%E3%83%88.md">05-13</a> / <a href="./05-14_%E5%88%97%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF.md">05-14</a>）。</li>
+</ol>
+<h2>テーブル操作の索引</h2>
+<p>テーブルは操作ごとに経路が違うので、操作単位で分けた。一覧は <a href="./05-10_%E3%83%86%E3%83%BC%E3%83%96%E3%83%AB%E6%93%8D%E4%BD%9C%E3%81%AE%E4%B8%80%E8%A6%A7.md">05-10</a> にある。</p>
+<ul>
+<li><a href="./05-11_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A8%E3%83%80%E3%83%96%E3%83%AB%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF.md">05-11 行クリックとダブルクリック</a></li>
+<li><a href="./05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12 チェックボックス選択と全選択</a></li>
+<li><a href="./05-13_%E5%88%97%E3%82%BD%E3%83%BC%E3%83%88.md">05-13 列ソート</a></li>
+<li><a href="./05-14_%E5%88%97%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF.md">05-14 列フィルタ</a></li>
+<li><a href="./05-15_%E5%88%97%E3%81%AE%E4%B8%A6%E3%81%B9%E6%9B%BF%E3%81%88%E3%81%A8%E5%B9%85%E5%A4%89%E6%9B%B4.md">05-15 列の並べ替えと幅変更</a></li>
+<li><a href="./05-16_%E8%BF%BD%E3%81%84%E8%AA%AD%E3%81%BF.md">05-16 追い読み</a></li>
+<li><a href="./05-17_%E5%8F%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC.md">05-17 右クリックメニュー</a></li>
+<li><a href="./05-18_%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E6%93%8D%E4%BD%9C%E3%81%A8%E3%83%95%E3%82%A9%E3%83%BC%E3%82%AB%E3%82%B9.md">05-18 キーボード操作とフォーカス</a></li>
+<li><a href="./05-19_%E3%82%AB%E3%83%BC%E3%83%89%E3%83%93%E3%83%A5%E3%83%BC%E3%81%AE%E6%93%8D%E4%BD%9C.md">05-19 カードビューの操作</a></li>
+<li><a href="./05-20_CSV%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89.md">05-20 CSVダウンロード</a></li>
+</ul>
+<h2>略称</h2>
+<p>01〜04 と同じ略称を使う。05 で追加したものだけ挙げる。</p>
+<table>
+<thead>
+<tr>
+<th>略称</th>
+<th>実体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PTable</td>
+<td>PrimeNG の <code>p-table</code>（<code>Table</code> クラス）</td>
+</tr>
+<tr>
+<td>BaseTable</td>
+<td><code>BaseTableView</code>（experiments-table の基底ディレクティブ）</td>
+</tr>
+<tr>
+<td>FilterSort</td>
+<td><code>sm-table-filter-sort</code>（列ヘッダーのソート＋フィルタ）</td>
+</tr>
+<tr>
+<td>CardFilter</td>
+<td><code>sm-table-card-filter</code>（カード表示時のフィルタメニュー）</td>
+</tr>
+<tr>
+<td>Card</td>
+<td><code>sm-table-card</code></td>
+</tr>
+</tbody>
+</table>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

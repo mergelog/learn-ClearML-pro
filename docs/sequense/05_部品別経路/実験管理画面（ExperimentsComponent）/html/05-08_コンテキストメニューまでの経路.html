@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-08 コンテキストメニューまでの経路</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-08 コンテキストメニューまでの経路</h1>
+<p>行を右クリックしたときのメニュー本体まで。</p>
+<p>この画面でいちばん経路がねじれている部品。
+<strong>メニューを書いているのは EC、置き場所を決めているのは experiments-table、
+掴んで操作するのは EC</strong> という三角形になっている。</p>
+<h2>図1: 宣言と実体化が別の場所で起きる</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant EC as ExperimentsComponent
+    participant ExpTable as sm-experiments-table
+    participant TplOutlet as ngTemplateOutlet
+    participant Menu as sm-experiment-menu-extended
+
+    EC-&gt;&gt;EC: ng-template #contextMenuExtendedTemplate を宣言&lt;br/&gt;（中身は sm-experiment-menu-extended）
+    Note right of EC: この時点ではまだ生成されない
+    EC-&gt;&gt;ExpTable: [contextMenuTemplate]=contextMenuExtendedTemplate
+    ExpTable-&gt;&gt;TplOutlet: テンプレートの1行目で ngTemplateOutlet&lt;br/&gt;context: {$implicit: contextExperiment()}
+    TplOutlet-&gt;&gt;Menu: ここで初めて生成される（DOM 上は experiments-table の中）
+    Menu--&gt;&gt;EC: EC の viewChild.required で掴める
+    Note over Menu,EC: 宣言が EC のテンプレートにあるので、&lt;br/&gt;DOM の位置が子の中でも EC のビューに属する
+</pre>
+<p><code>viewChild.required(ExperimentMenuExtendedComponent)</code> が成立するのがこの仕組みの帰結。
+テンプレートの宣言場所がビューの所有者を決めるので、<strong>実際の DOM 位置は関係ない</strong>。</p>
+<p>さらに EC 側は <code>contextMenu = computed(() =&gt; this.contextMenuExtended().contextMenu())</code> で
+メニューコンポーネント自身を取り出し、フッター（05-07）からも同じ実体を呼んでいる。</p>
+<h2>図2: 開くとき</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Menu as sm-experiment-menu-extended
+
+    User-&gt;&gt;PTable: 行を右クリック（pContextMenuRow）
+    PTable-&gt;&gt;SmTable: (onContextMenuSelect)
+    SmTable-&gt;&gt;SmTable: openContext() → rowRightClick.observed なら emit&lt;br/&gt;p-table 側の選択は打ち消し、p-context-menu は hide
+    SmTable-&gt;&gt;ExpTable: (rowRightClick) {e, rowData, single}
+    ExpTable-&gt;&gt;ExpTable: contextExperiment.set(該当タスク)（signal）
+    ExpTable-&gt;&gt;EC: 未チェックの行なら (experimentsSelectionChanged) で1件選択に置換
+    ExpTable-&gt;&gt;EC: (contextMenu) {x, y, single, backdrop}
+    EC-&gt;&gt;EC: singleRowContext / menuBackdrop を保存（field）
+    EC-&gt;&gt;Menu: contextMenu().openMenu({x, y})
+    Menu-&gt;&gt;Menu: position.set() → 100ms 後に MatMenuTrigger.openMenu()
+    Menu-&gt;&gt;EC: (menuOpened) → setContextMenuStatus(true)
+    EC-&gt;&gt;ExpTable: [contextMenuActive]=contextMenuActive で行のハイライト維持
+</pre>
+<p><code>contextExperiment</code> が signal なので、<code>set()</code> した時点で図1の <code>ngTemplateOutlet</code> の
+context が更新され、メニューの <code>[experiment]</code> が差し替わる。
+<strong>「どの行のメニューか」は experiments-table のローカル signal が持っていて、Store には出ない</strong>。</p>
+<p>起動元は3つあり、いずれも同じ <code>openContextMenu()</code> に合流する。</p>
+<table>
+<thead>
+<tr>
+<th>起動元</th>
+<th>single</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行の右クリック</td>
+<td><code>undefined</code></td>
+<td>未チェックなら選択を1件に置換</td>
+</tr>
+<tr>
+<td>行末の3点ボタン</td>
+<td><code>true</code></td>
+<td>選択を変えず、その行だけを対象にする</td>
+</tr>
+<tr>
+<td>チェック済み行の左クリック / カードのクリック</td>
+<td><code>undefined</code></td>
+<td>backdrop 付きで開く（05-17 / 05-19）</td>
+</tr>
+</tbody>
+</table>
+<p>判定は <code>if (!data?.single)</code> なので、<code>undefined</code> と <code>false</code> は同じ扱い。
+明示的に <code>false</code> を渡している箇所は無く、3点ボタンだけが <code>true</code> を立てる。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>テンプレート宣言: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html#L140">experiments.component.html:140</a></li>
+<li>実体化する1行: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L1">experiments-table.component.html:1</a></li>
+<li>viewChild と computed: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L240">experiments.component.ts:240</a></li>
+<li>開く処理: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts#L349">experiments-table.component.ts:349</a></li>
+<li>メニュー基底の openMenu: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts#L48">base-context-menu.component.ts:48</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

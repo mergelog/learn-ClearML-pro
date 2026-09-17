@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-06 情報パネルまでの経路</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-06 情報パネルまでの経路</h1>
+<p>右ペインに出るタスク詳細（および比較ビュー）まで。</p>
+<p>この部品だけは <strong>EC が生成しない</strong>。EC のテンプレートにあるのは <code>router-outlet</code> だけで、
+何が入るかは URL が決める。</p>
+<h2>図1: URL から右ペインの中身が決まるまで</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Router as Angular Router
+    participant EC as ExperimentsComponent
+    participant Area as as-split-area（右）
+    participant Outlet as router-outlet
+    participant Info as ExperimentOutputComponent
+
+    User-&gt;&gt;EC: 行をダブルクリック（05-11）
+    EC-&gt;&gt;EC: dispatch experimentSelectionChanged
+    Note right of EC: ViewEffects が router.navigate する&lt;br/&gt;（01-02 / 04-04）
+    Router-&gt;&gt;Router: projects/:projectId/tasks/:experimentId に遷移
+    Router-&gt;&gt;Outlet: 子ルートの loadComponent を解決
+    Outlet-&gt;&gt;Info: ExperimentOutputComponent を生成
+    Router--&gt;&gt;EC: selectMinimizedView が true になる
+    EC-&gt;&gt;Area: [visible]=minimizedView() / [size]=splitSize()
+    Note over EC,Area: 同じ URL 変化でテーブルも縮小表示に変わる（05-05）
+</pre>
+<p>子ルートは <code>experiment-routes.ts</code> に定義されていて、</p>
+<ul>
+<li><code>compare</code> → 比較ナビゲーションのガードのみ（描画なし）</li>
+<li><code>compare/scalars</code> / <code>compare/plots</code> → 比較チャート</li>
+<li><code>:experimentId</code> → タスク詳細（さらに子タブを持つ）</li>
+</ul>
+<p>の3系統。<code>getTableModeFromURL()</code> はこの形を見て <code>table</code> / <code>info</code> / <code>compare</code> を返す。</p>
+<h2>図2: パネルの幅とドラッグ</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Split as as-split
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+    participant SmTable as sm-table
+
+    User-&gt;&gt;Split: 仕切りをドラッグ
+    Split-&gt;&gt;EC: (dragStart) → disableInfoPanel()（field: infoDisabled = true）
+    Split-&gt;&gt;EC: (dragEnd) → splitSizeChange(event)
+    EC-&gt;&gt;Store: dispatch setSplitSize（experiments feature に保存）
+    Store--&gt;&gt;EC: splitSize() が更新され両ペインの [size] に反映
+
+    User-&gt;&gt;Split: 仕切りをダブルクリック
+    Split-&gt;&gt;EC: (gutterDblClick) → closePanel()
+    EC-&gt;&gt;EC: dispatch setTableMode('table') + router.navigate（URL から id を落とす）
+
+    Split-&gt;&gt;EC: (transitionEnd)
+    EC-&gt;&gt;SmTable: experimentsTable.table()?.resize(100)
+    EC-&gt;&gt;SmTable: experimentsTable.afterTableInit()
+    Note over EC,SmTable: アニメーション完了後に列幅を測り直し、&lt;br/&gt;選択行までスクロールし直す
+</pre>
+<p><code>transitionEnd</code> の行は、<strong>テンプレートから孫の公開メソッドを直接呼んでいる</strong>例。
+<code>#experimentsTable</code> というテンプレート参照 → <code>table()</code>（viewChild） → <code>resize()</code> と2段辿っている。
+幅の計算に実 DOM のサイズが必要で、アニメーション中に測ると間違うため。</p>
+<h2>状態の要点</h2>
+<ul>
+<li>何を表示するか: <strong>URL が原本</strong>（<code>:experimentId</code> / <code>compare</code>）。</li>
+<li>パネルの幅: Store（<code>experiments.view.splitSize</code>）。</li>
+<li>ドラッグ中フラグ <code>infoDisabled</code>: EC のただのプロパティ。CSS クラスにしか使わない。</li>
+<li>詳細データ: 情報パネル側が自分で <code>getExperimentInfo</code> を投げる（04-04）。EC は渡さない。</li>
+</ul>
+<h2>読みどころ</h2>
+<ul>
+<li>右ペイン: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html#L120">experiments.component.html:120</a></li>
+<li>子ルート定義: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiment-routes.ts#L44">experiment-routes.ts:44</a></li>
+<li>モード判定: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L523">experiments.component.ts:523</a></li>
+<li>パネルを閉じる: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/base-entity-page.ts#L155">base-entity-page.ts:155</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

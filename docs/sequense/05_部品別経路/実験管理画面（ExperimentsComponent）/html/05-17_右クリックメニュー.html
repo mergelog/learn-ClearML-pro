@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-17 右クリックメニュー</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-17 右クリックメニュー</h1>
+<p>メニュー部品そのものの住所は 05-08。ここでは<strong>開き方が3通りある</strong>ことと、その違いを追う。</p>
+<h2>図1: 行を右クリック</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Tr as tr（pContextMenuRow）
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;Tr: 右クリック
+    Note right of Tr: pContextMenuRowDisabled = !rowRightClick.observed&lt;br/&gt;親が購読していなければ何も起きない
+    Tr-&gt;&gt;PTable: コンテキストメニュー選択
+    PTable-&gt;&gt;SmTable: (onContextMenuSelect)
+    SmTable-&gt;&gt;SmTable: openContext() → rightClicked = true&lt;br/&gt;contextMenuSelection = null で p-table 側の選択を取り消す
+    SmTable-&gt;&gt;SmTable: setTimeout(() =&gt; menu().hide())（PrimeNG のメニューは使わない）
+    SmTable-&gt;&gt;ExpTable: (rowRightClick) {e, rowData, single: undefined}
+    ExpTable-&gt;&gt;ExpTable: contextExperiment.set(該当タスク)
+    alt その行が未チェック
+        ExpTable-&gt;&gt;EC: (experimentsSelectionChanged) [その行] で置換
+        Note right of ExpTable: prevSelected も更新しておく（Shift 選択の起点）
+    end
+    ExpTable-&gt;&gt;EC: (contextMenu) {x: clientX, y: clientY}
+    EC-&gt;&gt;EC: onContextMenuOpen() → contextMenu().openMenu({x, y})
+</pre>
+<p><code>p-context-menu</code> は DOM 上に置いてあるが <code>class=&quot;d-none&quot;</code> で、開いても即 <code>hide()</code> される。
+<strong>PrimeNG のメニューは座標取得のためだけに使い、実際の描画は Angular Material の
+<code>MatMenuTrigger</code></strong>（<code>sm-experiment-menu-extended</code> 側）が行う。</p>
+<h2>図2: 行末の3点ボタン</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Btn as 3点ボタン（行の右端）
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;Btn: クリック
+    Btn-&gt;&gt;SmTable: $event.stopPropagation()（行クリックを止める）
+    Btn-&gt;&gt;SmTable: openContext({originalEvent, data: rowData, single: true})
+    SmTable-&gt;&gt;ExpTable: (rowRightClick) {single: true}
+    ExpTable-&gt;&gt;ExpTable: single なので contextExperiment.set(rowData) だけ&lt;br/&gt;選択は一切変更しない
+    ExpTable-&gt;&gt;EC: (contextMenu) {single: true}
+    EC-&gt;&gt;EC: singleRowContext = true
+    Note over EC: メニューの [selectedExperiments] が&lt;br/&gt;「チェック済み全件」から「この1件」に切り替わる
+</pre>
+<p><code>single</code> の違いがメニューの対象範囲を決める。</p>
+<p>EC 側は <code>single</code> をそのまま <code>singleRowContext</code> に入れ、メニューの input を切り替える。</p>
+<table>
+<thead>
+<tr>
+<th><code>singleRowContext</code></th>
+<th>selectedExperiments</th>
+<th>numSelected</th>
+<th>useCurrentEntity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（3点ボタン）</td>
+<td>選択中の1件（または無し）</td>
+<td>1</td>
+<td>true</td>
+</tr>
+<tr>
+<td>falsy（右クリック / 左クリック）</td>
+<td><code>checkedExperiments</code> 全件</td>
+<td>件数</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h2>図3: チェック済みの行を左クリック</h2>
+<p>すでにチェックが入っている行を普通にクリックしたときも開く。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;SmTable: チェック済みの行を左クリック
+    SmTable-&gt;&gt;ExpTable: (rowClicked)（250ms 判定の後）
+    ExpTable-&gt;&gt;ExpTable: tableRowClicked() → checkedExperiments に含まれる
+    ExpTable-&gt;&gt;ExpTable: openContextMenu({e, rowData, backdrop: true})
+    ExpTable-&gt;&gt;EC: (contextMenu) {backdrop: true}
+    EC-&gt;&gt;EC: menuBackdrop = true → メニューに [backdrop] で渡す
+    Note over ExpTable,EC: backdrop 付きは「選択の一括操作を促す」表示。&lt;br/&gt;複数選択中に見失わないよう背景を落とす
+</pre>
+<h2>閉じるとき</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Menu as sm-experiment-menu-extended
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;Menu: メニュー外をクリック
+    Menu-&gt;&gt;Menu: @HostListener('document:click') → 自分の中でなければ closeMenu()
+    Menu-&gt;&gt;EC: (menuClosed)
+    EC-&gt;&gt;EC: setContextMenuStatus(false)
+    Note over Menu,EC: contextMenuActive が false に戻り、&lt;br/&gt;行のハイライト（context-menu-opened）が外れる
+</pre>
+<h2>読みどころ</h2>
+<ul>
+<li>tr の属性: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html#L124">table.component.html:124</a></li>
+<li>3点ボタン: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html#L170">table.component.html:170</a></li>
+<li>openContext: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L421">table.component.ts:421</a></li>
+<li>openContextMenu: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts#L349">experiments-table.component.ts:349</a></li>
+<li>EC 側の受け口: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L735">experiments.component.ts:735</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

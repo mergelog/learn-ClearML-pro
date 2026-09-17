@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-02 テーブル本体までの経路</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-02 テーブル本体までの経路</h1>
+<p>行が並ぶ本体まで。ここは3枚重ねになっていて、それぞれ役割が違う。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sm-experiments-table</code></td>
+<td>Task 固有の知識（列 ID、フィルタ選択肢、選択ロジック）。基底は <code>BaseTableView</code></td>
+</tr>
+<tr>
+<td><code>sm-table</code></td>
+<td>PrimeNG のラッパ。列幅・スクロール・テンプレート振り分け・キーボード操作</td>
+</tr>
+<tr>
+<td><code>p-table</code></td>
+<td>実際の table 要素を描く PrimeNG 本体</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task という言葉を知っているのは一番上の層だけ</strong>。下2層は <code>{id: string}</code> を持つ何かとしてしか扱わない。
+だから同じ <code>sm-table</code> がモデル一覧や比較画面でも使われている。</p>
+<h2>図1: 3層の生成と input の流れ</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant EC as ExperimentsComponent
+    participant Split as as-split-area（左）
+    participant ExpTable as sm-experiments-table
+    participant BaseTable as BaseTableView（基底）
+    participant SmTable as sm-table
+    participant PTable as p-table
+
+    EC-&gt;&gt;Split: [size]=100-splitSize()（Store）
+    Split-&gt;&gt;ExpTable: 左ペインに1個だけ配置
+    EC-&gt;&gt;ExpTable: [experiments] [tableCols] [colsOrder] [tableFilters]&lt;br/&gt;[checkedExperiments] [selectedExperiment]=highlited() ...
+    Note right of EC: 中身はすべて Store の select。&lt;br/&gt;experiments$ だけ archived の絞り込みを通す
+
+    ExpTable-&gt;&gt;BaseTable: super()（selectionChecked の用意、table() 待ち effect）
+    ExpTable-&gt;&gt;SmTable: [tableData]=experiments() [columns]=tableCols()&lt;br/&gt;[columnsOrder]=colsOrder() [selection]=selectedExperiment()&lt;br/&gt;[checkedItems]=checkedExperiments() [sortFields] [lazyLoading]=true
+    ExpTable-&gt;&gt;SmTable: ng-template pTemplate=&quot;body/card/sort-filter/checkbox/cardFilter&quot;&lt;br/&gt;（コンテンツとして渡す）
+
+    SmTable-&gt;&gt;SmTable: visibleColumns = columns().filter(col =&gt; !col.hidden)
+    SmTable-&gt;&gt;SmTable: effect: colsOrder が来たら orderColumns() で並べ替え
+    SmTable-&gt;&gt;PTable: [value]=tableData() [columns]=visibleColumns()&lt;br/&gt;[selectionMode] [scrollable] [virtualScroll]
+    PTable--&gt;&gt;SmTable: viewChild(Table) で掴める
+    SmTable--&gt;&gt;BaseTable: viewChild(TableComponent) = table()
+</pre>
+<p><code>sm-table</code> が <code>p-table</code> に渡す <code>[columns]</code> は <code>visibleColumns()</code>。
+<code>hidden: true</code> の列は<strong>そもそも描かれない</strong>。表示/非表示の切替はヘッダーのメニューから
+<code>toggleColHidden</code> で Store と URL を書き換え、ここまで降りてくる。</p>
+<h2>図2: テーブルが立ち上がった後の初期処理</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant BaseTable as BaseTableView
+    participant SmTable as sm-table
+    participant PTable as p-table
+
+    SmTable-&gt;&gt;SmTable: effect: table() が生えたら active=true, gotTable()
+    SmTable-&gt;&gt;SmTable: gotTable() でスクロールコンテナを掴む
+    SmTable-&gt;&gt;SmTable: effect: columns() が入ったら orderColumns() + resize()
+    SmTable-&gt;&gt;PTable: calcResize() で列幅を復元（restoreColumnWidths）
+
+    BaseTable-&gt;&gt;BaseTable: effect: table() が生えたら1度だけ
+    BaseTable-&gt;&gt;SmTable: focusSelected()（選択行に DOM フォーカス）
+    BaseTable-&gt;&gt;SmTable: afterTableInit() → scrollToElement(選択行)
+    Note over BaseTable,SmTable: この effect は自分で destroy() して二度と走らない
+</pre>
+<p>列幅の復元は <code>p-table</code> の内部 API（<code>columnWidthsState</code> / <code>restoreColumnWidths</code>）を
+直接叩いている。PrimeNG の localStorage 保存機能は使わず、<strong>幅の原本はサーバ側の
+ユーザープリファレンス</strong>にある（05-15）。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>テーブル呼び出し: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html#L69">experiments.component.html:69</a></li>
+<li>sm-table 呼び出し: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L3">experiments-table.component.html:3</a></li>
+<li>3層目の p-table: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html#L2">table.component.html:2</a></li>
+<li>初期化 effect 群: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L189">table.component.ts:189</a></li>
+<li>1回だけ走る effect: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/base-table-view.ts#L74">base-table-view.ts:74</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

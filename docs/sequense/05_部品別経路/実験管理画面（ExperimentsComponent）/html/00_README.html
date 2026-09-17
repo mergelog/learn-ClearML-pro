@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>実験管理画面（ExperimentsComponent）シーケンス図集</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>実験管理画面（ExperimentsComponent）シーケンス図集</h1>
+<p>ClearML Web UI の「Tasks 一覧画面」を構成する <code>ExperimentsComponent</code> について、
+関心事ごとにシーケンス図を分けて収録した資料。</p>
+<p>対象コンポーネント: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:142">experiments.component.ts</a></p>
+<h2>資料の分け方</h2>
+<p>一枚の図にすべての登場人物を載せると読めなくなるため、次の5系統に分けた。
+同じ操作でも系統によって注目する線が違うので、同じ操作が複数の図に登場する。</p>
+<table>
+<thead>
+<tr>
+<th>系統</th>
+<th>ディレクトリ</th>
+<th>何を追うか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンポーネントの繋がり</td>
+<td><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/">01_コンポーネント連携/</a></td>
+<td>親子コンポーネント間の input / output と、DOM イベントがどこまで登るか</td>
+</tr>
+<tr>
+<td>状態保持の繋がり</td>
+<td><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/">02_状態保持/</a></td>
+<td>値の原本がどこにあるか（URL / Store / サーバ保存の設定 / localStorage / コンポーネント内）</td>
+</tr>
+<tr>
+<td>ng-content・ng-template の繋がり</td>
+<td><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/">03_テンプレート投影/</a></td>
+<td>テンプレートが誰から誰へ渡り、どこで実体化するか</td>
+</tr>
+<tr>
+<td>バックエンドデータとの経路</td>
+<td><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/">04_バックエンド経路/</a></td>
+<td>Action から HTTP リクエストまでと、応答が画面に戻るまで</td>
+</tr>
+<tr>
+<td>部品ごとの到達経路</td>
+<td><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/">05_部品別経路/</a></td>
+<td>ある部品まで辿り着くコンポーネント経路と、テーブルの操作別の流れ</td>
+</tr>
+</tbody>
+</table>
+<h2>目次</h2>
+<h3>01 コンポーネントの繋がり</h3>
+<ul>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-01_%E7%94%BB%E9%9D%A2%E5%88%9D%E6%9C%9F%E5%8C%96%E3%81%A8%E3%83%93%E3%83%A5%E3%83%BC%E6%A7%8B%E7%AF%89.md">01-01 画面初期化とビュー構築</a></li>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-02_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%8B%E3%82%89Info%E3%83%91%E3%83%8D%E3%83%AB%E8%A1%A8%E7%A4%BA.md">01-02 行クリックから Info パネル表示まで</a></li>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-03_%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E6%93%8D%E4%BD%9C%E3%81%AE%E4%BC%9D%E6%92%AD.md">01-03 ヘッダー操作の伝播</a></li>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-04_%E3%82%B3%E3%83%B3%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E3%81%AE%E8%B5%B7%E5%8B%95.md">01-04 コンテキストメニューの起動</a></li>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-05_%E3%83%95%E3%83%83%E3%82%BF%E3%83%BC%E3%81%8B%E3%82%89%E3%81%AE%E4%B8%80%E6%8B%AC%E6%93%8D%E4%BD%9C.md">01-05 フッターからの一括操作</a></li>
+<li><a href="./01_%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E9%80%A3%E6%90%BA/01-06_%E6%AF%94%E8%BC%83%E3%83%A2%E3%83%BC%E3%83%89%E3%81%B8%E3%81%AE%E5%88%87%E6%9B%BF.md">01-06 比較モードへの切替</a></li>
+</ul>
+<h3>02 状態保持の繋がり</h3>
+<ul>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-01_%E7%8A%B6%E6%85%8B%E3%81%AE%E4%BA%94%E3%81%A4%E3%81%AE%E7%BD%AE%E3%81%8D%E5%A0%B4%E6%89%80.md">02-01 状態の五つの置き場所</a></li>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-02_URL%E3%81%8B%E3%82%89Store%E3%81%B8%E3%81%AE%E5%88%9D%E6%9C%9F%E5%8C%96.md">02-02 URL から Store への初期化</a></li>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-03_%E6%93%8D%E4%BD%9C%E3%81%8B%E3%82%89URL%E3%81%B8%E3%81%AE%E6%9B%B8%E3%81%8D%E6%88%BB%E3%81%97.md">02-03 操作から URL への書き戻し</a></li>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-04_%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%83%97%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9%E3%81%AE%E6%B0%B8%E7%B6%9A%E5%8C%96.md">02-04 ユーザープリファレンスの永続化</a></li>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-05_%E9%81%B8%E6%8A%9E%E7%8A%B6%E6%85%8B%E3%81%AE%E5%9B%9B%E7%B3%BB%E7%B5%B1.md">02-05 選択状態の四系統</a></li>
+<li><a href="./02_%E7%8A%B6%E6%85%8B%E4%BF%9D%E6%8C%81/02-06_%E3%82%B9%E3%82%AF%E3%83%AD%E3%83%BC%E3%83%ABID%E3%81%A8%E3%83%9A%E3%83%BC%E3%82%B8%E3%83%B3%E3%82%B0.md">02-06 スクロールIDとページング</a></li>
+</ul>
+<h3>03 ng-content・ng-template の繋がり</h3>
+<ul>
+<li><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/03-01_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E5%8F%97%E3%81%91%E6%B8%A1%E3%81%97%E3%81%AE%E5%85%A8%E4%BD%93%E5%83%8F.md">03-01 テンプレート受け渡しの全体像</a></li>
+<li><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/03-02_pTemplate%E3%81%A8contentChildren.md">03-02 pTemplate と contentChildren</a></li>
+<li><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/03-03_contextMenuTemplate%E3%81%AE%E9%80%86%E6%B5%81.md">03-03 contextMenuTemplate の逆流</a></li>
+<li><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/03-04_ng-content%E3%81%AB%E3%82%88%E3%82%8B%E3%82%AB%E3%83%BC%E3%83%89%E7%B5%84%E3%81%BF%E7%AB%8B%E3%81%A6.md">03-04 ng-content によるカード組み立て</a></li>
+<li><a href="./03_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%8A%95%E5%BD%B1/03-05_%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E3%81%B8%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%B3%A8%E5%85%A5.md">03-05 ヘッダーへのテンプレート注入</a></li>
+</ul>
+<h3>04 バックエンドデータとの経路</h3>
+<ul>
+<li><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-01_%E4%B8%80%E8%A6%A7%E5%8F%96%E5%BE%97%E3%81%AE%E5%85%A8%E7%B5%8C%E8%B7%AF.md">04-01 一覧取得の全経路</a></li>
+<li><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-02_%E8%87%AA%E5%8B%95%E6%9B%B4%E6%96%B0%E3%81%A8%E8%BF%BD%E3%81%84%E8%AA%AD%E3%81%BF.md">04-02 自動更新と追い読み</a></li>
+<li><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-03_%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF%E9%81%B8%E6%8A%9E%E8%82%A2%E3%81%AE%E5%8F%96%E5%BE%97.md">04-03 フィルタ選択肢の取得</a></li>
+<li><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-04_%E8%A9%B3%E7%B4%B0%E3%83%91%E3%83%8D%E3%83%AB%E3%81%AE%E4%BA%8C%E6%AE%B5%E5%8F%96%E5%BE%97.md">04-04 詳細パネルの二段取得</a></li>
+<li><a href="./04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-05_%E4%B8%80%E6%8B%AC%E6%93%8D%E4%BD%9C%E3%81%A8CSV%E5%87%BA%E5%8A%9B.md">04-05 一括操作とCSV出力</a></li>
+</ul>
+<h3>05 部品ごとの到達経路</h3>
+<p>部品の住所を追う系統。テーブルは操作単位で分けてある（索引は 05-10）。</p>
+<ul>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-00_%E9%83%A8%E5%93%81%E3%83%9E%E3%83%83%E3%83%97%E3%81%A8%E8%AA%AD%E3%81%BF%E6%96%B9.md">05-00 部品マップと読み方</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-01_%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-01 ヘッダーまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-02_%E3%83%86%E3%83%BC%E3%83%96%E3%83%AB%E6%9C%AC%E4%BD%93%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-02 テーブル本体までの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-03_%E3%82%BB%E3%83%AB%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-03 セルまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-04_%E5%88%97%E3%83%98%E3%83%83%E3%83%80%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-04 列ヘッダーまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-05_%E3%82%AB%E3%83%BC%E3%83%89%E3%83%93%E3%83%A5%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-05 カードビューまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-06_%E6%83%85%E5%A0%B1%E3%83%91%E3%83%8D%E3%83%AB%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-06 情報パネルまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-07_%E3%83%95%E3%83%83%E3%82%BF%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-07 フッターまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-08_%E3%82%B3%E3%83%B3%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E3%81%BE%E3%81%A7%E3%81%AE%E7%B5%8C%E8%B7%AF.md">05-08 コンテキストメニューまでの経路</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-10_%E3%83%86%E3%83%BC%E3%83%96%E3%83%AB%E6%93%8D%E4%BD%9C%E3%81%AE%E4%B8%80%E8%A6%A7.md">05-10 テーブル操作の一覧</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-11_%E8%A1%8C%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A8%E3%83%80%E3%83%96%E3%83%AB%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF.md">05-11 行クリックとダブルクリック</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-12_%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E9%81%B8%E6%8A%9E%E3%81%A8%E5%85%A8%E9%81%B8%E6%8A%9E.md">05-12 チェックボックス選択と全選択</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-13_%E5%88%97%E3%82%BD%E3%83%BC%E3%83%88.md">05-13 列ソート</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-14_%E5%88%97%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF.md">05-14 列フィルタ</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-15_%E5%88%97%E3%81%AE%E4%B8%A6%E3%81%B9%E6%9B%BF%E3%81%88%E3%81%A8%E5%B9%85%E5%A4%89%E6%9B%B4.md">05-15 列の並べ替えと幅変更</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-16_%E8%BF%BD%E3%81%84%E8%AA%AD%E3%81%BF.md">05-16 追い読み</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-17_%E5%8F%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC.md">05-17 右クリックメニュー</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-18_%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E6%93%8D%E4%BD%9C%E3%81%A8%E3%83%95%E3%82%A9%E3%83%BC%E3%82%AB%E3%82%B9.md">05-18 キーボード操作とフォーカス</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-19_%E3%82%AB%E3%83%BC%E3%83%89%E3%83%93%E3%83%A5%E3%83%BC%E3%81%AE%E6%93%8D%E4%BD%9C.md">05-19 カードビューの操作</a></li>
+<li><a href="./05_%E9%83%A8%E5%93%81%E5%88%A5%E7%B5%8C%E8%B7%AF/05-20_CSV%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89.md">05-20 CSVダウンロード</a></li>
+</ul>
+<h2>登場人物の略称</h2>
+<p>図の <code>participant</code> は全資料で次の略称に統一している。</p>
+<table>
+<thead>
+<tr>
+<th>略称</th>
+<th>実体</th>
+<th>ファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User</td>
+<td>操作者</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>Angular Router</td>
+<td>-</td>
+</tr>
+<tr>
+<td>EC</td>
+<td>ExperimentsComponent</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:142">experiments.component.ts</a></td>
+</tr>
+<tr>
+<td>Base</td>
+<td>BaseEntityPageComponent（ECの基底）</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/base-entity-page.ts:57">base-entity-page.ts</a></td>
+</tr>
+<tr>
+<td>Header</td>
+<td>sm-experiment-header</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiment-header/experiment-header.component.ts">experiment-header.component.ts</a></td>
+</tr>
+<tr>
+<td>ExpTable</td>
+<td>sm-experiments-table</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:115">experiments-table.component.ts</a></td>
+</tr>
+<tr>
+<td>SmTable</td>
+<td>sm-table（PrimeNG p-table のラッパ）</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts">table.component.ts</a></td>
+</tr>
+<tr>
+<td>Footer</td>
+<td>sm-entity-footer</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/entity-footer/entity-footer.component.ts">entity-footer.component.ts</a></td>
+</tr>
+<tr>
+<td>Menu</td>
+<td>sm-experiment-menu-extended</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/features/experiments/containers/experiment-menu-extended/experiment-menu-extended.component.ts:27">experiment-menu-extended.component.ts</a></td>
+</tr>
+<tr>
+<td>Store</td>
+<td>NgRx Store（<code>experiments</code> feature）</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/reducers/index.ts">reducers/index.ts</a></td>
+</tr>
+<tr>
+<td>ViewEff</td>
+<td>CommonExperimentsViewEffects</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts">common-experiments-view.effects.ts</a></td>
+</tr>
+<tr>
+<td>InfoEff</td>
+<td>CommonExperimentsInfoEffects</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-info.effects.ts">common-experiments-info.effects.ts</a></td>
+</tr>
+<tr>
+<td>MenuEff</td>
+<td>CommonExperimentsMenuEffects</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-menu.effects.ts">common-experiments-menu.effects.ts</a></td>
+</tr>
+<tr>
+<td>RouterEff</td>
+<td>RouterEffects</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/core/effects/router.effects.ts:28">router.effects.ts</a></td>
+</tr>
+<tr>
+<td>TasksApi</td>
+<td>ApiTasksService</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/tasks.service.ts:126">tasks.service.ts</a></td>
+</tr>
+<tr>
+<td>ProjApi</td>
+<td>ApiProjectsService</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/projects.service.ts">projects.service.ts</a></td>
+</tr>
+<tr>
+<td>Http</td>
+<td>SmApiRequestsService → HttpClient</td>
+<td><a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/api-requests.service.ts:11">api-requests.service.ts</a></td>
+</tr>
+<tr>
+<td>Server</td>
+<td>ClearML apiserver</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2>最初に押さえる原則</h2>
+<p><code>ExperimentsComponent</code> は API を直接呼ばない。操作は必ず <code>store.dispatch()</code> で Action になり、
+Effects が HTTP を叩き、結果は Reducer 経由で Selector から戻る。
+そのため 01 の図（コンポーネント連携）は Store で線が途切れ、04 の図（バックエンド経路）が Store から先を引き継ぐ。</p>
+
+</main>
+</body>
+</html>

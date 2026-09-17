@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-20 CSVダウンロード</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-20 CSVダウンロード</h1>
+<p>ヘッダーのダウンロードメニューには2項目あり、<strong>経路が全く別</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>範囲</th>
+<th>作る場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Download on screen items</td>
+<td>今テーブルに読み込んである行だけ</td>
+<td>ブラウザ（JS で文字列を組む）</td>
+</tr>
+<tr>
+<td>Download first N items</td>
+<td>サーバ側の全件（上限あり）</td>
+<td>サーバ</td>
+</tr>
+</tbody>
+</table>
+<h2>図1: 画面上の行だけ（ブラウザで生成）</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Header as sm-experiment-header
+    participant EC as ExperimentsComponent
+    participant ExpTable as sm-experiments-table
+    participant SmTable as sm-table
+    participant Browser as ブラウザ
+
+    User-&gt;&gt;Header: Download on screen items
+    Header-&gt;&gt;EC: (downloadTableAsCSV)
+    EC-&gt;&gt;ExpTable: this.table()（viewChild: ExperimentsTableComponent）
+    ExpTable-&gt;&gt;SmTable: .table()（viewChild: TableComponent）
+    EC-&gt;&gt;SmTable: downloadTableAsCSV('ClearML &lt;プロジェクト名&gt; Experiments')
+    Note over EC,SmTable: Store も Action も通さない。&lt;br/&gt;viewChild を2段辿って孫のメソッドを直接呼ぶ
+
+    SmTable-&gt;&gt;SmTable: colsOrder → columns() を並べ替え → prepareColsForDownload()
+    SmTable-&gt;&gt;SmTable: preProcessRows()&lt;br/&gt;lodash get で値を取り、配列は文字列化、文字列は sanitizeCSVCell
+    SmTable-&gt;&gt;Browser: export-to-csv の generateCsv + download
+</pre>
+<p><code>sanitizeCSVCell</code> は <code>= + - @ \r \t</code> のいずれかで始まるセルの<strong>先頭に <code>'</code> を足す</strong>処理。
+表計算ソフトが数式として解釈するのを防ぐ（CSV インジェクション対策）。セル内の改行は別途除去している。</p>
+<p>なぜ Store を通らないかというと、<strong>出力対象が「今 p-table が持っている列と順序」であって
+アプリの状態ではない</strong>から。列の並びは <code>columnsOrder</code> と <code>columns()</code> を突き合わせて
+その場で組み立てている。</p>
+<h2>図2: 全件（サーバで生成）</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Header as sm-experiment-header
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+    participant ViewEff as ViewEffects
+    participant OrgApi as organization.prepare_download_for_get_all
+    participant ProjEff as ProjectsEffects
+    participant Browser as ブラウザ
+
+    User-&gt;&gt;Header: Download first N items
+    Header-&gt;&gt;EC: (downloadFullTableAsCSV)
+    EC-&gt;&gt;Store: dispatch prepareTableForDownload({entityType: 'task'})
+
+    Store-&gt;&gt;ViewEff: prepareTableForDownload effect
+    ViewEff-&gt;&gt;ViewEff: 14 本の selector を concatLatestFrom で集める&lt;br/&gt;（プロジェクト、アーカイブ、検索語、並び、フィルタ、選択、列 ...）
+    Note right of ViewEff: 「選択のみ表示」が有効なら selectedIds を付ける&lt;br/&gt;completed フィルタには closed も足す
+    ViewEff-&gt;&gt;OrgApi: field_mappings + 一覧取得と同じ条件で依頼
+    OrgApi--&gt;&gt;ViewEff: prepare_id
+    ViewEff-&gt;&gt;Store: dispatch downloadForGetAll({prepareId})
+
+    Store-&gt;&gt;ProjEff: downloadForGetAll effect
+    ProjEff-&gt;&gt;Browser: a 要素を作って organization.download_for_get_all?prepare_id=... を開く
+</pre>
+<p><strong>画面に出ている条件をそのままサーバに渡し直している</strong>のがこの経路の要点。
+一覧取得と同じ <code>getGetAllQuery()</code> を使うので、フィルタとソートが一致する。</p>
+<p>件数上限はヘッダーのラベルに出ている <code>maxDownloadItems$</code>（サーバの設定値）。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>ヘッダーのメニュー: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiment-header/experiment-header.component.html#L32">experiment-header.component.html:32</a></li>
+<li>EC の2段辿り: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L790">experiments.component.ts:790</a></li>
+<li>ブラウザ側の生成: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L608">table.component.ts:608</a></li>
+<li>サーバ依頼の effect: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts#L184">common-experiments-view.effects.ts:184</a></li>
+<li>ダウンロードを開く: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/core/effects/projects.effects.ts#L440">projects.effects.ts:440</a></li>
+<li>一括操作側の詳細は <a href="../04_%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E7%B5%8C%E8%B7%AF/04-05_%E4%B8%80%E6%8B%AC%E6%93%8D%E4%BD%9C%E3%81%A8CSV%E5%87%BA%E5%8A%9B.md">04-05 一括操作とCSV出力</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

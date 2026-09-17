@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-19 カードビューの操作</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-19 カードビューの操作</h1>
+<p>縮小表示（カード）では、テーブル表示と同じ操作でも経路が変わる。到達経路は 05-05、ここは操作。</p>
+<h2>図1: カードを選ぶ</h2>
+<p>テーブル表示と違い、<code>tr</code> の click は塞がれている。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Tr as tr（pSelectableRow）
+    participant PTable as p-table
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    Note over Tr,SmTable: (click) は !minimizedView() 条件付きなので&lt;br/&gt;カード表示では checkClick を通らない
+    User-&gt;&gt;Tr: カードをクリック
+    Tr-&gt;&gt;PTable: pSelectableRow の選択
+    PTable-&gt;&gt;SmTable: (onRowSelect)
+    SmTable-&gt;&gt;ExpTable: (rowSelectionChanged)
+    ExpTable-&gt;&gt;EC: (experimentSelectionChanged) {origin: 'table'}
+    EC-&gt;&gt;Store: minimizedView() なので dispatch experimentSelectionChanged
+    Note over EC,Store: URL の :experimentId が変わり、&lt;br/&gt;右ペインの情報パネルが差し替わる
+</pre>
+<p>選択解除の向きも p-table 経由。カード表示では <code>onRowDeselected</code> が <code>data: null</code> を返すので、
+同じカードを押し直すと選択が外れる。</p>
+<h2>図2: 選択中のカードをもう一度押す</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Card as sm-table-card
+    participant BaseTable as BaseTableView
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    Note over Card: click は selected のときだけ cardClicked を呼ぶ&lt;br/&gt;つまり選択中のカードしか反応しない
+    User-&gt;&gt;Card: 1回目のクリック
+    Card-&gt;&gt;BaseTable: cardClicked()
+    BaseTable-&gt;&gt;BaseTable: clickDelayHandle に 250ms のタイマー
+
+    alt 250ms 以内に2回目
+        User-&gt;&gt;Card: 2回目
+        BaseTable-&gt;&gt;BaseTable: タイマー破棄
+        BaseTable-&gt;&gt;EC: (closePanel)
+        EC-&gt;&gt;EC: closePanel() → setTableMode('table') + URL から id を落とす
+    else 来なかった
+        BaseTable-&gt;&gt;ExpTable: openContextMenu({e, rowData, backdrop: true})
+        ExpTable-&gt;&gt;EC: (contextMenu) {backdrop: true}
+    end
+</pre>
+<p>「選択中のカードをシングルクリック → メニュー」「ダブルクリック → パネルを閉じる」という
+割り当てになっている。テーブル表示の 250ms 判定（05-11）とは別実装で、
+<code>BaseTableView.cardClicked()</code> 側に置かれている。</p>
+<h2>図3: 折りたたみ</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Header as カードヘッダーの折りたたみボタン
+    participant SmTable as sm-table
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Header: クリック
+    Header-&gt;&gt;SmTable: (cardsCollapsedToggle)
+    SmTable-&gt;&gt;ExpTable: (cardsCollapsedChanged)
+    ExpTable-&gt;&gt;EC: そのまま素通し
+    EC-&gt;&gt;EC: cardsCollapsedToggle()（基底クラス）
+    EC-&gt;&gt;Store: dispatch toggleCardsCollapsed({entityType})
+    Store--&gt;&gt;EC: cardsCollapsed() が反転
+    EC-&gt;&gt;SmTable: [cardsCollapsed] → カード高さを 48px に、タグを mini 表示に
+    Note over Store,EC: 保存先は core の view state（エンティティ種別ごと）。&lt;br/&gt;URL には出ない
+</pre>
+<h2>図4: カード表示のフィルタ</h2>
+<p>列ヘッダーが無いので、1つのメニューに全列のフィルタが入れ子で入る。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant CardFilter as sm-table-card-filter
+    participant BaseTable as BaseTableView
+    participant ExpTable as sm-experiments-table
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;CardFilter: 漏斗 → 列名 → サブメニュー
+    CardFilter-&gt;&gt;ExpTable: (menuOpened) col
+    ExpTable-&gt;&gt;ExpTable: columnFilterOpened(col)（05-14 図1 と同じ）
+    User-&gt;&gt;CardFilter: 値をチェック
+    CardFilter-&gt;&gt;ExpTable: (filterChanged) {col: 列ID, value}
+    ExpTable-&gt;&gt;BaseTable: tableFilterChanged({id: $event.col}, $event)
+    Note right of ExpTable: 列オブジェクトではなく {id} だけを渡す&lt;br/&gt;（メニューが持っているのは列 ID だけ）
+    BaseTable-&gt;&gt;EC: (filterChanged) → 以降は 05-14 と同じ
+    User-&gt;&gt;CardFilter: Clear all
+    CardFilter-&gt;&gt;EC: (clearAll) → (clearTableFilters)
+</pre>
+<p>タグのシステムタグだけは別扱いで、<code>(subFilterChanged)</code> から
+<code>tableFilterChanged({id: 'system_tags'}, ...)</code> として投げられる。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>カードの click: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L216">experiments-table.component.html:216</a></li>
+<li>cardClicked: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/base-table-view.ts#L178">base-table-view.ts:178</a></li>
+<li>onRowDeselected: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts#L384">table.component.ts:384</a></li>
+<li>折りたたみ: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/base-entity-page.ts#L326">base-entity-page.ts:326</a></li>
+<li>カードフィルタ: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L38">experiments-table.component.html:38</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

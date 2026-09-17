@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-12 チェックボックス選択と全選択</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-12 チェックボックス選択と全選択</h1>
+<p>一括操作の対象（<code>checkedExperiments</code>）を決める操作。ハイライト（05-11）とは別系統で、
+<strong>こちらは Store に入る</strong>。</p>
+<h2>図1: 行のチェックボックス</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Cb as mat-checkbox（selected 列）
+    participant ExpTable as sm-experiments-table
+    participant BaseTable as BaseTableView
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Cb: クリック
+    Note right of Cb: smClickStopPropagation で&lt;br/&gt;行クリックまで伝わらないようにする
+    Cb-&gt;&gt;ExpTable: rowSelectedChanged({value: cb.checked, event}, experiment)
+
+    alt チェックを付けた
+        ExpTable-&gt;&gt;BaseTable: getSelectionRange(change, experiment)
+        BaseTable--&gt;&gt;ExpTable: Shift 押下なら prevSelected から今の行までの配列
+        ExpTable-&gt;&gt;EC: (experimentsSelectionChanged) 既存 + 追加分
+    else チェックを外した
+        ExpTable-&gt;&gt;BaseTable: getDeselectionRange(change, experiment)
+        ExpTable-&gt;&gt;EC: (experimentsSelectionChanged) 除外後の配列
+    end
+
+    EC-&gt;&gt;Store: dispatch setSelectedExperiments({experiments})
+    Store-&gt;&gt;Store: reducer が selectedExperiments を置き換え
+    Note over EC,Store: effect が選択内容から「どのボタンが押せるか」を&lt;br/&gt;計算して setSelectedExperimentsDisableAvailable を返す
+</pre>
+<p><code>cb.checked</code> を読んでいるのは <code>(click)</code> で拾っているため。<code>(change)</code> ではなく <code>(click)</code> なのは
+<code>event.shiftKey</code> が必要だから。<strong>Shift 範囲選択のために、チェックボックスの標準イベントを使っていない</strong>。</p>
+<p>範囲の起点 <code>prevSelected</code> / <code>prevDeselect</code> は <code>BaseTableView</code> のただのプロパティ。
+再描画や再取得で消えるが、Shift 選択の起点としてはそれで十分という判断。</p>
+<h2>図2: ヘッダーのチェックボックス</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant Store as NgRx Store
+    participant BaseTable as BaseTableView
+    participant Cb as mat-checkbox（ヘッダー）
+    participant User
+    participant EC as ExperimentsComponent
+
+    Store--&gt;&gt;BaseTable: experiments() と checkedExperiments()
+    BaseTable-&gt;&gt;BaseTable: selectionState = All / Partial / None を computed
+    BaseTable-&gt;&gt;Cb: effect → selectionChecked.setValue(state !== 'None')
+    BaseTable-&gt;&gt;Cb: [indeterminate]=selectionIndeterminate()（Partial のとき）
+
+    User-&gt;&gt;Cb: クリック
+    Cb-&gt;&gt;BaseTable: headerCheckboxClicked()
+    BaseTable-&gt;&gt;BaseTable: None だった → unionBy(表示中の全件, 既存選択, 'id')&lt;br/&gt;それ以外 → 空配列
+    BaseTable-&gt;&gt;EC: emitSelection() → (experimentsSelectionChanged)
+    EC-&gt;&gt;Store: dispatch setSelectedExperiments
+</pre>
+<p><code>selectionState</code> が <code>this[this.entitiesKey]()</code> という文字列アクセスで書かれている。
+<code>BaseTableView</code> は Task を知らないので、派生クラスが</p>
+<pre><code>override entitiesKey = 'experiments';
+override selectedEntitiesKey = 'checkedExperiments';
+</code></pre>
+<p>と名前を教える。<strong>基底クラスが input signal をキー名で引く</strong>ため型が効かない箇所で、
+読むときは必ずこの2行を先に見る。</p>
+<h2>図3: ドロップダウンの All / None / All matching filter</h2>
+<p>ここだけ EC を経由しない。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Menu as mat-menu（チェックボックス横の矢印）
+    participant ExpTable as sm-experiments-table
+    participant Store as NgRx Store
+    participant ViewEff as CommonExperimentsViewEffects
+    participant Api as tasks.get_all_ex
+
+    User-&gt;&gt;Menu: All または All matching filter
+    Menu-&gt;&gt;ExpTable: selectAll(filtered?)
+    ExpTable-&gt;&gt;Store: dispatch selectAllExperiments({filtered})
+    Note right of ExpTable: BaseTableView が inject(Store) を持つので&lt;br/&gt;表示部品から直接投げている
+
+    Store-&gt;&gt;ViewEff: selectAll effect
+    ViewEff-&gt;&gt;Api: 1ページ 5000 件で問い合わせ&lt;br/&gt;filtered なら現在のフィルタを適用
+    Api--&gt;&gt;ViewEff: tasks + scroll_id
+    ViewEff-&gt;&gt;Api: expand() で 5000 件ちょうどなら次ページも取る
+    ViewEff-&gt;&gt;Store: reduce で全部繋げて setSelectedExperiments
+
+    User-&gt;&gt;Menu: None
+    Menu-&gt;&gt;ExpTable: emitSelection([])
+    ExpTable-&gt;&gt;Store: EC 経由で setSelectedExperiments({experiments: []})
+</pre>
+<p><code>only_fields</code> を name / parent / status / type などに絞って投げている。
+一括操作の可否判定に必要な項目だけなので、<strong>画面に出ていない行も選択できる</strong>。</p>
+<p>選択上限は <code>selectionReachedLimit</code> input（<code>getSelectedExperiments</code> effect 側では 100 件に
+スライスしている箇所もある）。上限に達すると未チェックの行のチェックボックスが disabled になる。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>行のチェックボックス: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L166">experiments-table.component.html:166</a></li>
+<li>範囲選択: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/base-table-view.ts#L104">base-table-view.ts:104</a></li>
+<li>ヘッダーの状態計算: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/base-table-view.ts#L64">base-table-view.ts:64</a></li>
+<li>全選択メニュー: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L73">experiments-table.component.html:73</a></li>
+<li>全選択の effect: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts#L642">common-experiments-view.effects.ts:642</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

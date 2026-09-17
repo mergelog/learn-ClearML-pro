@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05-14 列フィルタ</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>05-14 列フィルタ</h1>
+<p>漏斗アイコンのメニュー。ソート（05-13）と同じく URL を一周するが、
+<strong>「選択肢を取ってくる」という別の流れが手前にある</strong>のが違い。</p>
+<h2>図1: メニューを開く（選択肢の用意）</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant FilterSort as sm-table-filter-sort
+    participant ExpTable as sm-experiments-table
+    participant Store as NgRx Store
+    participant EC as ExperimentsComponent
+
+    User-&gt;&gt;FilterSort: 漏斗をクリック
+    FilterSort-&gt;&gt;FilterSort: onMenuOpen() → pinnedValues.set(value())
+    Note right of FilterSort: 開いた瞬間の選択値を固定。&lt;br/&gt;チェックを外しても並びが飛ばない
+    FilterSort-&gt;&gt;ExpTable: (menuOpened)
+    opt 手元の options() が空
+        FilterSort-&gt;&gt;FilterSort: searchChanged(searchValue()) を自分で呼ぶ
+        FilterSort-&gt;&gt;ExpTable: (searchValueChanged) → 図3 の検索経路へ
+    end
+    ExpTable-&gt;&gt;ExpTable: columnFilterOpened(col)&lt;br/&gt;sortByFilterValues.set(filtersValues())
+
+    alt tags 列
+        ExpTable-&gt;&gt;EC: 選択肢が空なら (tagsMenuOpened)
+        EC-&gt;&gt;Store: dispatch getTags
+    else hyperparams.* 列
+        ExpTable-&gt;&gt;Store: dispatch hyperParamSelectedInfoExperiments&lt;br/&gt;+ setHyperParamsFiltersPage + hyperParamSelectedExperiments
+        Note right of ExpTable: ここも表示部品から直接 dispatch
+    else project.name 列
+        ExpTable-&gt;&gt;EC: 選択肢が空なら (filterSearchChanged) {colId, value: {value: ''}}
+        EC-&gt;&gt;Store: dispatch getTablesFilterProjectsOptions
+    end
+
+    Store--&gt;&gt;ExpTable: 選択肢が届く
+    ExpTable-&gt;&gt;FilterSort: [options]=filtersOptions()[col.id]
+    FilterSort-&gt;&gt;FilterSort: effect: options() が来たら loading/searching を false に
+</pre>
+<p>status / type のように選択肢が固定の列は何も取りに行かない。
+<code>filtersOptions()</code> は固定リストと Store 由来のリストを混ぜた 1 個の <code>computed</code>。</p>
+<p>選択肢を取りに行く入口が2つある点に注意。experiments-table の <code>columnFilterOpened()</code> と、
+FilterSort 自身の <code>onMenuOpen()</code>（手元が空のときだけ）で、<strong>列によっては両方走る</strong>。</p>
+<h2>図2: 値をチェックして絞り込むまで</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant List as sm-checkbox-three-state-list
+    participant FilterSort as sm-table-filter-sort
+    participant BaseTable as BaseTableView
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+    participant ViewEff as ViewEffects
+
+    User-&gt;&gt;List: 値をチェック（3状態: 含む / 除外 / なし）
+    List-&gt;&gt;FilterSort: (filterChanged) 新しい値の配列
+    FilterSort-&gt;&gt;FilterSort: emitFilterChanged() で andFilter を添える
+    FilterSort-&gt;&gt;BaseTable: (filterChanged) {value, andFilter}
+    BaseTable-&gt;&gt;BaseTable: tableFilterChanged(col, event) → scrollTableToTop()
+    BaseTable-&gt;&gt;EC: (filterChanged) {col, value, andFilter}
+    EC-&gt;&gt;Store: dispatch tableFilterChanged({filters: [{col, value, filterMatchMode}], projectId})
+
+    Store-&gt;&gt;ViewEff: tableFilterChange → 既存フィルタとマージ
+    ViewEff-&gt;&gt;Store: dispatch setURLParams({filters, update: true})
+    Note over ViewEff,Store: 以降 URL → EC → setTableFilters → 再取得（05-10 図参照）
+    Store-&gt;&gt;ViewEff: reFetchExperiment は tableFilterChanged 自体も購読していて、&lt;br/&gt;URL の一周を待たずに取得が始まる
+</pre>
+<p>タグ列の Any / All 切替（<code>andFilter</code>）は <code>model()</code> なので、押した瞬間にコンポーネント内の値が
+変わり、同時に <code>filterChanged</code> も飛ぶ。<code>filterMatchMode: 'AND'</code> として Store に載る。</p>
+<h2>図3: 選択肢の検索とページング</h2>
+<p>選択肢が多い列（親タスク、プロジェクト、ハイパーパラメータ値）はサーバ検索になる。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant FilterSort as sm-table-filter-sort
+    participant BaseTable as BaseTableView
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;FilterSort: 検索欄に入力
+    FilterSort-&gt;&gt;FilterSort: searchChanged() → pageNumber=1, searching=true
+    FilterSort-&gt;&gt;BaseTable: (searchValueChanged) {value}
+    BaseTable-&gt;&gt;BaseTable: searchValues[colId] = value（ただのオブジェクト）
+    BaseTable-&gt;&gt;EC: col.asyncFilter のときだけ (filterSearchChanged)
+    EC-&gt;&gt;EC: override filterSearchChanged()
+    alt parent.name
+        EC-&gt;&gt;Store: dispatch resetTablesFilterParentsOptions + getParents({searchValue})
+    else hyperparams.*
+        EC-&gt;&gt;Store: dispatch setHyperParamsFiltersPage({page: 0}) + hyperParamSelectedExperiments
+    else project.name
+        EC-&gt;&gt;Store: 基底の実装 → getTablesFilterProjectsOptions
+    end
+
+    User-&gt;&gt;FilterSort: 3点（もっと読む）
+    FilterSort-&gt;&gt;FilterSort: loadMore()
+    FilterSort-&gt;&gt;FilterSort: loading() か noMoreOptions() なら即 return
+    alt asyncFilter でない
+        FilterSort-&gt;&gt;FilterSort: pageNumber++ だけ（手元の配列を多く見せる）
+    else asyncFilter
+        FilterSort-&gt;&gt;FilterSort: lengthBeforeLoad を記録し pageNumber++ して loading=true
+        FilterSort-&gt;&gt;EC: (searchValueChanged) {value, loadMore: true}
+        Note right of FilterSort: 返ってきた件数が増えていなければ&lt;br/&gt;noMoreOptions() が true になり 3点が消える
+    end
+</pre>
+<p><code>searchValues</code> が signal ではなく素の <code>Record&lt;string, string&gt;</code> である点が引っかかりやすい。
+OnPush でも動くのは、<strong>値を書き換えるのが必ずイベントハンドラの中</strong>で、
+その場でそのビューの変更検知が走るため。</p>
+<h2>図4: フィルタを消す</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant User
+    participant Src as ヘッダーの Clear / メニューの Clear all / 0件表示のリンク
+    participant EC as ExperimentsComponent
+    participant Store as NgRx Store
+
+    User-&gt;&gt;Src: クリック
+    Src-&gt;&gt;EC: (clearTableFilters) または (clearTableFiltersAndSearch)
+    EC-&gt;&gt;EC: clearTableFiltersHandler(tableFilters, others?)
+    EC-&gt;&gt;Store: dispatch setTableFilters({filters: []})
+    EC-&gt;&gt;Store: dispatch tableFilterChanged({filters: 全列を空配列, others})
+    Note over EC,Store: setTableFilters で即座に画面を空に、&lt;br/&gt;tableFilterChanged で URL の filter を消す
+</pre>
+<p>0 件のときに出る「Clear filters」は <code>#noDataTemplate</code> の中のリンク。
+このテンプレートは experiments-table が宣言し、<code>[noDataTemplate]</code> として sm-table に渡され、
+p-table の <code>#emptymessage</code> から呼び戻される（セルと同じ投影の形）。
+検索語も一緒に消すのが <code>clearTableFiltersAndSearch</code>（<code>others: {q: null}</code>）。</p>
+<h2>読みどころ</h2>
+<ul>
+<li>メニューを開いたとき: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts#L377">experiments-table.component.ts:377</a></li>
+<li>値の受け渡し: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/base-table-view.ts#L140">base-table-view.ts:140</a></li>
+<li>検索の分岐: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts#L841">experiments.component.ts:841</a></li>
+<li>effect: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts#L164">common-experiments-view.effects.ts:164</a></li>
+<li>0件テンプレート: <a href="/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html#L298">experiments-table.component.html:298</a></li>
+</ul>
+
+</main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

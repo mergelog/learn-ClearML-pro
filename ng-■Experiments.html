@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;a href=&quot;./src/app/webapp-common/experiments/experiments.component.ts&quot;&gt;ExperimentsComponent&lt;/a&gt; [extends &lt;a href=&quot;./src/app/webapp-common/shared/entity-page/base-entity-page.ts&quot;&gt;BaseEntityPageComponent&lt;/a&gt;]</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+    background: #ffffff;
+    color: #1f2328;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+      "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5;
+    margin: 2em 0 0.8em;
+    font-weight: 700;
+  }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.4em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h3 { font-size: 1.15em; }
+  p, ul, ol, table, blockquote { margin: 0.8em 0; }
+  ul, ol { padding-left: 1.6em; }
+  li { margin: 0.3em 0; }
+  a { color: #0969da; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  pre.mermaid {
+    background: transparent;
+    text-align: center;
+    padding: 1em 0;
+  }
+  blockquote {
+    margin-left: 0;
+    padding: 0.2em 1em;
+    border-left: 4px solid #d0d7de;
+    color: #57606a;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  th {
+    background: #f6f8fa;
+  }
+  img { max-width: 100%; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+</style>
+</head>
+<body>
+<main>
+<h1><a href="./src/app/webapp-common/experiments/experiments.component.ts">ExperimentsComponent</a> [extends <a href="./src/app/webapp-common/shared/entity-page/base-entity-page.ts">BaseEntityPageComponent</a>]</h1>
+<p>parent path: <code>./src/app/webapp-common/experiments/</code></p>
+<pre>
+├── <a href="./src/app/webapp-common/shared/ui-components/overlay/overlay/overlay.component.ts">OverlayComponent</a> (参照元: 9)
+├── <a href="./src/app/webapp-common/experiments/dumb/experiment-header/experiment-header.component.ts">ExperimentHeaderComponent</a> [extends <a href="./src/app/webapp-common/shared/entity-page/base-entity-header/base-entity-header.component.ts">BaseEntityHeaderComponent</a>] (参照元: 3)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/buttons/toggle-archive/toggle-archive.component.ts">ToggleArchiveComponent</a> (参照元: 3)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/inputs/button-toggle/button-toggle.component.ts">ButtonToggleComponent</a> (参照元: 10)
+│   ├── <a href="./src/app/webapp-common/common-search/containers/common-search/common-search.component.ts">CommonSearchComponent</a> (参照元: 6)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/inputs/search/search.component.ts">SearchComponent</a> (参照元: 13)
+│   ├── <a href="./src/app/webapp-common/shared/components/clear-filters-button/clear-filters-button.component.ts">ClearFiltersButtonComponent</a> (参照元: 6)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu/menu.component.ts">MenuComponent</a> (参照元: 15)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu-item/menu-item.component.ts">MenuItemComponent</a> ×2 (参照元: 15)
+│   ├── <a href="./src/app/webapp-common/experiments/dumb/experiment-custom-cols-menu/experiment-custom-cols-menu.component.ts">ExperimentCustomColsMenuComponent</a> (参照元: 2)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu/menu.component.ts">MenuComponent</a> (参照元: 15)
+│   │   └── <a href="./src/app/webapp-common/shared/components/custom-columns-list/custom-columns-list.component.ts">CustomColumnsListComponent</a>
+│   │       └── <a href="./src/app/webapp-common/shared/ui-components/panel/menu-item/menu-item.component.ts">MenuItemComponent</a> (参照元: 15)
+│   ├── <a href="./src/app/webapp-common/shared/components/refresh-button/refresh-button.component.ts">RefreshButtonComponent</a> (参照元: 7)
+│   ├── <a href="./src/app/webapp-common/experiments/dumb/select-metric-for-custom-col/select-metric-for-custom-col.component.ts">SelectMetricForCustomColComponent</a> (参照元: 4)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/inputs/search/search.component.ts">SearchComponent</a> (参照元: 13)
+│   └── <a href="./src/app/webapp-common/experiments/dumb/select-hyper-params-for-custom-col/select-hyper-params-for-custom-col.component.ts">SelectHyperParamsForCustomColComponent</a>
+│       └── <a href="./src/app/webapp-common/shared/ui-components/data/grouped-checked-filter-list/grouped-checked-filter-list.component.ts">GroupedCheckedFilterListComponent</a> (参照元: 2)
+│           └── <a href="./src/app/webapp-common/shared/ui-components/inputs/search/search.component.ts">SearchComponent</a> (参照元: 13)
+├── <a href="./src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts">ExperimentsTableComponent</a> (参照元: 5)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table.component.ts">TableComponent</a> (参照元: 12)
+│   │   ├── <a href="./src/app/webapp-common/shared/components/multi-line-tooltip/multi-line-tooltip.component.ts">MultiLineTooltipComponent</a> (参照元: 4)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu/menu.component.ts">MenuComponent</a> (参照元: 15)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu-item/menu-item.component.ts">MenuItemComponent</a> (参照元: 15)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-card-filter-template/table-card-filter.component.ts">TableCardFilterComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/checkbox-three-state-list/checkbox-three-state-list.component.ts">CheckboxThreeStateListComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/panel/menu-item/menu-item.component.ts">MenuItemComponent</a> (参照元: 15)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-filter-sort/table-filter-sort.component.ts">TableFilterSortComponent</a> (参照元: 7)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/menu/menu.component.ts">MenuComponent</a> (参照元: 15)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration/table-filter-duration.component.ts">TableFilterDurationComponent</a> [extends <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-duration-sort-base.component.ts">TableDurationSortBaseComponent</a>]
+│   │   │   ├── <a href="./src/app/webapp-common/shared/ui-components/inputs/duraion-input-list/duration-input-list.component.ts">DurationInputListComponent</a> [extends <a href="./src/app/webapp-common/shared/ui-components/inputs/duration-input/duration-input.base.ts">DurationInputBase</a>] ×2 (参照元: 2)
+│   │   │   ├── <a href="./src/app/webapp-common/shared/ui-components/indicators/divider/divider.component.ts">DividerComponent</a> (参照元: 2)
+│   │   │   └── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration-error/table-filter-duration-error.component.ts">TableFilterDurationErrorComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration-numeric/table-filter-duration-numeric.component.ts">TableFilterDurationNumericComponent</a> [extends <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-duration-sort-base.component.ts">TableDurationSortBaseComponent</a>]
+│   │   │   ├── <a href="./src/app/webapp-common/shared/ui-components/indicators/divider/divider.component.ts">DividerComponent</a> (参照元: 2)
+│   │   │   └── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration-error/table-filter-duration-error.component.ts">TableFilterDurationErrorComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration-date-time/table-filter-duration-date-time.component.ts">TableFilterDurationDateTimeComponent</a> [extends <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-duration-sort-base.component.ts">TableDurationSortBaseComponent</a>]
+│   │   │   ├── <a href="./src/app/webapp-common/shared/ui-components/inputs/duraion-input-list/duration-input-list.component.ts">DurationInputListComponent</a> [extends <a href="./src/app/webapp-common/shared/ui-components/inputs/duration-input/duration-input.base.ts">DurationInputBase</a>] ×2 (参照元: 2)
+│   │   │   └── <a href="./src/app/webapp-common/shared/ui-components/data/table/table-duration-sort-template/table-filter-duration-error/table-filter-duration-error.component.ts">TableFilterDurationErrorComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/panel/checkbox-three-state-list/checkbox-three-state-list.component.ts">CheckboxThreeStateListComponent</a> (参照元: 3)
+│   │   ├── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/panel/menu-item/menu-item.component.ts">MenuItemComponent</a> (参照元: 15)
+│   ├── <a href="./src/app/webapp-common/shared/experiment-type-icon-label/experiment-type-icon-label.component.ts">ExperimentTypeIconLabelComponent</a> ×2 (参照元: 4)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/tags/tag-list/tag-list.component.ts">TagListComponent</a> ×3 (参照元: 17)
+│   │   └── <a href="./src/app/webapp-common/shared/ui-components/tags/user-tag/user-tag.component.ts">UserTagComponent</a> ×3
+│   ├── <a href="./src/app/webapp-common/shared/experiment-status-icon-label/status-icon-label.component.ts">StatusIconLabelComponent</a> ×2 (参照元: 7)
+│   ├── <a href="./src/app/webapp-common/experiments/shared/components/hyper-param-metric-column/hyper-param-metric-column.component.ts">HyperParamMetricColumnComponent</a> (参照元: 3)
+│   ├── <a href="./src/app/webapp-common/shared/ui-components/data/table-card/table-card.component.ts">TableCardComponent</a> (参照元: 3)
+│   └── <a href="./src/app/webapp-common/shared/ui-components/tags/user-tag/mini-tags-list/mini-tags-list.component.ts">MiniTagsListComponent</a> (参照元: 3)
+│       └── <a href="./src/app/webapp-common/shared/ui-components/tags/user-tag/mini-tag/mini-tag.component.ts">MiniTagComponent</a>
+├── <a href="./src/app/webapp-common/shared/entity-page/entity-footer/entity-footer.component.ts">EntityFooterComponent</a> [extends <a href="./src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts">BaseContextMenuComponent</a>] (参照元: 4)
+│   └── <a href="./src/app/webapp-common/shared/ui-components/tags/tags-menu/tags-menu.component.ts">TagsMenuComponent</a> (参照元: 13)
+│       └── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+├── <a href="./src/app/features/experiments/containers/experiment-menu-extended/experiment-menu-extended.component.ts">ExperimentMenuExtendedComponent</a> [extends <a href="./src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.ts">ExperimentMenuComponent</a>] (参照元: 2)
+│   └── <a href="./src/app/webapp-common/shared/ui-components/tags/tags-menu/tags-menu.component.ts">TagsMenuComponent</a> (参照元: 13)
+│       └── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+└── <a href="./src/app/webapp-common/experiments/containers/create-experiment-dialog/create-experiment-dialog.component.ts">CreateExperimentDialogComponent</a> [dialog]
+    ├── <a href="./src/app/webapp-common/shared/ui-components/overlay/dialog-template/dialog-template.component.ts">DialogTemplateComponent</a> (参照元: 34)
+    ├── <a href="./src/app/webapp-common/shared/ui-components/data/code-editor/code-editor.component.ts">CodeEditorComponent</a> (参照元: 5)
+    ├── <a href="./src/app/webapp-common/shared/ui-components/inputs/button-toggle/button-toggle.component.ts">ButtonToggleComponent</a> (参照元: 10)
+    └── <a href="./src/app/webapp-common/shared/components/paginated-entity-selector/paginated-entity-selector.component.ts">PaginatedEntitySelectorComponent</a> (参照元: 7)
+        └── <a href="./src/app/webapp-common/shared/ui-components/indicators/dots-load-more/dots-load-more.component.ts">DotsLoadMoreComponent</a> (参照元: 13)
+</pre>
+
+</main>
+</body>
+</html>
