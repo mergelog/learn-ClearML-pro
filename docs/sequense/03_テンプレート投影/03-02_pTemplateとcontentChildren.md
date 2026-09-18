@@ -93,11 +93,11 @@ sequenceDiagram
 
 ## 読みどころ
 
-- 収集と振り分け: [table.component.ts:334](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts:334)
-- 受け皿のフィールド定義: [table.component.ts:85](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts:85)
-- `contentChildren`: [table.component.ts:104](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts:104)
-- 描画側の `ngTemplateOutlet`: [table.component.html:154](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html:154)
-- テンプレート宣言側: [experiments-table.component.html:37](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:38)
+- 収集と振り分け: [table.component.ts:334](../../../src/app/webapp-common/shared/ui-components/data/table/table.component.ts:334)
+- 受け皿のフィールド定義: [table.component.ts:85](../../../src/app/webapp-common/shared/ui-components/data/table/table.component.ts:85)
+- `contentChildren`: [table.component.ts:104](../../../src/app/webapp-common/shared/ui-components/data/table/table.component.ts:104)
+- 描画側の `ngTemplateOutlet`: [table.component.html:154](../../../src/app/webapp-common/shared/ui-components/data/table/table.component.html:154)
+- テンプレート宣言側: [experiments-table.component.html:37](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:38)
 
 `templates` は `contentChildren`（signal ベースのクエリ）で宣言されているが、
 読み出しは `ngAfterContentInit` で 1 回だけ行い、以後はフィールドに保持した
@@ -105,6 +105,6 @@ sequenceDiagram
 
 そのため、`@if` で囲われたテンプレートは初期評価の結果しか反映されない。
 実際に `pTemplate="checkbox"` は `@if (enableMultiSelect())` の中にある
-（[experiments-table.component.html:56](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:56)）。
+（[experiments-table.component.html:56](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:56)）。
 `enableMultiSelect` は `input(true)` の既定値のまま使われるか、呼び出し側で固定値を渡すだけなので、
 現状の使い方では問題にならない。

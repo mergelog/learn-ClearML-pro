@@ -88,13 +88,13 @@ sequenceDiagram
 
 ## 読みどころ
 
-- 購読本体: [experiments.component.ts:284](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:284)
-- 空 URL の分岐: [experiments.component.ts:355](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:355)
-- 比較用ユーティリティ: [common-projects.utils.ts:55](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/projects/common-projects.utils.ts:55)
-- デコード関数群: [tableParamEncode.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/utils/tableParamEncode.ts)
-- URL 書き込み: [router.effects.ts:28](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/core/effects/router.effects.ts:28)
+- 購読本体: [experiments.component.ts:284](../../../src/app/webapp-common/experiments/experiments.component.ts:284)
+- 空 URL の分岐: [experiments.component.ts:355](../../../src/app/webapp-common/experiments/experiments.component.ts:355)
+- 比較用ユーティリティ: [common-projects.utils.ts:55](../../../src/app/webapp-common/projects/common-projects.utils.ts:55)
+- デコード関数群: [tableParamEncode.ts](../../../src/app/webapp-common/shared/utils/tableParamEncode.ts)
+- URL 書き込み: [router.effects.ts:28](../../../src/app/webapp-common/core/effects/router.effects.ts:28)
 
 検索語（`q`）だけが別扱いになっているのは、
 `syncAppSearch()` が `selectSearchQuery` を購読して `globalFilterChanged` を発行し、
-そこから直接再取得に入るためである（[experiments.component.ts:467](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:467)）。
+そこから直接再取得に入るためである（[experiments.component.ts:467](../../../src/app/webapp-common/experiments/experiments.component.ts:467)）。
 除外していないと、検索のたびに列・ソート・フィルタの復元処理まで走り直す。

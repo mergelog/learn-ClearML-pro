@@ -49,7 +49,7 @@ sequenceDiagram
 `ng-content` の投影は、渡されたかどうかをカード側で判定しづらい。
 `TemplateRef` を `input` で受け取る形なら `@if(tagsTemplate())` で分岐でき、
 渡されなかった場合のラッパー要素ごと省略できる
-（[table-card.component.html:30](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table-card/table-card.component.html:30)）。
+（[table-card.component.html:30](../../../src/app/webapp-common/shared/ui-components/data/table-card/table-card.component.html:30)）。
 カードのタグ行・補足行は他の画面では使わないため、この形になっている。
 
 ## 評価文脈
@@ -60,7 +60,7 @@ sequenceDiagram
 
 ## 読みどころ
 
-- 投影元（カードテンプレート）: [experiments-table.component.html:215](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:215)
-- slot 定義: [table-card.component.html:10](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table-card/table-card.component.html:10)
-- テンプレート渡しの 2 つ: [experiments-table.component.html:269](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:269)
-- カード描画の呼び出し元: [table.component.html:165](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html:165)
+- 投影元（カードテンプレート）: [experiments-table.component.html:215](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:215)
+- slot 定義: [table-card.component.html:10](../../../src/app/webapp-common/shared/ui-components/data/table-card/table-card.component.html:10)
+- テンプレート渡しの 2 つ: [experiments-table.component.html:269](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:269)
+- カード描画の呼び出し元: [table.component.html:165](../../../src/app/webapp-common/shared/ui-components/data/table/table.component.html:165)

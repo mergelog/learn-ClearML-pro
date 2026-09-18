@@ -3,7 +3,7 @@
 ClearML Web UI の「Tasks 一覧画面」を構成する `ExperimentsComponent` について、
 関心事ごとにシーケンス図を分けて収録した資料。
 
-対象コンポーネント: [experiments.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:142)
+対象コンポーネント: [experiments.component.ts](../../../../src/app/webapp-common/experiments/experiments.component.ts:142)
 
 ## 資料の分け方
 
@@ -87,21 +87,21 @@ ClearML Web UI の「Tasks 一覧画面」を構成する `ExperimentsComponent`
 | --- | --- | --- |
 | User | 操作者 | - |
 | Router | Angular Router | - |
-| EC | ExperimentsComponent | [experiments.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:142) |
-| Base | BaseEntityPageComponent（ECの基底） | [base-entity-page.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/base-entity-page.ts:57) |
-| Header | sm-experiment-header | [experiment-header.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiment-header/experiment-header.component.ts) |
-| ExpTable | sm-experiments-table | [experiments-table.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:115) |
-| SmTable | sm-table（PrimeNG p-table のラッパ） | [table.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts) |
-| Footer | sm-entity-footer | [entity-footer.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/entity-page/entity-footer/entity-footer.component.ts) |
-| Menu | sm-experiment-menu-extended | [experiment-menu-extended.component.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/features/experiments/containers/experiment-menu-extended/experiment-menu-extended.component.ts:27) |
-| Store | NgRx Store（`experiments` feature） | [reducers/index.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/reducers/index.ts) |
-| ViewEff | CommonExperimentsViewEffects | [common-experiments-view.effects.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts) |
-| InfoEff | CommonExperimentsInfoEffects | [common-experiments-info.effects.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-info.effects.ts) |
-| MenuEff | CommonExperimentsMenuEffects | [common-experiments-menu.effects.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/effects/common-experiments-menu.effects.ts) |
-| RouterEff | RouterEffects | [router.effects.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/core/effects/router.effects.ts:28) |
-| TasksApi | ApiTasksService | [tasks.service.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/tasks.service.ts:126) |
-| ProjApi | ApiProjectsService | [projects.service.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/projects.service.ts) |
-| Http | SmApiRequestsService → HttpClient | [api-requests.service.ts](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/business-logic/api-services/api-requests.service.ts:11) |
+| EC | ExperimentsComponent | [experiments.component.ts](../../../../src/app/webapp-common/experiments/experiments.component.ts:142) |
+| Base | BaseEntityPageComponent（ECの基底） | [base-entity-page.ts](../../../../src/app/webapp-common/shared/entity-page/base-entity-page.ts:57) |
+| Header | sm-experiment-header | [experiment-header.component.ts](../../../../src/app/webapp-common/experiments/dumb/experiment-header/experiment-header.component.ts) |
+| ExpTable | sm-experiments-table | [experiments-table.component.ts](../../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:115) |
+| SmTable | sm-table（PrimeNG p-table のラッパ） | [table.component.ts](../../../../src/app/webapp-common/shared/ui-components/data/table/table.component.ts) |
+| Footer | sm-entity-footer | [entity-footer.component.ts](../../../../src/app/webapp-common/shared/entity-page/entity-footer/entity-footer.component.ts) |
+| Menu | sm-experiment-menu-extended | [experiment-menu-extended.component.ts](../../../../src/app/features/experiments/containers/experiment-menu-extended/experiment-menu-extended.component.ts:27) |
+| Store | NgRx Store（`experiments` feature） | [reducers/index.ts](../../../../src/app/webapp-common/experiments/reducers/index.ts) |
+| ViewEff | CommonExperimentsViewEffects | [common-experiments-view.effects.ts](../../../../src/app/webapp-common/experiments/effects/common-experiments-view.effects.ts) |
+| InfoEff | CommonExperimentsInfoEffects | [common-experiments-info.effects.ts](../../../../src/app/webapp-common/experiments/effects/common-experiments-info.effects.ts) |
+| MenuEff | CommonExperimentsMenuEffects | [common-experiments-menu.effects.ts](../../../../src/app/webapp-common/experiments/effects/common-experiments-menu.effects.ts) |
+| RouterEff | RouterEffects | [router.effects.ts](../../../../src/app/webapp-common/core/effects/router.effects.ts:28) |
+| TasksApi | ApiTasksService | [tasks.service.ts](../../../../src/app/business-logic/api-services/tasks.service.ts:126) |
+| ProjApi | ApiProjectsService | [projects.service.ts](../../../../src/app/business-logic/api-services/projects.service.ts) |
+| Http | SmApiRequestsService → HttpClient | [api-requests.service.ts](../../../../src/app/business-logic/api-services/api-requests.service.ts:11) |
 | Server | ClearML apiserver | - |
 
 ## 最初に押さえる原則

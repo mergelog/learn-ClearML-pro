@@ -9,9 +9,9 @@
     コンポーネント: "TableComponent"
     実装箇所:
       - シンボル: "pContextMenuRow"
-        リンク: "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html:124:1"
+        リンク: "../src/app/webapp-common/shared/ui-components/data/table/table.component.html:124:1"
       - シンボル: "onContextMenuSelect"
-        リンク: "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.html:36:1"
+        リンク: "../src/app/webapp-common/shared/ui-components/data/table/table.component.html:36:1"
   componentOverview:
     表示内容: "各一覧画面で再利用される共通テーブル"
     データ受取元: "ExperimentsTableComponent"
@@ -39,9 +39,9 @@
     コンポーネント: "TableComponent"
     メソッド: "openContext"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts:421:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/ui-components/data/table/table.component.ts:174:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:31:1"
+      - "../src/app/webapp-common/shared/ui-components/data/table/table.component.ts:421:1"
+      - "../src/app/webapp-common/shared/ui-components/data/table/table.component.ts:174:1"
+      - "../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:31:1"
   componentOverview:
     表示内容: "共通テーブル"
     この地点の役割: "PrimeNGイベントをアプリ用イベントへ変換する中継点"
@@ -71,9 +71,9 @@
     コンポーネント: "ExperimentsTableComponent"
     メソッド: "openContextMenu"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:349:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:197:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:165:1"
+      - "../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:349:1"
+      - "../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:197:1"
+      - "../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:165:1"
   componentOverview:
     表示内容: "実験固有の一覧、セル、選択状態、カード表示"
     データ受取元: "ExperimentsComponent"
@@ -109,9 +109,9 @@
     コンポーネント: "ExperimentsComponent"
     メソッド: "onContextMenuOpen"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html:111:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:735:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:240:1"
+      - "../src/app/webapp-common/experiments/experiments.component.html:111:1"
+      - "../src/app/webapp-common/experiments/experiments.component.ts:735:1"
+      - "../src/app/webapp-common/experiments/experiments.component.ts:240:1"
   componentOverview:
     表示内容: "検索、一覧、詳細、フッター、メニューを束ねる実験管理画面"
     データ受取元: ["NgRx Store", "ExperimentsTableComponent"]
@@ -133,9 +133,9 @@
       - "contextMenuTemplate inputで子へ渡す"
       - "ngTemplateOutletで描画"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html:140:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html:94:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:1:1"
+      - "../src/app/webapp-common/experiments/experiments.component.html:140:1"
+      - "../src/app/webapp-common/experiments/experiments.component.html:94:1"
+      - "../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:1:1"
   effects:
     - 影響名: "イベントによる通知から子Componentへのメソッド呼び出しへ移る"
     - 影響名: "単一行モードとbackdropの有無が確定する"
@@ -152,9 +152,9 @@
     コンポーネント: "BaseContextMenuComponent"
     メソッド: "openMenu"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:48:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:36:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11:1"
+      - "../src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:48:1"
+      - "../src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:36:1"
+      - "../src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11:1"
   componentOverview:
     表示内容: "自身は表示を持たないコンテキストメニュー共通基底Component"
     データ受取元: "ExperimentsComponent"
@@ -186,9 +186,9 @@
     コンポーネント: "BaseContextMenuComponent / ExperimentMenuComponent"
     メソッド: "MatMenuTrigger.updatePosition / openMenu"
     リンク一覧:
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:54:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11:1"
-      - "vscode://file/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:18:1"
+      - "../src/app/webapp-common/shared/components/base-context-menu/base-context-menu.component.ts:54:1"
+      - "../src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:11:1"
+      - "../src/app/webapp-common/experiments/shared/components/experiment-menu/experiment-menu.component.html:18:1"
   componentOverview:
     表示内容: "詳細、キュー操作、共有、削除、アーカイブなどの実験操作メニュー"
     データ受取元: "ExperimentsComponent"

@@ -69,12 +69,12 @@ sequenceDiagram
 
 ## 読みどころ
 
-- テンプレート宣言: [experiments.component.html:140](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html:140)
-- 受け渡し: [experiments.component.html:94](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.html:94)
-- 描画位置: [experiments-table.component.html:1](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:1)
-- `input` 定義: [experiments-table.component.ts:119](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:119)
-- `viewChild.required`: [experiments.component.ts:240](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:240)
-- メニューを開く側: [experiments.component.ts:735](/home/mtrysd/work_2026/000-learn-ClearML-pro/src/app/webapp-common/experiments/experiments.component.ts:735)
+- テンプレート宣言: [experiments.component.html:140](../../../src/app/webapp-common/experiments/experiments.component.html:140)
+- 受け渡し: [experiments.component.html:94](../../../src/app/webapp-common/experiments/experiments.component.html:94)
+- 描画位置: [experiments-table.component.html:1](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.html:1)
+- `input` 定義: [experiments-table.component.ts:119](../../../src/app/webapp-common/experiments/dumb/experiments-table/experiments-table.component.ts:119)
+- `viewChild.required`: [experiments.component.ts:240](../../../src/app/webapp-common/experiments/experiments.component.ts:240)
+- メニューを開く側: [experiments.component.ts:735](../../../src/app/webapp-common/experiments/experiments.component.ts:735)
 
 `viewChild.required` は解決できないと実行時に例外を投げる。
 ここで `required` を使えているのは、`contextMenuTemplate` が
