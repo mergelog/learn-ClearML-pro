@@ -1,0 +1,37 @@
+{
+  "search.useIgnoreFiles": true,
+  "search.useGlobalIgnoreFiles": true,
+  "search.exclude": {
+    "**/.angular": true,
+    "**/.cache": true,
+    "**/.generated": true,
+    "**/.git": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.venv": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/playwright-report": true,
+    "**/reports": true,
+    "**/test-results": true
+  },
+  "files.watcherExclude": {
+    "**/.angular/**": true,
+    "**/.generated/**": true,
+    "**/.git/objects/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.venv/**": true,
+    "**/build/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/playwright-report/**": true,
+    "**/reports/**": true,
+    "**/test-results/**": true
+  }
+}
