@@ -4,12 +4,12 @@
 
 実験名の変更は、詳細ヘッダーのインライン編集からNgRxのActionとして発行される。Effectが名前をAPIで保存した後、一覧のStateを部分的に更新して画面へ反映する。
 
-| 担当 | 技術 | 実際の役割 |
-|---|---|---|
-| 入力と通知 | Angular `output()` | インライン編集の確定値を、ヘッダーから詳細パネルのComponentへ渡す |
-| 保存 | NgRx Effect + `ApiTasksService` | `experimentDetailsUpdated` を受けて `POST tasks.update` を呼び、成功後に `updateExperiment` を発行する |
-| 一覧の更新 | NgRx Reducer / Selector | `experiments` 配列の該当行だけを差し替え、`selectExperimentsList` から新しい配列を流す |
-| 描画 | Angular Signal input + PrimeNG `p-table` | 詳細パネル表示中のカード表示で `experiment.name` を描画する |
+| 担当       | 技術                                     | 実際の役割                                                                                             |
+| ---------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 入力と通知 | Angular `output()`                       | インライン編集の確定値を、ヘッダーから詳細パネルのComponentへ渡す                                      |
+| 保存       | NgRx Effect + `ApiTasksService`          | `experimentDetailsUpdated` を受けて `POST tasks.update` を呼び、成功後に `updateExperiment` を発行する |
+| 一覧の更新 | NgRx Reducer / Selector                  | `experiments` 配列の該当行だけを差し替え、`selectExperimentsList` から新しい配列を流す                 |
+| 描画       | Angular Signal input + PrimeNG `p-table` | 詳細パネル表示中のカード表示で `experiment.name` を描画する                                            |
 
 > **一覧は再取得せず、API成功後にStore上の該当行だけを書き換えて反映する。**
 
