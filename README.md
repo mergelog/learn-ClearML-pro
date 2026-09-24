@@ -544,7 +544,7 @@ ClearML APIの疎通確認は次のコマンドで行えます。
 curl http://localhost:8008/debug.ping
 ```
 
-ClearML Server全体の件数と、このプロジェクトで使用する半導体学習データの登録状態を確認します。このコマンドはデータを変更しません。
+ClearML Server全体の件数と、このプロジェクトで使用する水銀電池学習データの登録状態を確認します。このコマンドはデータを変更しません。
 
 ```bash
 corepack pnpm backend:data:status
@@ -563,7 +563,7 @@ corepack pnpm backend:data:status
 corepack pnpm seed
 ```
 
-#### 半導体の機械学習データ
+#### 水銀電池の機械学習データ
 
 製造条件からウェハの良品・不良品を予測する、架空の表形式データを作成します。画像は使用しません。
 
@@ -760,10 +760,10 @@ corepack pnpm web:build
 # Python環境の準備（学習・推論・検証の依存をlockから入れる）
 corepack pnpm py:setup
 
-# 半導体Datasetだけを登録
+# 水銀電池Datasetだけを登録
 corepack pnpm seed:semiconductor:dataset
 
-# 半導体Dataset・比較用実験・代表モデルを一括登録
+# 水銀電池Dataset・比較用実験・代表モデルを一括登録
 corepack pnpm seed:semiconductor
 
 # 登録済みDatasetで学習（Dataset Versionは必須）
@@ -823,7 +823,7 @@ corepack pnpm web:lint:baseline
 # ClearML Serverのログを表示
 corepack pnpm backend:logs
 
-# ClearML Serverと半導体学習データの登録状態を表示
+# ClearML Serverと水銀電池学習データの登録状態を表示
 corepack pnpm backend:data:status
 
 # ClearML Serverを停止
@@ -853,8 +853,8 @@ corepack pnpm backend:down
 | `TRAINING_AGENT_IMAGE` | `stackup/semiconductor-agent:0.1.0` | `.env`。Agentのイメージ |
 | `TRAINING_AGENT_IMAGE_DIGEST` | `unknown` | `.env`。Taskへ来歴として渡すdigest。ローカルビルドでは `docker image inspect --format '{{.Id}}'` の値 |
 | `EXPERIMENT_ENVIRONMENT` | `dev` | ハイパーパラメータ探索がどの環境の予算で走るか。`dev` / `staging` / `production`。`--environment` を渡すとそちらが優先される |
-| `SEMICONDUCTOR_SEED_OUTPUT` | `.generated/semiconductor` | 半導体seedの出力先 |
-| `SEMICONDUCTOR_RANDOM_SEED` | `20260904` | 半導体seedが生成するデータのrandom seed |
+| `SEMICONDUCTOR_SEED_OUTPUT` | `.generated/semiconductor` | 水銀電池seedの出力先 |
+| `SEMICONDUCTOR_RANDOM_SEED` | `20260904` | 水銀電池seedが生成するデータのrandom seed |
 | `PRIMEUI_LICENSE` | 未設定 | `.env`。PrimeUIのライセンスキー |
 | `CLEARML_WEB_COMPANY_ID` | `d1bd92a3b039400cbafc60a7a5b1e52b` | Web画面が使うClearMLのcompany ID |
 | `BIND_ADDRESS` | `127.0.0.1` | `.env`。推論・監視がホスト上で待ち受けるアドレス。`0.0.0.0` にすると同じLANの誰でも到達できる |

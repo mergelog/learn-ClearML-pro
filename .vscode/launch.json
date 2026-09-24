@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Angular (Mac Chrome / LAN)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://192.168.0.4:4200/",
+      "webRoot": "${workspaceFolder}",
+      "browserLaunchLocation": "ui"
+    },
+    {
+      "name": "Attach to Angular (Mac Chrome / LAN)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "urlFilter": "http://192.168.0.4:4200/*",
+      "webRoot": "${workspaceFolder}",
+      "browserAttachLocation": "ui"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 - 状態: 採用
 - 日付: 2026-09-08
-- 対象: `ml/semiconductor_quality`（半導体品質分類）
+- 対象: `ml/semiconductor_quality`（水銀電池品質分類）
 
 ## 背景
 

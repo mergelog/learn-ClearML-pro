@@ -208,14 +208,147 @@ src/app/webapp-common/shared/
     └── template-forms-ui/
 ```
 
+## `business-logic/`：ClearML API とその型
+
+ここは ClearML の API を呼ぶためのコードと、API が受け渡すデータの型を置く場所です。フォルダ名に `business-logic` とありますが、画面固有の業務手順をすべてここに集めているわけではありません。たとえば品質パイプラインの「Task を複製して Queue に入れる」という手順は `features/quality-pipeline/data-access/` にあります。
+
+```text
+src/app/business-logic/
+├── api-services/
+│   ├── tasks.service.ts        # tasks.get_all_ex など、Task API の操作
+│   ├── models.service.ts       # Model API の操作
+│   ├── projects.service.ts     # Project API の操作
+│   ├── …                       # Events・Queues・Workers などの API
+│   ├── api-requests.service.ts # 共通の HTTP 呼び出しと応答の取り出し
+│   └── api.ts                  # Task API の再エクスポートと ApiOptions
+├── model/
+│   ├── tasks/                 # Task と Task API の Request・Response
+│   ├── models/                # Model と Model API の Request・Response
+│   ├── projects/              # Project API の型
+│   ├── …                      # API の対象別の型
+│   └── api-request.ts         # HTTP 応答の data・meta など
+├── services/
+│   ├── tasks.service.ts        # Task・Queue の状態やタグに関する判断
+│   └── models.service.ts       # Model のタグに関する判断
+├── configuration.ts           # API の接続設定とヘッダーの選択
+├── variables.ts               # BASE_PATH などの値
+├── constants.ts               # 対象エンティティの定数
+└── encoder.ts                 # URL 内の + をエンコードする処理
+```
+
+### `api-services/`：API 操作と HTTP
+
+`tasks.service.ts` の `ApiTasksService` は、`tasksGetAllEx()`・`tasksClone()` のように ClearML API の操作ごとにメソッドを持ちます。ほかの対象も `models.service.ts` の `ApiModelsService`、`projects.service.ts` の `ApiProjectsService` という対応です。API ごとのファイルは `auth`・`events`・`login`・`models`・`organization`・`pipelines`・`projects`・`queues`・`reports`・`server`・`serving`・`storage`・`tasks`・`users`・`workers` の 15 個です。
+
+各 API サービスはエンドポイントとリクエスト型を選び、`SmApiRequestsService` に HTTP 呼び出しを渡します。たとえば `tasksGetAllEx(request)` は `TasksGetAllExRequest` を受け、`/tasks.get_all_ex` に POST します。共通の `api-requests.service.ts` は `HttpClient` を使い、通常の `post<T>()` では ClearML の応答 `{ data, meta }` から `data` を取り出します。そのため呼び出し元が受け取るのは、通常は外側の `{ data, meta }` ではなく `TasksGetAllExResponse` に相当する中身です。また、`post<T>()` は `withCredentials` を有効にします。HTTP リクエストは [app.config.ts](src/app/app.config.ts) で登録した interceptor も通り、そこではクライアントを示すヘッダーの追加と 401 エラーの処理を行います。
+
+### `model/`：API の入出力型
+
+`model/` は API 対象ごとに分かれます。直下の対象別フォルダは `auth`・`debug`・`events`・`login`・`models`・`organization`・`pipelines`・`projects`・`queues`・`reports`・`server`・`serving`・`storage`・`tasks`・`users`・`workers` です。`api-request.ts` のように `model/` 直下にある共通の型もあります。
+
+`model/tasks/` を例にすると、次の 3 種類を区別すると読みやすくなります。
+
+| 例 | 役割 |
+| --- | --- |
+| `task.ts`・`taskStatusEnum.ts` | Task 自体の項目と状態の値 |
+| `tasksGetAllExRequest.ts` | 一覧取得に渡す検索条件。`project`・`status`・`page_size` など |
+| `tasksGetAllExResponse.ts` | 一覧取得で返る `tasks`・`scroll_id` など |
+
+API サービスと多くのモデルは OpenAPI のコード生成に由来します。ただし、このリポジトリには追加・調整されたコードや手書きの共通処理も混在します。生成由来の `ApiTasksService.tasksGetAllEx()` は、内部で `TasksGetAllExResponse` を使っていても、公開シグネチャが `Observable<any>` です。呼び出し側では生成モデルの応答型を明示し、画面が使う項目を adapter で整えます。型注釈だけでは実行時の応答内容を保証できないため、欠損値の扱いも adapter で決めます。
+
+以下は `model/` の **16 分野すべて**の案内です。同じ分野の `XxxRequest.ts` は API に渡す値、`XxxResponse.ts` は返る値、短い名前のファイルはその中で使うエンティティや入れ子の型を表します。各分野の `models.ts` は型の再エクスポート用ですが、`debug/models.ts` は空です。型名が同じでも、`tasks/task.ts` と `reports/task.ts` のように置き場所が違えば別の型なので、import 元を確認します。
+
+#### `auth/`：認証情報と権限
+
+`credentials.ts` はアクセスキー・シークレットキーなどの認証情報、`role.ts` はユーザー権限の値を表します。`authLoginRequest.ts`／`authLoginResponse.ts` は認証トークン取得の入出力、`authValidateTokenResponse.ts` はトークンの有効性と対応するユーザー・会社 ID です。資格情報の作成・編集・失効や、ユーザー作成に使う Request／Response もここにあります。後述の `login/` はログイン画面が利用できる方式の問い合わせが中心です。
+
+#### `debug/`：現在は型定義なし
+
+現状は空の `models.ts` だけです。デバッグ画像やログの型を探す場合は `events/` を、Report の取得結果に含まれるデバッグ画像の型を探す場合は `reports/` を見ます。
+
+#### `events/`：Task が記録したログ・指標・画像
+
+`metricsScalarEvent.ts`・`metricsVectorEvent.ts`・`metricsPlotEvent.ts`・`metricsImageEvent.ts` は数値や可視化データのイベント、`taskLogEvent.ts` はログ 1 件の形です。`eventsGetTaskLatestScalarValuesRequest.ts` は Task ID を渡し、Response は `metrics[] → variants[] → last_value` という入れ子で最新値を返します。系列の履歴、複数 Task の比較、デバッグ画像、プロット、Task ログの取得にもそれぞれ Request／Response があります。`tasks/` が Task 本体なら、こちらは Task に蓄積された観測データです。
+
+#### `login/`：利用できるログイン方式
+
+`loginSupportedModesResponse.ts` は Basic 認証、ゲスト、SSO、認証済みかどうか、サーバー側の問題などを表します。`loginSupportedModesResponseBasic.ts` などはその入れ子の型で、`loginLogoutResponse.ts` はログアウトの応答です。`auth/` のトークン・資格情報と分けて読むと、ログイン画面が何を表示できるかを追いやすくなります。
+
+#### `models/`：Model の登録情報
+
+`model.ts` は ID・名前・所属 Project・作成元 Task・framework・保存先 URI・公開準備の状態・metadata などを持ちます。`modelsGetAllExRequest.ts` は名前・タグ・Project・ページなどでの検索条件、Response の `models[]` は Model の一覧です。作成・更新・移動・アーカイブ・公開などの操作型もあります。`metadataItem.ts` は Model のメタデータ 1 項目で、`tasks/taskModels.ts` は Task 側が参照する Model 情報なので役割が異なります。
+
+#### `organization/`：組織全体の集計と共通情報
+
+`organizationGetEntitiesCountResponse.ts` は Project・Task・Model・Dataset・Report などの件数です。`organizationGetTagsResponse.ts` は組織で使われるタグ、`organizationGetUserCompaniesResponse.ts` は所属会社の情報を返します。`organizationGetProjectWorkloadsRequest.ts` は期間・Project ID・集計軸を指定し、Response の `projects`・`users`・`queues` に `workloads.ts` の合計値と時系列を収めます。個別 Project の詳細型とは分けて読みます。
+
+#### `pipelines/`：Pipeline 実行の API
+
+`pipelinesCheckNewRunRequest.ts` は既存の controller Task と実行先 Project 名を渡し、新しい実行を始められるか確認します。`pipelinesStartPipelineRequest.ts` は元 Task・Queue・引数など、Response は Pipeline ID・投入結果・新規 Project 情報などです。`pipelinesDeleteRunsResponse.ts` は削除成功分と失敗分を別の配列で返します。ここには Pipeline API の入出力型があり、個々の実行を表す Task 自体の型は `tasks/` にあります。
+
+#### `projects/`：Project とその配下の集計
+
+`project.ts` は Project の ID・名前・説明・タグ・既定の成果物出力先・集計値などを表します。一覧 API の `projectsGetAllExResponse.ts` は `projects[]` とスクロール ID を持ち、配列の要素には `projectsGetAllResponseSingle.ts` が使われます。この要素には子 Project や集計値も含まれるため、`project.ts` と同一視しません。作成・更新・削除・移動・統合に加え、タグ・指標・ハイパーパラメータの候補を取得する型もここにあります。
+
+#### `queues/`：実行待ち Queue と投入された Task
+
+`queue.ts` は Queue の ID・名前・タグ・待機中の `Entry[]`・Worker 情報など、`entry.ts` は投入された Task ID と投入時刻を表します。`queuesGetAllExResponse.ts` は Queue 一覧、`queueMetrics.ts` は時刻ごとの Queue 長と平均待ち時間です。Task の追加・除去・別 Queue への移動・順番変更・次の Task の取得などの Request／Response があり、`tasks/` の実行状態とは別に「どの Queue で待つか」を扱います。
+
+#### `reports/`：Report と Report 用の取得データ
+
+`report.ts` は Report の ID・名前・状態・所属 Project・本文・添付資産などを表します。`reportsGetAllExResponse.ts` の一覧プロパティ名は `reports` ではなく `tasks` で、要素型は `Report` です。`reportsGetTaskDataResponse.ts` は関連 Task・プロット・デバッグ画像・指標をまとめて返します。`view.ts`・`filtering.ts` など表示・絞り込み用の型や、Report の作成・公開・共有・移動の操作型もあります。ここにある `task.ts` は Report 用データに含まれる Task の型です。
+
+#### `server/`：ClearML サーバーの情報と設定
+
+`serverInfoResponse.ts` はバージョン・ビルド・API バージョンなど、`serverConfigRequest.ts` は設定の取得対象パスです。`serverReportStatsOptionRequest.ts`／Response は統計送信オプションの設定と有効状態を表します。Task や Project の業務データではなく、接続先サーバーそのものに関する型です。
+
+#### `serving/`：Model の配信 Endpoint
+
+`servingGetEndpointsResponse.ts` は Endpoint 一覧、`endpointStats.ts` は各 Endpoint の Model・URL・インスタンス数・要求数・遅延などです。`servingGetEndpointDetailsResponse.ts` は入力形式や稼働中のインスタンスまで含む詳細、`servingGetEndpointMetricsHistoryResponse.ts` は全体とインスタンス別の履歴です。Container の登録・解除・状態報告に使う Request もあり、`models/` が Model の保存情報なら、こちらは配信中の状態を扱います。
+
+#### `storage/`：成果物の保存先と接続設定
+
+`storage.ts` は保存先の ID・名前・URI・資格情報を表し、`storageGetAllResponse.ts` の `results[]` に並びます。`storageGetSettingsResponse.ts` は AWS・Google・Azure の設定を `aws.ts`・`google.ts`・`azure.ts` で分けて持ち、Bucket／Container の型もあります。保存先の作成・削除・設定変更に使う Request／Response を探す場所で、`assets/` のようなフロントエンドの静的ファイル置き場ではありません。
+
+#### `tasks/`：実験・実行を表す中心的な型
+
+`task.ts` は ID・名前・種類・状態・所属 Project・親 Task・実行設定・出力・タグなどを持ちます。`taskStatusEnum.ts` は `created`・`queued`・`in_progress`・`completed` などの状態です。`execution.ts` は実行設定、`artifact.ts` はその中の成果物、`output.ts` は実行結果の参照先を表します。`tasksGetAllExRequest.ts` は検索条件・ページ・取得項目（`only_fields`）、Response は `tasks[]` と `scroll_id` を持ちます。複製、Queue 投入、停止、公開、設定やハイパーパラメータの編集など多数の操作型もここです。`only_fields` を指定した応答では、`Task` のすべての項目が返るとは限りません。
+
+#### `users/`：ユーザー情報と個人設定
+
+`user.ts` はユーザー ID・名前・メールアドレス・役割など、`usersGetAllExResponse.ts` はユーザー一覧です。`usersGetCurrentUserResponse.ts` は現在のユーザーに加えて設定や開始時の情報を含み、`usersGetPreferencesResponse.ts` は個人設定を返します。ユーザー作成・更新・削除、招待情報の取得に関わる型もあります。認証トークンや資格情報の形式は `auth/` を見ます。
+
+#### `workers/`：Task を実行する Worker の稼働状況
+
+`worker.ts` は Worker ID・所属・接続先 Queue・現在の Task・最終報告時刻などを表します。`workersGetStatsResponse.ts` と `machineStats.ts` は CPU・GPU・メモリなどの利用状況、`workersGetActivityReportResponse.ts` は稼働の時系列です。Worker の登録・解除・状態報告、取得する指標キーの指定に使う Request／Response もあります。`queues/` の待機列と合わせると、投入された Task をどの Worker が処理するかを追えます。
+
+`model/` 直下には分野別フォルダ以外に 4 ファイルあります。`api-request.ts` は共通 HTTP 応答の `data`・`meta` と汎用リクエスト、`al-task.ts` は `Task` の一部を画面で使う形に差し替えた `ITask` です。`LoginModeResponse.ts` と `FixedUserModeExResponse.ts` は認証方式やゲスト・サーバーエラー情報を補う型です。
+
+### `services/`：API サービスと名前が似ている別の処理
+
+`api-services/tasks.service.ts` の **`ApiTasksService` は通信**を担当します。一方、`services/tasks.service.ts` の **`BlTasksService` は判断**を担当します。後者には、既定の Queue を探す、Task を Queue に投入・解除できるか判定する、`archived` などのタグを操作する、といったメソッドがあります。`services/models.service.ts` の `BlModelsService` は Model の `archived` タグを操作します。ファイル名が同じ `tasks.service.ts` でも、import 元とクラス名で見分けます。
+
+### 画面から API まで辿る例
+
+品質パイプライン画面で実行中のステップを読む場合は、次の経路です。
+
+```text
+features/quality-pipeline/state/quality-pipeline.effects.ts
+  → features/quality-pipeline/data-access/quality-pipeline-api.service.ts の getSteps()
+  → business-logic/api-services/tasks.service.ts の tasksGetAllEx()
+  → business-logic/api-services/api-requests.service.ts の post<T>()
+  → HttpClient → ClearML API の /tasks.get_all_ex
+  → model/tasks/tasksGetAllExResponse.ts の型で応答を読む
+  → features/quality-pipeline/data-access/quality-pipeline.adapter.ts の toStep()
+  → 画面用の PipelineStep
+```
+
+`getSteps()` は「親 Task の ID」「取得する項目」「並び順」などを API の検索条件に変え、返った `Task` を画面用の `PipelineStep` に変換します。このような画面固有の組み立ては `features/*/data-access/` が担当します。[アーキテクチャ規約](docs/phase7_チーム開発標準/61_アーキテクチャ規約.md) では `business-logic/` を取り込み済みの凍結領域とし、新しい feature が生成 API に触れる場所を境界ファイルに限定しています。
+
 ## その他の app 直下
 
 ```text
 src/app/
-├── business-logic/
-│   ├── api-services/        # tasks.service.ts などの ClearML API サービス
-│   ├── model/               # API のデータ型を対象別に配置
-│   └── services/            # Task・Model 関連のサービス
 ├── core/
 │   ├── actions/
 │   ├── reducers/

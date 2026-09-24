@@ -23,7 +23,7 @@ class ClearmlDataStatusTest(unittest.TestCase):
         self.assertIn("Project: 1件", report)
         self.assertIn("現在のDatasetデータはありません。", report)
         self.assertIn("現在のTraining Taskデータはありません。", report)
-        self.assertIn("半導体学習データはありません。学習開始前の状態です。", report)
+        self.assertIn("水銀電池学習データはありません。学習開始前の状態です。", report)
 
     def test_registered_learning_data_includes_counts_and_created_dates(self) -> None:
         created = datetime(2026, 9, 6, 1, 2, 3, tzinfo=timezone.utc)
@@ -78,7 +78,7 @@ class ClearmlDataStatusTest(unittest.TestCase):
             "作成日時 (Asia/Tokyo): 2026-09-06T10:02:03+09:00",
             report,
         )
-        self.assertIn("半導体学習データが登録されています。", report)
+        self.assertIn("水銀電池学習データが登録されています。", report)
 
     def test_dataset_in_hidden_infrastructure_project_is_reported(self) -> None:
         created = datetime(2026, 9, 6, 1, 2, 3, tzinfo=timezone.utc)

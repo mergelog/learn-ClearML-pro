@@ -63,13 +63,13 @@ curl http://localhost:8008/debug.ping
 http://localhost:8080
 ```
 
-ClearML Server全体の件数と、半導体学習データが残っていないことを確認します。
+ClearML Server全体の件数と、水銀電池学習データが残っていないことを確認します。
 
 ```bash
 corepack pnpm backend:data:status
 ```
 
-現在のCompose構成では、ClearML標準サンプルの自動登録を無効にしています。初期化直後は、Server全体と半導体学習データの両方が次の状態であることを確認します。
+現在のCompose構成では、ClearML標準サンプルの自動登録を無効にしています。初期化直後は、Server全体と水銀電池学習データの両方が次の状態であることを確認します。
 
 ```text
 ClearML Server全体:
@@ -77,7 +77,7 @@ ClearML Server全体:
 - Task: 0件
 - Model: 0件
 
-判定: 半導体学習データはありません。学習開始前の状態です。
+判定: 水銀電池学習データはありません。学習開始前の状態です。
 ```
 
 ## 初期化後の注意点
@@ -129,7 +129,7 @@ corepack pnpm ml:train -- \
 
 ## ローカル生成ファイルについて
 
-半導体seedが作成したローカルファイルは、次のディレクトリに保存されます。
+水銀電池seedが作成したローカルファイルは、次のディレクトリに保存されます。
 
 ```text
 .generated/semiconductor/

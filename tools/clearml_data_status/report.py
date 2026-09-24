@@ -34,9 +34,9 @@ def render_status(status: ClearmlDataStatus) -> str:
         lines.extend(_render_category(label, items))
 
     if status.has_learning_data:
-        lines.append("判定: 半導体学習データが登録されています。")
+        lines.append("判定: 水銀電池学習データが登録されています。")
     else:
-        lines.append("判定: 半導体学習データはありません。学習開始前の状態です。")
+        lines.append("判定: 水銀電池学習データはありません。学習開始前の状態です。")
 
     return "\n".join(lines)
 
