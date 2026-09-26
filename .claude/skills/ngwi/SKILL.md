@@ -49,25 +49,27 @@ allowed-tools: Bash(npx mergelog/ng-wiring:*), Bash(ls:*), Read, Grep, Glob, Ask
 候補一覧は 1 件 4 行で stderr に出る。
 
 ```text
-3. [ExperimentInfoHeaderComponent] route: projects/:projectId/tasks/:experimentId
-   path: AppComponent -> ExperimentsComponent -> ExperimentOutputComponent -> ExperimentInfoHeaderComponent
-   use: src/app/features/.../experiment-output.component.html:6
-   target: src/app/webapp-common/.../experiment-info-header.component.html (offset 2431)
+4. [bootstrap] route: /projects/:projectId/tasks/:experimentId
+   path: AppRootComponent -> AppComponent -> ExperimentsComponent -> ExperimentOutputComponent -> ExperimentInfoHeaderComponent
+   use: src/app/features/experiments/containers/experiment-ouptut/experiment-output.component.html:6
+   target: src/app/webapp-common/experiments/dumb/experiment-info-header/experiment-info-header.component.html (offset 2336)
 ```
 
-- `[...]` = 属性を持つ要素の所属コンポーネント、`route` = それが表示されるルート、`path` = 親から対象までの経路、`use` = 対象コンポーネントの使用箇所、`target` = 属性が書かれているファイル。
+- `[...]` は経路の種別。`bootstrap` は起動からその要素まで辿り切れた経路、`declaration` は使用箇所まで辿れていない宣言だけの経路、`uninstantiated-fragment` は実体化されないテンプレート断片、`unresolved-dynamic` は動的生成で経路が切れたもの。
+- `route` = その要素が表示されるルート、`path` = 起動側から属性を持つコンポーネント（末尾）までの経路、`use` = 経路上の使用箇所（複数並ぶことがある）、`target` = 属性が書かれているファイル。
 
 説明文（引数の 3）と突き合わせて 1 件に絞る。
 
-1. 説明文にある画面名・URL・一覧/詳細/モーダル/サイドバーなどの語を、`route` と `path` に対応させる。
-2. まだ複数残るなら、候補の `target` のファイルと `use` の行を読み、説明文が指す操作対象（ボタンのラベル、入力欄の役割、周辺の要素）と一致するものを選ぶ。
-3. 選べたら、**同じコマンドに `--candidate <番号>` を足して再実行する**。番号は直前の実行が出した一覧の番号を使う（絞り込みオプションを変えると番号も変わる）。
-4. `Candidate enumeration was truncated.` が出ている場合は一覧が打ち切られている。`--through <クラス名>`、`--route <パス>`、`--project <名前>` で絞ってから選ぶ。
+1. `bootstrap` の候補を優先する。`declaration` / `uninstantiated-fragment` / `unresolved-dynamic` は画面までの経路が完結していないので、説明文に合う `bootstrap` があればそちらを選ぶ。
+2. 説明文にある画面名・URL・一覧/詳細/モーダル/サイドバーなどの語を `route` と `path` に対応させる。同じ要素でも `route` が違えば別候補になる（例: `.../:experimentId` と `.../:experimentId/output`、一覧に重ねて出る最小化ビューとフル画面）ので、説明文がどの URL の画面を指しているかを見る。
+3. まだ複数残るなら、`target` のファイルと `use` の行を読み、説明文が指す操作対象（ボタンのラベル、入力欄の役割、周辺の要素）と一致するものを選ぶ。同名の属性が別コンポーネントにもある場合（例: ヘッダー直下のボタンとメニュー内の同じボタン）は `path` の末尾と `target` で見分ける。
+4. 選べたら、**同じコマンドに `--candidate <番号>` を足して再実行する**。番号は直前の実行が出した一覧の番号を使う（絞り込みオプションを変えると番号も変わる）。
+5. `Candidate enumeration was truncated.` が出ている場合は一覧が打ち切られている。`--through <クラス名>`、`--route <パス>`、`--project <名前>` で絞ってから選ぶ。
 
 **説明文が無い、または説明文だけでは決め手が無いときは、推測で選ばない。** AskUserQuestion でどの経路を求めているか質問する。
 
-- 選択肢のラベルは所属コンポーネント名など短い識別、説明には `route` と `path` の要点を、ユーザが画面として判別できる言葉で書く。
-- 候補が 4 件を超えるときは、`route` でまとめて代表的なものを選択肢にし、説明文に該当件数を書く。
+- 選択肢のラベルは `path` 末尾のコンポーネント名など短い識別にし、説明には `route` と経路の要点を、ユーザが画面として判別できる言葉で書く（どの URL のどの部分か、`bootstrap` 以外なら経路が未完である旨）。
+- 候補が 4 件を超えるときは `route` と `target` でまとめ、代表的なものを選択肢にして、説明に該当件数を書く。
 - 回答を得たら `--candidate` を付けて再実行し、資料の保存まで到達させる。質問して終わりにしない。
 
 ## 使い方（案内用）
