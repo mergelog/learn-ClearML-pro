@@ -38,6 +38,8 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 # コマンドライン入口は結果を標準出力へ書くことが仕事なので print を許す。
 "**/*cli.py" = ["T20"]
 "tools/seed_clearml.py" = ["T20"]
+# 一時検証用スクリプト。詳細は x-mp20260926.md 参照。役目を終えたら削除する。
+"tools/mp20260926_seed.py" = ["T20"]
 # プロセスの入口は、起動できない理由を標準エラーへ書くのが仕事である。
 "**/main.py" = ["T20"]
 "tools/semiconductor_seed/*.py" = ["T20"]
