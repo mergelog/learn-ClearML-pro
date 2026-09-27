@@ -29,6 +29,7 @@ from ml.semiconductor_quality.clearml_tracking import (
     RESOLVED_DATASET_SECTION,
     RUNTIME_SECTION,
     SPLIT_SECTION,
+    WEB_ARGUMENT_PREFIX,
     EnqueueError,
     fetch_dataset,
     queued_command_line,
@@ -248,6 +249,7 @@ class StartTrainingTaskTest(ClearmlSdkTestCase):
         start_training_task(build_config())
 
         self.assertEqual(self.init_arguments["output_uri"], DEFAULT_FILES_HOST)
+        self.assertEqual(self.task.output_uri, DEFAULT_FILES_HOST)
 
     def test_the_started_task_exposes_its_id(self) -> None:
         started = start_training_task(build_config())
@@ -770,6 +772,7 @@ class AgentBoundaryTest(ClearmlSdkTestCase):
 class QueuedCommandLineTest(ClearmlSdkTestCase):
     def test_the_invocation_is_read_back_from_the_task_the_agent_named(self) -> None:
         queued = mock.MagicMock(name="queued task")
+        queued.get_parameters.return_value = {}
         queued.get_parameter.return_value = "--dataset-version 2.0.0 --queue"
         self.sdk.get_task.return_value = queued
 
@@ -781,6 +784,7 @@ class QueuedCommandLineTest(ClearmlSdkTestCase):
 
     def test_the_invocation_is_read_from_where_it_was_recorded(self) -> None:
         queued = mock.MagicMock(name="queued task")
+        queued.get_parameters.return_value = {}
         queued.get_parameter.return_value = ""
         self.sdk.get_task.return_value = queued
 
@@ -794,6 +798,7 @@ class QueuedCommandLineTest(ClearmlSdkTestCase):
 
     def test_a_quoted_argument_survives_the_round_trip(self) -> None:
         queued = mock.MagicMock(name="queued task")
+        queued.get_parameters.return_value = {}
         queued.get_parameter.return_value = "--task-name 'nightly run'"
         self.sdk.get_task.return_value = queued
 
@@ -801,6 +806,44 @@ class QueuedCommandLineTest(ClearmlSdkTestCase):
             arguments = queued_command_line()
 
         self.assertEqual(arguments, ("--task-name", "nightly run"))
+
+    def test_webapp_args_are_used_when_no_command_line_was_recorded(self) -> None:
+        queued = mock.MagicMock(name="queued task")
+        queued.get_parameter.return_value = ""
+        queued.get_parameters.return_value = {
+            f"{WEB_ARGUMENT_PREFIX}dataset-version": "1.0.0",
+            f"{WEB_ARGUMENT_PREFIX}dataset-project": "p20260927",
+            f"{WEB_ARGUMENT_PREFIX}dataset-name": "dataset_1",
+        }
+        self.sdk.get_task.return_value = queued
+
+        with mock.patch.dict("os.environ", {AGENT_TASK_ID_ENVIRONMENT_KEY: "queued-id"}):
+            arguments = queued_command_line()
+
+        self.assertEqual(
+            arguments,
+            (
+                "--dataset-version",
+                "1.0.0",
+                "--dataset-project",
+                "p20260927",
+                "--dataset-name",
+                "dataset_1",
+            ),
+        )
+
+    def test_webapp_args_take_priority_over_a_recorded_command_line(self) -> None:
+        queued = mock.MagicMock(name="queued task")
+        queued.get_parameter.return_value = "--dataset-version 1.0.0"
+        queued.get_parameters.return_value = {
+            f"{WEB_ARGUMENT_PREFIX}dataset-version": "2.0.0",
+        }
+        self.sdk.get_task.return_value = queued
+
+        with mock.patch.dict("os.environ", {AGENT_TASK_ID_ENVIRONMENT_KEY: "queued-id"}):
+            arguments = queued_command_line()
+
+        self.assertEqual(arguments, ("--dataset-version", "2.0.0"))
 
     def test_without_a_task_to_read_from_the_run_is_refused(self) -> None:
         with mock.patch.dict("os.environ", {}, clear=True), self.assertRaises(EnqueueError):

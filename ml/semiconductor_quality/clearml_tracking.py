@@ -84,6 +84,7 @@ PROVENANCE_SECTION = "Provenance"
 RUNTIME_SECTION = "Runtime"
 
 COMMAND_LINE_PARAMETER = "command_line"
+WEB_ARGUMENT_PREFIX = "Args/"
 
 # 「どこへ書こうとしたか」を、拒否したときの説明に使う。
 PARAMETER_ORIGIN = "task parameters"
@@ -318,6 +319,9 @@ def start_training_task(
         auto_connect_frameworks=dict(DISABLED_MODEL_FRAMEWORKS),
         output_uri=connection.files_host,
     )
+    # Agentは既存Taskへ接続するため、Task.initの引数だけでは保存先が更新されない。
+    # モデルをAgentの一時パスに残さないよう、接続後にも明示する。
+    task.output_uri = connection.files_host  # type: ignore[misc]
     task.set_packages(str(REQUIREMENTS_FILE))
     training_task = TrainingTask(task)
     training_task.record_configuration(config, command_line=command_line)
@@ -432,8 +436,10 @@ def queued_command_line() -> tuple[str, ...]:
 
     An Agent re-runs the entry point without the arguments the run was asked
     for, so the invocation is taken from the Task instead. The Task is the
-    single source either way: it is written from the command line when a run
-    is queued, and read from here when the Agent carries it out.
+    single source either way: a CLI-created Task records the complete command
+    line, while a WebApp-created Task supplies its values in the ``Args``
+    parameter group. WebApp values take priority, so editing a Draft and
+    retrying it never reuses an older invocation recorded by a failed run.
     """
     task_id = os.getenv(AGENT_TASK_ID_ENVIRONMENT_KEY, "").strip()
     if not task_id:
@@ -443,11 +449,34 @@ def queued_command_line() -> tuple[str, ...]:
         )
 
     task: Task = Task.get_task(task_id=task_id)
+    web_arguments = _web_task_arguments(task.get_parameters())
+    if web_arguments:
+        return web_arguments
+
     recorded = task.get_parameter(
         f"{EXECUTION_SECTION}/{COMMAND_LINE_PARAMETER}",
         default="",
     )
     return tuple(shlex.split(str(recorded or "")))
+
+
+def _web_task_arguments(parameters: Mapping[str, object]) -> tuple[str, ...]:
+    """Turn ClearML WebApp ``Args`` values into this command's CLI arguments.
+
+    The WebApp records each argument separately instead of preserving an
+    original shell command line. Keeping its keys as option names makes the
+    normal parser validate the values and keeps the UI and CLI entry points
+    subject to the same execution contract.
+    """
+    arguments: list[str] = []
+    for name, value in parameters.items():
+        if not name.startswith(WEB_ARGUMENT_PREFIX) or value is None:
+            continue
+        option = name.removeprefix(WEB_ARGUMENT_PREFIX)
+        if not option:
+            continue
+        arguments.extend((f"--{option}", str(value)))
+    return tuple(arguments)
 
 
 def fetch_dataset(config: DatasetConfig) -> FetchedDataset:
