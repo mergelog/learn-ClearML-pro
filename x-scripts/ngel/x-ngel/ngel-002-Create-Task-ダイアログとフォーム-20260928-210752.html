@@ -1,0 +1,976 @@
+<!--
+sm-create-experiment-dialog
+└── sm-dialog-template
+    ├── button: data-id="Cross" in mat
+    ├── mat-icon: data-id="pipelineIcon"
+    ├── mat-label: data-id="taskNameHeader"
+    ├── input: data-id="taskNameField" in mat
+    ├── mat-select: data-id="taskTypeDropdown"
+    ├── mat-expansion-panel-header: data-id="gitExpansionPanel"
+    ├── mat-select: data-id="gitTypeDropdown"
+    ├── mat-radio-button: data-id="pythonRadioButton"
+    ├── mat-radio-button: data-id="shellRadioButton"
+    ├── mat-select: data-id="scriptTypeDrodown"
+    ├── sm-button-toggle
+    │   ├── mat-button-toggle: data-id="discover"
+    │   └── mat-button-toggle: data-id="Specify"
+    └── sm-paginated-entity-selector
+-->
+<sm-create-experiment-dialog _nghost-ng-c218427907="" class="mat-mdc-dialog-component-host">
+  <sm-dialog-template _ngcontent-ng-c218427907="" header="Create Task" iconclass="al-ico-training" class="wrapper" _nghost-ng-c813617501="">
+    <button _ngcontent-ng-c813617501="" mat-icon-button="" data-id="Cross" tabindex="-1" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base stick-to-corner right mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+      <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+      <mat-icon _ngcontent-ng-c813617501="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+      <!--container-->
+      <span class="mat-focus-indicator"></span>
+      <span class="mat-mdc-button-touch-target"></span>
+    </button>
+    <!--container-->
+    <!--container-->
+    <mat-icon _ngcontent-ng-c813617501="" role="img" fontset="al" data-id="pipelineIcon" class="mat-icon notranslate icon-image lg al-ico-training al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-training" data-mat-icon-namespace="al" fonticon="al-ico-training"></mat-icon>
+    <!--container-->
+    <!--container-->
+    Create Task
+    <!--container-->
+    <!--container-->
+    <!--container-->
+    <mat-stepper _ngcontent-ng-c218427907="" color="accent" class="mat-stepper-horizontal mat-stepper-label-position-end mat-stepper-animations-enabled" style="--mat-stepper-animation-duration: 500ms;">
+      <!--container-->
+      <!--container-->
+      <mat-step-header role="tab" class="mat-step-header mat-horizontal-stepper-header mat-accent cdk-focused cdk-program-focused" tabindex="0" id="cdk-stepper-0-label-0" aria-posinset="1" aria-setsize="5" aria-selected="true" aria-controls="cdk-stepper-0-content-0">
+        <!--container-->
+        <span aria-hidden="true">
+          1
+        </span>
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        Code
+        <!--container-->
+        <!--container-->
+        <!--container-->
+      </mat-step-header>
+      <!--ng-container-->
+      <!--container-->
+      <mat-step-header role="tab" class="mat-step-header mat-horizontal-stepper-header mat-accent" tabindex="-1" id="cdk-stepper-0-label-1" aria-posinset="2" aria-setsize="5" aria-selected="false" aria-controls="cdk-stepper-0-content-1">
+        <!--container-->
+        <span aria-hidden="true">
+          2
+        </span>
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        Arguments
+        <!--container-->
+        <!--container-->
+        <!--container-->
+      </mat-step-header>
+      <!--ng-container-->
+      <!--container-->
+      <mat-step-header role="tab" class="mat-step-header mat-horizontal-stepper-header mat-accent" tabindex="-1" id="cdk-stepper-0-label-2" aria-posinset="3" aria-setsize="5" aria-selected="false" aria-controls="cdk-stepper-0-content-2">
+        <!--container-->
+        <span aria-hidden="true">
+          3
+        </span>
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        Environment
+        <!--container-->
+        <!--container-->
+        <!--container-->
+      </mat-step-header>
+      <!--ng-container-->
+      <!--container-->
+      <mat-step-header role="tab" class="mat-step-header mat-horizontal-stepper-header mat-accent" tabindex="-1" id="cdk-stepper-0-label-3" aria-posinset="4" aria-setsize="5" aria-selected="false" aria-controls="cdk-stepper-0-content-3">
+        <!--container-->
+        <span aria-hidden="true">
+          4
+        </span>
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        Container
+        <!--container-->
+        <!--container-->
+        <!--container-->
+      </mat-step-header>
+      <!--ng-container-->
+      <!--container-->
+      <mat-step-header role="tab" class="mat-step-header mat-horizontal-stepper-header mat-accent" tabindex="-1" id="cdk-stepper-0-label-4" aria-posinset="5" aria-setsize="5" aria-selected="false" aria-controls="cdk-stepper-0-content-4">
+        <!--container-->
+        <span aria-hidden="true">
+          5
+        </span>
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        <!--container-->
+        Run
+        <!--container-->
+        <!--container-->
+        <!--container-->
+      </mat-step-header>
+      <!--ng-container-->
+      <!--container-->
+      <!--container-->
+      <!--ng-container-->
+      <!--container-->
+      <form _ngcontent-ng-c218427907="" novalidate="" class="ng-untouched ng-pristine ng-invalid">
+        <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-invalid mat-form-field-animations-enabled">
+          <!--container-->
+          <!--container-->
+          <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-18" for="mat-input-18" style="">
+            <mat-label _ngcontent-ng-c218427907="" data-id="taskNameHeader">
+              Task Name
+            </mat-label>
+            <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+            <!--container-->
+          </label>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <input _ngcontent-ng-c218427907="" matinput="" placeholder="my task" formcontrolname="name" data-id="taskNameField" class="mat-mdc-input-element ng-untouched ng-pristine ng-invalid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-18" required="" aria-required="true">
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </mat-form-field>
+        <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-select mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled" style="width: 300px;">
+          <!--container-->
+          <!--container-->
+          <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-19" style="">
+            <mat-label _ngcontent-ng-c218427907="">
+              Task Type
+            </mat-label>
+            <!--container-->
+          </label>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <mat-select _ngcontent-ng-c218427907="" role="combobox" aria-haspopup="listbox" formcontrolname="taskType" data-id="taskTypeDropdown" class="mat-mdc-select ng-untouched ng-pristine ng-valid" aria-labelledby="mat-mdc-form-field-label-19" id="mat-select-0" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false">
+            <!--container-->
+            <span class="mat-mdc-select-value-text">
+              <mat-select-trigger _ngcontent-ng-c218427907="">
+                <mat-icon _ngcontent-ng-c218427907="" role="img" fontset="al" class="mat-icon notranslate al-ico-type-training al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-type-training" data-mat-icon-namespace="al" fonticon="al-ico-type-training"></mat-icon>
+                 Training 
+              </mat-select-trigger>
+              <!--container-->
+              <!--container-->
+            </span>
+            <!--container-->
+            <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
+            <!--container-->
+          </mat-select>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </mat-form-field>
+        <mat-expansion-panel _ngcontent-ng-c218427907="" class="mat-expansion-panel mt-3 mat-expansion-panel-animations-enabled">
+          <mat-expansion-panel-header _ngcontent-ng-c218427907="" role="button" data-id="gitExpansionPanel" class="mat-expansion-panel-header mat-focus-indicator" id="mat-expansion-panel-header-0" tabindex="0" aria-controls="cdk-accordion-child-0" aria-expanded="false" aria-disabled="false">
+            <span class="mat-content">
+              Git
+            </span>
+            <span class="mat-expansion-indicator">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path>
+              </svg>
+            </span>
+            <!--container-->
+          </mat-expansion-panel-header>
+          <section _ngcontent-ng-c218427907="">
+            <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-20" for="mat-input-19" style="">
+                <mat-label _ngcontent-ng-c218427907="">
+                  Repository URL
+                </mat-label>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <input _ngcontent-ng-c218427907="" matinput="" placeholder="git@github.com:clearml/clearml.git" formcontrolname="repo" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-19" aria-invalid="false" aria-required="false">
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+            <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field me-3 mat-mdc-form-field-type-mat-select mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-21" style="">
+                <mat-label _ngcontent-ng-c218427907="">
+                  Type
+                </mat-label>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <mat-select _ngcontent-ng-c218427907="" role="combobox" aria-haspopup="listbox" formcontrolname="type" data-id="gitTypeDropdown" class="mat-mdc-select ng-untouched ng-pristine ng-valid" aria-labelledby="mat-mdc-form-field-label-21" id="mat-select-1" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false">
+                <!--container-->
+                <span class="mat-mdc-select-value-text">
+                  <!--container-->
+                  <span class="mat-mdc-select-min-line">
+                    Branch
+                  </span>
+                  <!--container-->
+                </span>
+                <!--container-->
+                <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true">
+                  <path d="M7 10l5 5 5-5z"></path>
+                </svg>
+                <!--container-->
+              </mat-select>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+            <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-31" for="mat-input-28" style="">
+                <mat-label _ngcontent-ng-c218427907="">
+                  Branch
+                </mat-label>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <input _ngcontent-ng-c218427907="" matinput="" placeholder="main" formcontrolname="branch" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-28" aria-invalid="false" aria-required="false">
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </section>
+          <!--container-->
+        </mat-expansion-panel>
+        <!--container-->
+        <h5 _ngcontent-ng-c218427907="">
+          Entry Point
+        </h5>
+        <section _ngcontent-ng-c218427907="">
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-22" for="mat-input-20" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Working Directory
+              </mat-label>
+              <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <input _ngcontent-ng-c218427907="" matinput="" placeholder="src" formcontrolname="directory" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-20" required="" aria-invalid="false" aria-required="true">
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+          <mat-radio-group _ngcontent-ng-c218427907="" role="radiogroup" aria-label="Select Binary Type" formcontrolname="binaryType" class="mat-mdc-radio-group d-block mt-4 ng-untouched ng-pristine ng-valid">
+            <mat-radio-button _ngcontent-ng-c218427907="" value="python" data-id="pythonRadioButton" class="mat-mdc-radio-button mat-accent mat-mdc-radio-checked" id="mat-radio-0">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-radio-0-input">
+                <span class="mdc-radio">
+                  <span class="mat-mdc-radio-touch-target"></span>
+                  <input type="radio" aria-invalid="false" class="mdc-radio__native-control" id="mat-radio-0-input" name="mat-radio-group-0" value="python" tabindex="0">
+                  <span aria-hidden="true" class="mdc-radio__background">
+                    <span class="mdc-radio__outer-circle"></span>
+                    <span class="mdc-radio__inner-circle"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-radio-ripple mat-focus-indicator">
+                    <span class="mat-ripple-element mat-radio-persistent-ripple"></span>
+                  </span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Python
+                </span>
+              </label>
+            </mat-radio-button>
+            <mat-radio-button _ngcontent-ng-c218427907="" value="shell" data-id="shellRadioButton" class="mat-mdc-radio-button mat-accent" id="mat-radio-1">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-radio-1-input">
+                <span class="mdc-radio">
+                  <span class="mat-mdc-radio-touch-target"></span>
+                  <input type="radio" aria-invalid="false" class="mdc-radio__native-control" id="mat-radio-1-input" name="mat-radio-group-0" value="shell" tabindex="-1">
+                  <span aria-hidden="true" class="mdc-radio__background">
+                    <span class="mdc-radio__outer-circle"></span>
+                    <span class="mdc-radio__inner-circle"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-radio-ripple mat-focus-indicator">
+                    <span class="mat-ripple-element mat-radio-persistent-ripple"></span>
+                  </span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Shell
+                </span>
+              </label>
+            </mat-radio-button>
+          </mat-radio-group>
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-23" for="mat-input-21" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Binary
+              </mat-label>
+              <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <input _ngcontent-ng-c218427907="" matinput="" formcontrolname="binary" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" placeholder="python3" id="mat-input-21" required="" aria-invalid="false" aria-required="true">
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field me-3 mat-mdc-form-field-type-mat-select mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-24" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Type
+              </mat-label>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <mat-select _ngcontent-ng-c218427907="" role="combobox" aria-haspopup="listbox" formcontrolname="scriptType" panelclass="light-theme" data-id="scriptTypeDrodown" class="mat-mdc-select ng-untouched ng-pristine ng-valid" aria-labelledby="mat-mdc-form-field-label-24" id="mat-select-2" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false">
+              <!--container-->
+              <span class="mat-mdc-select-value-text">
+                <!--container-->
+                <span class="mat-mdc-select-min-line">
+                  Script
+                </span>
+                <!--container-->
+              </span>
+              <!--container-->
+              <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true">
+                <path d="M7 10l5 5 5-5z"></path>
+              </svg>
+              <!--container-->
+            </mat-select>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-invalid mat-form-field-animations-enabled">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-32" for="mat-input-29" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Script
+              </mat-label>
+              <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <input _ngcontent-ng-c218427907="" matinput="" formcontrolname="script" class="mat-mdc-input-element ng-untouched ng-pristine ng-invalid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" placeholder="entry_point.py" id="mat-input-29" required="" aria-required="true">
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <mat-checkbox _ngcontent-ng-c218427907="" formcontrolname="taskInit" class="mat-mdc-checkbox mat-accent mat-mdc-checkbox-checked ng-untouched ng-pristine ng-valid" id="mat-mdc-checkbox-29">
+            <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-29-input">
+              <span class="mdc-checkbox">
+                <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                <input type="checkbox" class="mdc-checkbox__native-control mdc-checkbox--selected" id="mat-mdc-checkbox-29-input" tabindex="0">
+                <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                <span aria-hidden="true" class="mdc-checkbox__background">
+                  <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                    <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                  </svg>
+                  <span class="mdc-checkbox__mixedmark"></span>
+                </span>
+                <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+              </span>
+              <span class="mat-internal-form-field-label mdc-label">
+                Add 
+                <code _ngcontent-ng-c218427907="" class="mx-0">
+                  Task.init
+                </code>
+                 call
+              </span>
+            </label>
+          </mat-checkbox>
+          <!--container-->
+        </section>
+      </form>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matsteppernext="" class="mdc-button mat-mdc-button-base mat-stepper-next mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="submit">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          NEXT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          SAVE AS DRAFT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base tertiary-button mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          RUN
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <mat-step _ngcontent-ng-c218427907="" hidden="" label="Arguments" class="ng-untouched ng-pristine ng-valid">
+        <!--container-->
+      </mat-step>
+      <!--container-->
+      <!--container-->
+      <!--ng-container-->
+      <form _ngcontent-ng-c218427907="" novalidate="" formarrayname="args" class="ng-untouched ng-pristine ng-valid">
+        <h5 _ngcontent-ng-c218427907="">
+          Configuration Hyperparameters Args
+        </h5>
+        <section _ngcontent-ng-c218427907="">
+          <!--container-->
+        </section>
+        <button _ngcontent-ng-c218427907="" mat-button="" class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple">
+          <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+          <mat-icon _ngcontent-ng-c218427907="" role="img" fontset="al" fonticon="al-ico-plus" class="mat-icon notranslate al-ico-plus al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-plus" data-mat-icon-namespace="al"></mat-icon>
+          <span class="mdc-button__label">
+             Add argument 
+          </span>
+          <!--container-->
+          <span class="mat-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+        </button>
+      </form>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matstepperprevious="" class="mdc-button mat-mdc-button-base mat-stepper-previous mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="button">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          BACK
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matsteppernext="" class="mdc-button mat-mdc-button-base mat-stepper-next mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="submit">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          NEXT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          SAVE AS DRAFT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <!--container-->
+      <!--ng-container-->
+      <form _ngcontent-ng-c218427907="" novalidate="" class="ng-untouched ng-pristine ng-valid">
+        <h5 _ngcontent-ng-c218427907="">
+          Python
+        </h5>
+        <section _ngcontent-ng-c218427907="">
+          <h6 _ngcontent-ng-c218427907="">
+            Package Manager
+          </h6>
+          <mat-checkbox _ngcontent-ng-c218427907="" formcontrolname="poetry" class="mat-mdc-checkbox mat-accent ng-untouched ng-pristine ng-valid" id="mat-mdc-checkbox-28">
+            <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-28-input">
+              <span class="mdc-checkbox">
+                <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                <input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-28-input" tabindex="0">
+                <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                <span aria-hidden="true" class="mdc-checkbox__background">
+                  <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                    <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                  </svg>
+                  <span class="mdc-checkbox__mixedmark"></span>
+                </span>
+                <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+              </span>
+              <span class="mat-internal-form-field-label mdc-label">
+                Use Poetry
+              </span>
+            </label>
+          </mat-checkbox>
+          <h6 _ngcontent-ng-c218427907="">
+            Use Existing Virtual Environment
+          </h6>
+          <sm-button-toggle _ngcontent-ng-c218427907="" formcontrolname="venvType" _nghost-ng-c4156287772="" class="ng-untouched ng-pristine ng-valid">
+            <mat-button-toggle-group _ngcontent-ng-c4156287772="" name="fontStyle" aria-label="Font Style" class="mat-button-toggle-group mat-button-toggle-group-appearance-standard ng-untouched ng-pristine ng-valid" role="radiogroup" aria-disabled="false">
+              <mat-button-toggle _ngcontent-ng-c4156287772="" role="presentation" appearance="legacy" class="mat-button-toggle mat-button-toggle-checked mat-button-toggle-appearance-standard mat-button-toggle-animations-enabled" data-id="discover" id="mat-button-toggle-3">
+                <button type="button" class="mat-button-toggle-button mat-focus-indicator" id="mat-button-toggle-3-button" role="radio" tabindex="0" aria-checked="true" name="fontStyle">
+                  <!--container-->
+                  <span class="mat-button-toggle-label-content">
+                    <!--container-->
+                    <span _ngcontent-ng-c4156287772="" class="label">
+                      Discover
+                    </span>
+                    <!--container-->
+                  </span>
+                </button>
+                <span class="mat-button-toggle-focus-overlay"></span>
+                <span matripple="" class="mat-ripple mat-button-toggle-ripple"></span>
+              </mat-button-toggle>
+              <!--container-->
+              <mat-button-toggle _ngcontent-ng-c4156287772="" role="presentation" appearance="legacy" class="mat-button-toggle mat-button-toggle-appearance-standard mat-button-toggle-animations-enabled" data-id="Specify" id="mat-button-toggle-4">
+                <button type="button" class="mat-button-toggle-button mat-focus-indicator" id="mat-button-toggle-4-button" role="radio" tabindex="-1" aria-checked="false" name="fontStyle">
+                  <!--container-->
+                  <span class="mat-button-toggle-label-content">
+                    <!--container-->
+                    <span _ngcontent-ng-c4156287772="" class="label">
+                      Manual
+                    </span>
+                    <!--container-->
+                  </span>
+                </button>
+                <span class="mat-button-toggle-focus-overlay"></span>
+                <span matripple="" class="mat-ripple mat-button-toggle-ripple"></span>
+              </mat-button-toggle>
+              <!--container-->
+              <!--container-->
+            </mat-button-toggle-group>
+          </sm-button-toggle>
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field position-absolute mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled" style="visibility: hidden;">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-25" for="mat-input-22" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Preinstalled venv
+              </mat-label>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <input _ngcontent-ng-c218427907="" matinput="" placeholder="clearml" formcontrolname="venv" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-22" aria-invalid="false" aria-required="false">
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+          <h6 _ngcontent-ng-c218427907="">
+            Additional Packages
+          </h6>
+          <mat-radio-group _ngcontent-ng-c218427907="" role="radiogroup" aria-label="Select Requirements Type" formcontrolname="requirements" class="mat-mdc-radio-group mt-4 ng-untouched ng-pristine ng-valid">
+            <mat-radio-button _ngcontent-ng-c218427907="" value="skip" class="mat-mdc-radio-button mat-accent" id="mat-radio-2">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-radio-2-input">
+                <span class="mdc-radio">
+                  <span class="mat-mdc-radio-touch-target"></span>
+                  <input type="radio" aria-invalid="false" class="mdc-radio__native-control" id="mat-radio-2-input" name="mat-radio-group-1" value="skip" tabindex="-1">
+                  <span aria-hidden="true" class="mdc-radio__background">
+                    <span class="mdc-radio__outer-circle"></span>
+                    <span class="mdc-radio__inner-circle"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-radio-ripple mat-focus-indicator">
+                    <span class="mat-ripple-element mat-radio-persistent-ripple"></span>
+                  </span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Skip
+                </span>
+              </label>
+            </mat-radio-button>
+            <mat-radio-button _ngcontent-ng-c218427907="" value="text" class="mat-mdc-radio-button mat-accent mat-mdc-radio-checked" id="mat-radio-3">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-radio-3-input">
+                <span class="mdc-radio">
+                  <span class="mat-mdc-radio-touch-target"></span>
+                  <input type="radio" aria-invalid="false" class="mdc-radio__native-control" id="mat-radio-3-input" name="mat-radio-group-1" value="text" tabindex="0">
+                  <span aria-hidden="true" class="mdc-radio__background">
+                    <span class="mdc-radio__outer-circle"></span>
+                    <span class="mdc-radio__inner-circle"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-radio-ripple mat-focus-indicator">
+                    <span class="mat-ripple-element mat-radio-persistent-ripple"></span>
+                  </span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Use 
+                  <code _ngcontent-ng-c218427907="" class="mx-0">
+                    requirements.txt
+                  </code>
+                </span>
+              </label>
+            </mat-radio-button>
+            <mat-radio-button _ngcontent-ng-c218427907="" value="manual" class="mat-mdc-radio-button mat-accent" id="mat-radio-4">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-radio-4-input">
+                <span class="mdc-radio">
+                  <span class="mat-mdc-radio-touch-target"></span>
+                  <input type="radio" aria-invalid="false" class="mdc-radio__native-control" id="mat-radio-4-input" name="mat-radio-group-1" value="manual" tabindex="-1">
+                  <span aria-hidden="true" class="mdc-radio__background">
+                    <span class="mdc-radio__outer-circle"></span>
+                    <span class="mdc-radio__inner-circle"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-radio-ripple mat-focus-indicator">
+                    <span class="mat-ripple-element mat-radio-persistent-ripple"></span>
+                  </span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Specify packages
+                </span>
+              </label>
+            </mat-radio-button>
+          </mat-radio-group>
+          <!--container-->
+        </section>
+        <h5 _ngcontent-ng-c218427907="">
+          Environment Variables
+        </h5>
+        <section _ngcontent-ng-c218427907="" formarrayname="vars" class="ng-untouched ng-pristine ng-valid">
+          <!--container-->
+        </section>
+        <button _ngcontent-ng-c218427907="" mat-button="" class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple">
+          <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+          <mat-icon _ngcontent-ng-c218427907="" role="img" fontset="al" fonticon="al-ico-plus" class="mat-icon notranslate al-ico-plus al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-plus" data-mat-icon-namespace="al"></mat-icon>
+          <span class="mdc-button__label">
+             Add Variable 
+          </span>
+          <!--container-->
+          <span class="mat-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+        </button>
+      </form>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matstepperprevious="" class="mdc-button mat-mdc-button-base mat-stepper-previous mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="button">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          BACK
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matsteppernext="" class="mdc-button mat-mdc-button-base mat-stepper-next mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="submit">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          NEXT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          SAVE AS DRAFT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <!--container-->
+      <!--ng-container-->
+      <form _ngcontent-ng-c218427907="" novalidate="" class="d-flex gap-3 flex-column pe-4 ng-untouched ng-pristine ng-valid">
+        <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+          <!--container-->
+          <!--container-->
+          <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-26" for="mat-input-23" style="">
+            <mat-label _ngcontent-ng-c218427907="">
+              Image
+            </mat-label>
+            <!--container-->
+          </label>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <input _ngcontent-ng-c218427907="" matinput="" formcontrolname="image" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-23" aria-invalid="false" aria-required="false">
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </mat-form-field>
+        <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+          <!--container-->
+          <!--container-->
+          <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-27" for="mat-input-24" style="">
+            <mat-label _ngcontent-ng-c218427907="">
+              Arguments
+            </mat-label>
+            <!--container-->
+          </label>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <input _ngcontent-ng-c218427907="" matinput="" placeholder="-e env1=true" formcontrolname="args" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-24" aria-invalid="false" aria-required="false">
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </mat-form-field>
+        <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+          <!--container-->
+          <!--container-->
+          <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-28" for="mat-input-25" style="">
+            <mat-label _ngcontent-ng-c218427907="">
+              Startup Script
+            </mat-label>
+            <!--container-->
+          </label>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <textarea _ngcontent-ng-c218427907="" matinput="" formcontrolname="script" rows="8" class="mat-mdc-input-element terminal ng-untouched ng-pristine ng-valid mat-mdc-form-field-textarea-control mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-25" aria-invalid="false" aria-required="false"></textarea>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </mat-form-field>
+      </form>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matstepperprevious="" class="mdc-button mat-mdc-button-base mat-stepper-previous mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="button">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          BACK
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matsteppernext="" class="mdc-button mat-mdc-button-base mat-stepper-next mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="submit">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          NEXT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          SAVE AS DRAFT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <!--container-->
+      <!--ng-container-->
+      <form _ngcontent-ng-c218427907="" novalidate="" class="d-flex gap-3 flex-column ng-untouched ng-dirty ng-invalid">
+        <h5 _ngcontent-ng-c218427907="">
+          Enqueue task to
+        </h5>
+        <section _ngcontent-ng-c218427907="">
+          <sm-paginated-entity-selector _ngcontent-ng-c218427907="" formcontrolname="queue" label="Queue" displayfield="caption" _nghost-ng-c3684832195="" class="ng-untouched ng-dirty ng-invalid">
+            <mat-form-field _ngcontent-ng-c3684832195="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-mdc-form-field-has-icon-suffix mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-invalid mat-form-field-animations-enabled">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-30" for="mat-input-27" style="">
+                <mat-label _ngcontent-ng-c3684832195="">
+                  Queue
+                </mat-label>
+                <!--container-->
+                <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <input _ngcontent-ng-c3684832195="" matinput="" type="text" class="mat-mdc-input-element mat-mdc-autocomplete-trigger mat-mdc-form-field-input-control mdc-text-field__input ng-untouched ng-pristine ng-invalid cdk-text-field-autofill-monitored" id="mat-input-27" required="" aria-required="true" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-haspopup="listbox">
+              <!--container-->
+              <mat-autocomplete _ngcontent-ng-c3684832195="" autoactivefirstoption="" class="mat-mdc-autocomplete">
+                <!--container-->
+              </mat-autocomplete>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <mat-icon _ngcontent-ng-c3684832195="" role="img" fontset="al" fonticon="al-ico-search" matsuffix="" class="mat-icon notranslate al-ico-search al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-search" data-mat-icon-namespace="al"></mat-icon>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+            <!--container-->
+          </sm-paginated-entity-selector>
+        </section>
+        <h5 _ngcontent-ng-c218427907="">
+          Output
+        </h5>
+        <section _ngcontent-ng-c218427907="">
+          <mat-form-field _ngcontent-ng-c218427907="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+            <!--container-->
+            <!--container-->
+            <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-29" for="mat-input-26" style="">
+              <mat-label _ngcontent-ng-c218427907="">
+                Destination
+              </mat-label>
+              <!--container-->
+            </label>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <input _ngcontent-ng-c218427907="" matinput="" formcontrolname="output" placeholder="s3://my_bucket/my_folder" class="mat-mdc-input-element ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-26" aria-invalid="false" aria-required="false">
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </mat-form-field>
+        </section>
+      </form>
+      <button _ngcontent-ng-c218427907="" mat-stroked-button="" matstepperprevious="" class="mdc-button mat-mdc-button-base mat-stepper-previous mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="button">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          BACK
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          SAVE AS DRAFT
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <button _ngcontent-ng-c218427907="" mat-flat-button="" class="mdc-button mat-mdc-button-base tertiary-button mdc-button--unelevated mat-mdc-unelevated-button mat-mdc-button-disabled mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" disabled="true">
+        <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+        <span class="mdc-button__label">
+          RUN
+        </span>
+        <!--container-->
+        <span class="mat-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+      </button>
+      <!--container-->
+      <!--ng-container-->
+      <!--container-->
+      <!--container-->
+      <!--container-->
+      <!--container-->
+      <!--container-->
+    </mat-stepper>
+    <!--container-->
+  </sm-dialog-template>
+  <!--container-->
+</sm-create-experiment-dialog>
