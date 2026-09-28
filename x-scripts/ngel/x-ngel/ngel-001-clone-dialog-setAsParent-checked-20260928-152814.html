@@ -1,0 +1,1349 @@
+<!--
+html/
+├── head
+└── body
+    ├── sm-root
+    │   ├── router-outlet
+    │   └── sm-app-shell
+    │       ├── sm-update-notifier
+    │       ├── sm-color-picker-wrapper
+    │       ├── sm-server-notification-dialog-container
+    │       ├── sm-spinner
+    │       ├── sm-side-nav
+    │       │   ├── a: data-id="modelEndpointsIcon"
+    │       │   ├── a: data-id="qualityPipelineIcon"
+    │       │   └── a: data-id="dataCatalogIcon"
+    │       ├── sm-header
+    │       │   ├── sm-breadcrumbs
+    │       │   ├── sm-header-navbar-tabs
+    │       │   ├── button: data-id="globalSearchButton" in mat
+    │       │   │   └── mat-icon: data-id="search Icon"
+    │       │   ├── mat-icon: data-id="help Icon"
+    │       │   └── span: data-id="Avatar"
+    │       ├── router-outlet
+    │       ├── sm-common-experiments
+    │       │   ├── sm-overlay
+    │       │   ├── sm-experiment-header
+    │       │   │   ├── sm-toggle-archive
+    │       │   │   │   └── button: data-id="Open Archive" in mat
+    │       │   │   ├── sm-button-toggle
+    │       │   │   │   ├── mat-button-toggle: data-id="table"
+    │       │   │   │   ├── mat-button-toggle: data-id="info"
+    │       │   │   │   └── mat-button-toggle: data-id="compare"
+    │       │   │   ├── sm-common-search
+    │       │   │   │   ├── button: data-id="searchIcon" in mat
+    │       │   │   │   └── sm-search
+    │       │   │   │       └── input: data-id="searchInputField"
+    │       │   │   ├── sm-menu: data-id="downloadCSV"
+    │       │   │   │   └── mat-icon: data-id="OpenMenu"
+    │       │   │   └── sm-refresh-button
+    │       │   │       └── button: data-id="Auto Refresh" in mat
+    │       │   ├── as-split
+    │       │   │   ├── as-split-area
+    │       │   │   │   └── sm-experiments-table
+    │       │   │   │       ├── sm-experiment-menu-extended
+    │       │   │   │       │   └── sm-tags-menu
+    │       │   │   │       └── sm-table
+    │       │   │   │           ├── p-table
+    │       │   │   │           │   ├── sm-dots-load-more
+    │       │   │   │           │   ├── mat-checkbox: data-id="Select All Loaded Tasks"
+    │       │   │   │           │   ├── sm-menu: data-id="sortedByFilter"
+    │       │   │   │           │   │   └── mat-icon: data-id="OpenMenu"
+    │       │   │   │           │   ├── sm-table-card-filter
+    │       │   │   │           │   │   └── button: data-id="filterIcon" in mat
+    │       │   │   │           │   ├── sm-table-card
+    │       │   │   │           │   │   ├── sm-experiment-type-icon-label
+    │       │   │   │           │   │   ├── sm-status-icon-label
+    │       │   │   │           │   │   └── sm-tag-list
+    │       │   │   │           │   └── sm-table-card
+    │       │   │   │           │       ├── sm-experiment-type-icon-label
+    │       │   │   │           │       ├── sm-status-icon-label
+    │       │   │   │           │       └── sm-tag-list
+    │       │   │   │           │           ├── sm-user-tag: data-id="tagName"
+    │       │   │   │           │           └── sm-user-tag: data-id="tagName"
+    │       │   │   │           └── p-context-menu
+    │       │   │   └── as-split-area
+    │       │   │       ├── router-outlet
+    │       │   │       └── sm-experiment-output
+    │       │   │           ├── sm-overlay
+    │       │   │           ├── sm-info-header-status-icon-label
+    │       │   │           ├── sm-experiment-info-header
+    │       │   │           │   ├── sm-experiment-type-icon-label: data-id="experimentIcon"
+    │       │   │           │   ├── sm-inline-edit
+    │       │   │           │   │   ├── mat-icon: data-id="Edit Description"
+    │       │   │           │   │   ├── input: data-id="nameField"
+    │       │   │           │   │   ├── button: data-id="ApproveButton" in mat
+    │       │   │           │   │   └── button: data-id="CancelButton" in mat
+    │       │   │           │   ├── sm-id-badge
+    │       │   │           │   │   └── span: data-id="userId"
+    │       │   │           │   ├── button: data-id="descriptionIcon" in mat
+    │       │   │           │   ├── button: data-id="exportTaskButton" in mat
+    │       │   │           │   ├── button: data-id="fullscreenIcon" in mat
+    │       │   │           │   ├── sm-experiment-menu-extended
+    │       │   │           │   │   ├── button: data-id="menuIcon" in mat
+    │       │   │           │   │   └── sm-tags-menu
+    │       │   │           │   ├── button: data-id="Cross Button" in mat
+    │       │   │           │   ├── sm-tag-list
+    │       │   │           │   │   └── sm-user-tag: data-id="addTag"
+    │       │   │           │   └── sm-tags-menu
+    │       │   │           ├── sm-experiment-info-navbar
+    │       │   │           │   └── sm-router-tab-nav-bar
+    │       │   │           │       ├── a: data-id="execution" in mat
+    │       │   │           │       ├── a: data-id="configuration" in mat
+    │       │   │           │       ├── a: data-id="artifacts" in mat
+    │       │   │           │       ├── a: data-id="info" in mat
+    │       │   │           │       ├── a: data-id="console" in mat
+    │       │   │           │       ├── a: data-id="scalars" in mat
+    │       │   │           │       ├── a: data-id="plots" in mat
+    │       │   │           │       └── a: data-id="debug samples" in mat
+    │       │   │           ├── router-outlet
+    │       │   │           └── sm-debug-images
+    │       │   └── sm-entity-footer
+    │       └── notifier-container
+    └── sm-clone-dialog
+        ├── sm-dialog-template
+        │   ├── button: data-id="Cross" in mat
+        │   ├── mat-icon: data-id="pipelineIcon"
+        │   ├── sm-paginated-entity-selector
+        │   ├── mat-checkbox: data-id="setAsParentCheckbox"
+        │   └── mat-checkbox: data-id="forceOriginalPackagesCheckbox"
+        ├── button: data-id="CancelButton" in mat
+        └── button: data-id="CloneButton" in mat
+-->
+<html lang="en" class="light-mode">
+  <head>
+    <script type="module" src="/@vite/client"></script>
+    <meta charset="utf-8">
+    <title>
+      ClearML - PROJECTS / All Tasks
+    </title>
+    <meta name="description" content="stackup - ClearML based MLOps workspace">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link id="favicon" rel="icon" type="image/x-icon" href="favicon.ico?v=7">
+    <script>
+      
+    if (global === undefined) {
+      var global = window;
+    }
+  
+    </script>
+    <script src="env.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="global-styles.css">
+    <script type="text/javascript" src="app/webapp-common/assets/plotly-2.35.0.min.js" crossorigin=""></script>
+    <script type="text/javascript" src="assets/ace-builds/ace.js" crossorigin=""></script>
+  </head>
+  <body style="transform: scale(0.8); transform-origin: 0px 0px; height: 125vh; width: 125vw;">
+    <sm-root ng-version="22.1.5" aria-hidden="true">
+      <router-outlet></router-outlet>
+      <sm-app-shell>
+        <sm-update-notifier _nghost-ng-c1933727447="">
+          A newer version of ClearML server ( ) is available. 
+          <a _ngcontent-ng-c1933727447="" target="_blank" class="link" href="">
+             See details.
+          </a>
+          <button _ngcontent-ng-c1933727447="" mat-icon-button="" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+            <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+            <mat-icon _ngcontent-ng-c1933727447="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+          <!--container-->
+        </sm-update-notifier>
+        <sm-color-picker-wrapper id="color-picker-outlet" _nghost-ng-c3583412064="">
+          <!--container-->
+          <!--container-->
+        </sm-color-picker-wrapper>
+        <sm-server-notification-dialog-container></sm-server-notification-dialog-container>
+        <sm-spinner _nghost-ng-c4245312281="">
+          <!--container-->
+        </sm-spinner>
+        <sm-side-nav _nghost-ng-c3104842741="">
+          <img _ngcontent-ng-c3104842741="" alt="clearML" width="64" height="64" class="logo-a" loading="eager" fetchpriority="high" decoding="sync" ng-img="true" src="assets/small-logo.svg?=2">
+          <a _ngcontent-ng-c3104842741="" routerlink="/workers-and-queues" routerlinkactive="active" smtooltip="WORKERS &amp; QUEUES" class="mat-mdc-tooltip-trigger item al-ico-queues" href="/workers-and-queues" aria-describedby="cdk-describedby-message-ng-1-3" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" smtooltip="MODEL ENDPOINTS" data-id="modelEndpointsIcon" class="mat-mdc-tooltip-trigger item al-ico-model-endpoints" href="/endpoints/active" aria-describedby="cdk-describedby-message-ng-1-4" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" smtooltip="DATASETS" class="mat-mdc-tooltip-trigger item al-ico-datasets" href="/datasets" aria-describedby="cdk-describedby-message-ng-1-5" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" smtooltip="PROJECTS" routerlink="/dashboard" class="mat-mdc-tooltip-trigger item al-ico-projects active" href="/dashboard" aria-describedby="cdk-describedby-message-ng-1-6" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" smtooltip="PIPELINES" class="mat-mdc-tooltip-trigger item al-ico-pipelines" href="/pipelines" aria-describedby="cdk-describedby-message-ng-1-7" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" routerlink="/quality-pipeline" routerlinkactive="active" smtooltip="QUALITY PIPELINE" aria-label="Quality pipeline" data-id="qualityPipelineIcon" class="mat-mdc-tooltip-trigger item al-ico-testing" href="/quality-pipeline" aria-describedby="cdk-describedby-message-ng-1-8" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" routerlink="/data-catalog" routerlinkactive="active" smtooltip="DATA CATALOG" aria-label="Data catalog" data-id="dataCatalogIcon" class="mat-mdc-tooltip-trigger item al-ico-data-audit" href="/data-catalog" aria-describedby="cdk-describedby-message-ng-1-9" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" routerlink="enterprise" routerlinkactive="active" smtooltip="EXPLORE CLEARML ENTERPRISE" class="mat-mdc-tooltip-trigger item al-ico-enterprise-rocket lm" href="/enterprise" aria-describedby="cdk-describedby-message-ng-1-2" cdk-describedby-host="ng-1"></a>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <a _ngcontent-ng-c3104842741="" target="_blank" smtooltip="Community support on Slack" class="mat-mdc-tooltip-trigger item" href="https://joinslack.clear.ml" aria-describedby="cdk-describedby-message-ng-1-10" cdk-describedby-host="ng-1">
+            <i _ngcontent-ng-c3104842741="" class="i-slack-mark-color"></i>
+          </a>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+        </sm-side-nav>
+        <!--container-->
+        <sm-header _nghost-ng-c1659870886="">
+          <sm-breadcrumbs _ngcontent-ng-c1659870886="" class="spacer flex-grow-1" _nghost-ng-c2466075759="">
+            <!--container-->
+            <span _ngcontent-ng-c2466075759="" class="sub-projects-breadcrumbs">
+              <!--container-->
+              <a _ngcontent-ng-c2466075759="" class="crumb url first" href="/projects">
+                 PROJECTS
+              </a>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </span>
+            <i _ngcontent-ng-c2466075759="" class="al-icon al-ico-slash"></i>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <span _ngcontent-ng-c2466075759="" class="sub-projects-breadcrumbs last">
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              All Tasks
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </span>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <mat-menu _ngcontent-ng-c2466075759="">
+              <!--container-->
+            </mat-menu>
+            <!--container-->
+          </sm-breadcrumbs>
+          <!--container-->
+          <!--container-->
+          <sm-header-navbar-tabs _ngcontent-ng-c1659870886="" _nghost-ng-c1831992985="">
+            <mat-tab-group _ngcontent-ng-c1831992985="" mat-stretch-tabs="false" mat-align-tabs="center" disableripple="" class="mat-mdc-tab-group mat-primary" style="--mat-tab-body-animation-duration: 500ms; --mat-tab-header-animation-duration: 500ms;">
+              <mat-tab-header class="mat-mdc-tab-header">
+                <span class="mdc-tab__ripple"></span>
+                <span class="mdc-tab__content">
+                  <span class="mdc-tab__text-label">
+                    <span _ngcontent-ng-c1831992985="">
+                      TASKS
+                    </span>
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                  </span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+                <span class="mdc-tab__ripple"></span>
+                <span class="mdc-tab__content">
+                  <span class="mdc-tab__text-label">
+                    <span _ngcontent-ng-c1831992985="">
+                      MODELS
+                    </span>
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                  </span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+                <!--container-->
+              </mat-tab-header>
+              <!--container-->
+              <mat-tab-body role="tabpanel" class="mat-mdc-tab-body mat-mdc-tab-body-active" id="mat-tab-group-0-content-0" aria-labelledby="mat-tab-group-0-label-0" aria-hidden="false">
+                <!--container-->
+                <!--container-->
+              </mat-tab-body>
+              <mat-tab-body role="tabpanel" class="mat-mdc-tab-body" id="mat-tab-group-0-content-1" aria-labelledby="mat-tab-group-0-label-1" aria-hidden="true" inert="">
+                <!--container-->
+              </mat-tab-body>
+              <!--container-->
+            </mat-tab-group>
+            <!--container-->
+          </sm-header-navbar-tabs>
+          <!--container-->
+          <button _ngcontent-ng-c1659870886="" mat-icon-button="" data-id="globalSearchButton" smtooltip="Search all [ctrl + k]" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-tooltip-trigger me-2 mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-describedby="cdk-describedby-message-ng-1-11" cdk-describedby-host="ng-1">
+            <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+            <mat-icon _ngcontent-ng-c1659870886="" role="img" fontset="al" fonticon="al-ico-search" data-id="search Icon" class="mat-icon notranslate al-ico-search al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-search" data-mat-icon-namespace="al"></mat-icon>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+          <!--container-->
+          <!--container-->
+          <!--container-->
+          <button _ngcontent-ng-c1659870886="" mat-icon-button="" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger resources-trigger mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-haspopup="menu" aria-expanded="false">
+            <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+            <mat-icon _ngcontent-ng-c1659870886="" role="img" fontset="al" fonticon="al-ico-help-outlined" data-id="help Icon" class="mat-icon notranslate al-ico-help-outlined al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-help-outlined" data-mat-icon-namespace="al"></mat-icon>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+          <!--container-->
+          <span _ngcontent-ng-c1659870886="" data-id="Avatar" class="mat-mdc-menu-trigger pointer menu-trigger position-relative" aria-haspopup="menu" aria-expanded="false">
+            <!--container-->
+            <i _ngcontent-ng-c1659870886="" class="al-icon al-ico-account sm-md"></i>
+            <!--container-->
+            <!--container-->
+          </span>
+          <!--container-->
+          <mat-menu _ngcontent-ng-c1659870886="" class="">
+            <!--container-->
+          </mat-menu>
+          <mat-menu _ngcontent-ng-c1659870886="" class="">
+            <!--container-->
+          </mat-menu>
+          <!--container-->
+        </sm-header>
+        <!--container-->
+        <router-outlet class="main-router"></router-outlet>
+        <sm-common-experiments _nghost-ng-c2890758180="">
+          <sm-overlay _ngcontent-ng-c2890758180="" _nghost-ng-c2030592807=""></sm-overlay>
+          <sm-experiment-header _ngcontent-ng-c2890758180="" _nghost-ng-c1049210839="">
+            <!--container-->
+            <!--container-->
+            <sm-toggle-archive _ngcontent-ng-c1049210839="" _nghost-ng-c2825009408="">
+              <button _ngcontent-ng-c2825009408="" mat-stroked-button="" data-id="Open Archive" class="mdc-button mat-mdc-button-base mat-mdc-tooltip-trigger mdc-button--outlined mat-mdc-outlined-button icon-only mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" aria-describedby="cdk-describedby-message-ng-1-14" cdk-describedby-host="ng-1">
+                <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+                <mat-icon _ngcontent-ng-c2825009408="" role="img" fontset="al" class="mat-icon notranslate al-ico-archive al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-archive" data-mat-icon-namespace="al" fonticon="al-ico-archive"></mat-icon>
+                <span class="mdc-button__label">
+                  <!--container-->
+                </span>
+                <!--container-->
+                <span class="mat-focus-indicator"></span>
+                <span class="mat-mdc-button-touch-target"></span>
+              </button>
+              <!--container-->
+            </sm-toggle-archive>
+            <sm-button-toggle _ngcontent-ng-c1049210839="" class="ms-3 ng-untouched ng-pristine ng-valid" _nghost-ng-c4156287772="">
+              <mat-button-toggle-group _ngcontent-ng-c4156287772="" name="fontStyle" aria-label="Font Style" class="mat-button-toggle-group mat-button-toggle-group-appearance-standard ng-untouched ng-pristine ng-valid" role="radiogroup" aria-disabled="false">
+                <mat-button-toggle _ngcontent-ng-c4156287772="" role="presentation" appearance="legacy" class="mat-button-toggle mat-button-toggle-appearance-standard mat-button-toggle-animations-enabled" data-id="table" id="mat-button-toggle-0">
+                  <button type="button" class="mat-button-toggle-button mat-focus-indicator" id="mat-button-toggle-0-button" role="radio" tabindex="-1" aria-checked="false" name="fontStyle">
+                    <!--container-->
+                    <span class="mat-button-toggle-label-content">
+                      <mat-icon _ngcontent-ng-c4156287772="" role="img" fontset="al" class="mat-icon notranslate al-ico-table-view al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-table-view" data-mat-icon-namespace="al" fonticon="al-ico-table-view"></mat-icon>
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                  </button>
+                  <span class="mat-button-toggle-focus-overlay"></span>
+                  <span matripple="" class="mat-ripple mat-button-toggle-ripple"></span>
+                </mat-button-toggle>
+                <!--container-->
+                <mat-button-toggle _ngcontent-ng-c4156287772="" role="presentation" appearance="legacy" class="mat-button-toggle mat-button-toggle-appearance-standard mat-button-toggle-animations-enabled mat-button-toggle-checked" data-id="info" id="mat-button-toggle-1">
+                  <button type="button" class="mat-button-toggle-button mat-focus-indicator" id="mat-button-toggle-1-button" role="radio" tabindex="0" aria-checked="true" name="fontStyle">
+                    <!--container-->
+                    <span class="mat-button-toggle-label-content">
+                      <mat-icon _ngcontent-ng-c4156287772="" role="img" fontset="al" class="mat-icon notranslate al-ico-experiment-view al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-experiment-view" data-mat-icon-namespace="al" fonticon="al-ico-experiment-view"></mat-icon>
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                  </button>
+                  <span class="mat-button-toggle-focus-overlay"></span>
+                  <span matripple="" class="mat-ripple mat-button-toggle-ripple"></span>
+                </mat-button-toggle>
+                <!--container-->
+                <mat-button-toggle _ngcontent-ng-c4156287772="" role="presentation" appearance="legacy" class="mat-button-toggle mat-button-toggle-appearance-standard mat-button-toggle-animations-enabled" data-id="compare" id="mat-button-toggle-2">
+                  <button type="button" class="mat-button-toggle-button mat-focus-indicator" id="mat-button-toggle-2-button" role="radio" tabindex="-1" aria-checked="false" name="fontStyle">
+                    <!--container-->
+                    <span class="mat-button-toggle-label-content">
+                      <mat-icon _ngcontent-ng-c4156287772="" role="img" fontset="al" class="mat-icon notranslate al-ico-charts-view al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-charts-view" data-mat-icon-namespace="al" fonticon="al-ico-charts-view"></mat-icon>
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                  </button>
+                  <span class="mat-button-toggle-focus-overlay"></span>
+                  <span matripple="" class="mat-ripple mat-button-toggle-ripple"></span>
+                </mat-button-toggle>
+                <!--container-->
+                <!--container-->
+              </mat-button-toggle-group>
+            </sm-button-toggle>
+            <sm-common-search _ngcontent-ng-c1049210839="" class="ms-3" _nghost-ng-c3654561426="">
+              <button _ngcontent-ng-c3654561426="" mat-icon-button="" data-id="searchIcon" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base search-icon mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+                <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                <mat-icon _ngcontent-ng-c3654561426="" role="img" fontset="al" class="mat-icon notranslate al-ico-search al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-search" data-mat-icon-namespace="al" fonticon="al-ico-search"></mat-icon>
+                <!--container-->
+                <span class="mat-focus-indicator"></span>
+                <span class="mat-mdc-button-touch-target"></span>
+              </button>
+              <span _ngcontent-ng-c3654561426="" class="search-container">
+                <sm-search _ngcontent-ng-c3654561426="" class="outline contained-icon" _nghost-ng-c2747600649="">
+                  <span _ngcontent-ng-c2747600649="" class="search-input-container expand active animate">
+                    <span _ngcontent-ng-c2747600649="" class="search-input">
+                      <input _ngcontent-ng-c2747600649="" data-id="searchInputField" class="active" placeholder="Search for tasks">
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                  </span>
+                </sm-search>
+              </span>
+            </sm-common-search>
+            <!--container-->
+            <sm-menu _ngcontent-ng-c1049210839="" iconclass="al-ico-download" data-id="downloadCSV" _nghost-ng-c1114940198="">
+              <button _ngcontent-ng-c1114940198="" mat-button="" smclickstoppropagation="" class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger mat-mdc-tooltip-trigger menu-button mat-mdc-button icon-only mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" aria-haspopup="menu" aria-expanded="false">
+                <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+                <!--container-->
+                <span class="mdc-button__label">
+                  <span _ngcontent-ng-c1114940198="" smshowtooltipifellipsis="" class="mat-mdc-tooltip-trigger ellipsis me-auto"></span>
+                  <!--container-->
+                </span>
+                <mat-icon _ngcontent-ng-c1114940198="" role="img" inline="" iconpositionend="" fontset="al" data-id="OpenMenu" class="mat-icon notranslate al-ico-download al-icon mat-icon-inline mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-download" data-mat-icon-namespace="al" fonticon="al-ico-download"></mat-icon>
+                <!--container-->
+                <!--container-->
+                <span class="mat-focus-indicator"></span>
+                <span class="mat-mdc-button-touch-target"></span>
+              </button>
+              <!--container-->
+              <mat-menu _ngcontent-ng-c1114940198="" class="">
+                <!--container-->
+              </mat-menu>
+            </sm-menu>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <sm-refresh-button _ngcontent-ng-c1049210839="" _nghost-ng-c4088296581="">
+              <button _ngcontent-ng-c4088296581="" mat-icon-button="" data-id="Auto Refresh" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base refresh mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+                <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                <span _ngcontent-ng-c4088296581="" class="arrows">
+                  <svg _ngcontent-ng-c4088296581="" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path _ngcontent-ng-c4088296581="" d="M13.79,19.79l1.61,1.61c-1.06.38-2.2.6-3.4.6-5.52,0-10-4.48-10-10,0-1.97.58-3.8,1.56-5.35l-.93-.93c-.27-.27-.08-.72.3-.72h3.64c.23,0,.42.19.42.42v3.64c0,.38-.46.57-.72.3l-1.25-1.25c-.65,1.15-1.02,2.48-1.02,3.89,0,4.41,3.59,8,8,8,.62,0,1.21-.08,1.79-.21ZM20.03,17.94c1.23-1.66,1.97-3.71,1.97-5.94,0-5.52-4.48-10-10-10-1.19,0-2.33.22-3.4.6l1.61,1.61c.58-.13,1.17-.21,1.79-.21,4.41,0,8,3.59,8,8,0,1.67-.52,3.22-1.4,4.51l-.87-.87c-.27-.27-.72-.08-.72.3v3.64c0,.23.19.42.42.42h3.64c.38,0,.57-.46.3-.72l-1.34-1.34Z" fill="#8492c2" class="path_arrows"></path>
+                  </svg>
+                </span>
+                <span _ngcontent-ng-c4088296581="" class="play">
+                  <svg _ngcontent-ng-c4088296581="" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path _ngcontent-ng-c4088296581="" d="M14.89,12.29l-3.99,3.05c-.33.26-.9.07-.9-.29v-6.09c0-.36.57-.54.9-.29l3.99,3.05c.15.14.15.44,0,.57Z" fill="#d3ff00" class="path_play"></path>
+                  </svg>
+                </span>
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <span class="mat-focus-indicator"></span>
+                <span class="mat-mdc-button-touch-target"></span>
+              </button>
+              <!--container-->
+              <!--container-->
+            </sm-refresh-button>
+            <!--container-->
+            <!--container-->
+          </sm-experiment-header>
+          <!--container-->
+          <as-split _ngcontent-ng-c2890758180="" _nghost-ng-c4291842499="" dir="ltr" class="as-horizontal as-percent as-transition" style="grid-template: 1fr / 30fr 1px 70fr;">
+            <as-split-area _ngcontent-ng-c2890758180="" _nghost-ng-c731707058="" class="as-split-area" style="grid-column: 1 / 1;">
+              <sm-experiments-table _ngcontent-ng-c2890758180="" selectionmode="single" class="align-self-stretch" _nghost-ng-c1174536081="">
+                <sm-experiment-menu-extended _ngcontent-ng-c2890758180="" _nghost-ng-c3935119698="">
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <mat-menu _ngcontent-ng-c3935119698="" class="">
+                    <!--container-->
+                  </mat-menu>
+                  <sm-tags-menu _ngcontent-ng-c3935119698="" class="light-theme" _nghost-ng-c4039894505="">
+                    <mat-menu _ngcontent-ng-c4039894505="" class="">
+                      <!--container-->
+                    </mat-menu>
+                  </sm-tags-menu>
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                </sm-experiment-menu-extended>
+                <!--container-->
+                <sm-table _ngcontent-ng-c1174536081="" _nghost-ng-c3510103288="">
+                  <p-table _ngcontent-ng-c3510103288="" datakey="id" class="table has-header card-view p-component p-datatable p-datatable-flex-scrollable p-datatable-hoverable p-datatable-scrollable" data-p="scrollable flex-scrollable" pc2="" data-pc-section="root" data-pc-name="table" style="--table-row-height: 48px; --card-height: 112px;">
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <sm-dots-load-more _ngcontent-ng-c3510103288="" class="pointer" _nghost-ng-c2546996476=""></sm-dots-load-more>
+                    <table role="table" class="p-datatable-scrollable-table p-datatable-table" id="pn_id_1-table" data-pc-section="table" style="width: 336px; min-width: 336px;">
+                      <!--container-->
+                      <thead role="rowgroup" class="p-datatable-thead" data-pc-section="thead" style="position: sticky;">
+                        <!--container-->
+                        <tr _ngcontent-ng-c3510103288="" class="header card-header">
+                          <th _ngcontent-ng-c3510103288="">
+                            <mat-checkbox _ngcontent-ng-c1174536081="" data-id="Select All Loaded Tasks" smclickstoppropagation="" class="mat-mdc-checkbox header-checkbox mat-accent ng-untouched ng-pristine ng-valid" id="mat-mdc-checkbox-0">
+                              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-0-input">
+                                <span class="mdc-checkbox">
+                                  <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                                  <input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-0-input" tabindex="0">
+                                  <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                                  <span aria-hidden="true" class="mdc-checkbox__background">
+                                    <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                                      <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                                    </svg>
+                                    <span class="mdc-checkbox__mixedmark"></span>
+                                  </span>
+                                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+                                </span>
+                                <span class="mat-internal-form-field-label mdc-label"></span>
+                              </label>
+                            </mat-checkbox>
+                            <!--container-->
+                            <!--container-->
+                            <mat-menu _ngcontent-ng-c1174536081="">
+                              <!--container-->
+                            </mat-menu>
+                            <!--container-->
+                            taskS LIST
+                            <sm-menu _ngcontent-ng-c3510103288="" header="SORTED BY " data-id="sortedByFilter" class="menu" _nghost-ng-c1114940198="">
+                              <button _ngcontent-ng-c1114940198="" mat-button="" smclickstoppropagation="" class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger mat-mdc-tooltip-trigger menu-button mat-mdc-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-disabled="" aria-haspopup="menu" aria-expanded="false">
+                                <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+                                <!--container-->
+                                <span class="mdc-button__label">
+                                  <span _ngcontent-ng-c1114940198="" smshowtooltipifellipsis="" class="mat-mdc-tooltip-trigger ellipsis me-auto" aria-describedby="cdk-describedby-message-ng-1-18" cdk-describedby-host="ng-1">
+                                    SORTED BY 
+                                  </span>
+                                  <!--container-->
+                                </span>
+                                <mat-icon _ngcontent-ng-c1114940198="" role="img" inline="" iconpositionend="" fontset="al" data-id="OpenMenu" class="mat-icon notranslate al-ico-dropdown-arrow al-icon mat-icon-inline mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dropdown-arrow" data-mat-icon-namespace="al" fonticon="al-ico-dropdown-arrow"></mat-icon>
+                                <!--container-->
+                                <!--container-->
+                                <span class="mat-focus-indicator"></span>
+                                <span class="mat-mdc-button-touch-target"></span>
+                              </button>
+                              <!--container-->
+                              <mat-menu _ngcontent-ng-c1114940198="" class="">
+                                <!--container-->
+                              </mat-menu>
+                            </sm-menu>
+                            <!--container-->
+                            <sm-table-card-filter _ngcontent-ng-c1174536081="" fixedoptionssubheader="System tags" _nghost-ng-c861602909="">
+                              <button _ngcontent-ng-c861602909="" mat-icon-button="" data-id="filterIcon" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-haspopup="menu" aria-expanded="false">
+                                <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                                <mat-icon _ngcontent-ng-c861602909="" role="img" fontset="al" class="mat-icon notranslate al-ico-filter-off al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-filter-off" data-mat-icon-namespace="al" fonticon="al-ico-filter-off">
+                                  <span _ngcontent-ng-c861602909="" class="path1"></span>
+                                  <span _ngcontent-ng-c861602909="" class="path2"></span>
+                                </mat-icon>
+                                <!--container-->
+                                <span class="mat-focus-indicator"></span>
+                                <span class="mat-mdc-button-touch-target"></span>
+                              </button>
+                              <!--container-->
+                              <mat-menu _ngcontent-ng-c861602909="" class="">
+                                <!--container-->
+                              </mat-menu>
+                            </sm-table-card-filter>
+                            <!--container-->
+                          </th>
+                        </tr>
+                        <!--container-->
+                        <!--container-->
+                      </thead>
+                      <!--container-->
+                      <tbody role="rowgroup" class="p-datatable-tbody" data-p-virtualscroll="false" data-pc-section="tbody" data-p="hoverable" pc3="">
+                        <!--container-->
+                        <tr _ngcontent-ng-c3510103288="" class="cards-table pointer p-datatable-selectable-row selected p-datatable-row-selected" tabindex="0" data-p-selectable-row="true" pc4="" pc5="" pc6="">
+                          <!--container-->
+                          <td _ngcontent-ng-c3510103288="" role="button" class="pointer p-0">
+                            <sm-table-card _ngcontent-ng-c1174536081="" _nghost-ng-c2738891822="" class="no-tags">
+                              <mat-checkbox _ngcontent-ng-c1174536081="" smclickstoppropagation="" class="mat-mdc-checkbox mat-accent" id="mat-mdc-checkbox-14">
+                                <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-14-input">
+                                  <span class="mdc-checkbox">
+                                    <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                                    <input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-14-input" tabindex="0">
+                                    <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                                    <span aria-hidden="true" class="mdc-checkbox__background">
+                                      <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                                        <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                                      </svg>
+                                      <span class="mdc-checkbox__mixedmark"></span>
+                                    </span>
+                                    <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+                                  </span>
+                                  <span class="mat-internal-form-field-label mdc-label"></span>
+                                </label>
+                              </mat-checkbox>
+                              <!--container-->
+                              <sm-experiment-type-icon-label _ngcontent-ng-c1174536081="" _nghost-ng-c3763374092="">
+                                <mat-icon _ngcontent-ng-c3763374092="" role="img" fontset="al" class="mat-icon notranslate al-ico-type-training al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-type-training" data-mat-icon-namespace="al" fonticon="al-ico-type-training"></mat-icon>
+                                <!--container-->
+                              </sm-experiment-type-icon-label>
+                              <!--container-->
+                              <!--container-->
+                              task_2
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                              <sm-status-icon-label _ngcontent-ng-c1174536081="" _nghost-ng-c2535322009="">
+                                <mat-icon _ngcontent-ng-c2535322009="" role="img" fontset="al" class="mat-icon notranslate inline al-ico-completed al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-completed" data-mat-icon-namespace="al" fonticon="al-ico-completed"></mat-icon>
+                                <!--container-->
+                                Completed
+                                <!--container-->
+                                <!--container-->
+                                <!--container-->
+                              </sm-status-icon-label>
+                              <span _ngcontent-ng-c1174536081="" tags-list-container="" class="">
+                                <sm-tag-list _ngcontent-ng-c1174536081="" _nghost-ng-c3875443391="">
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                </sm-tag-list>
+                                <!--container-->
+                                <!--container-->
+                              </span>
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                              <span _ngcontent-ng-c1174536081="" class="">
+                                <span _ngcontent-ng-c1174536081="" class="ellipsis">
+                                  Updated 19 hours ago
+                                  <span _ngcontent-ng-c1174536081="" class="dot">
+                                    ●
+                                  </span>
+                                  Created by mmmtest 
+                                </span>
+                                <!--container-->
+                              </span>
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                            </sm-table-card>
+                            <!--container-->
+                            <!--container-->
+                            <!--container-->
+                          </td>
+                          <!--container-->
+                        </tr>
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <tr _ngcontent-ng-c3510103288="" class="even cards-table pointer p-datatable-selectable-row" tabindex="0" data-p-selectable-row="true" pc7="" pc8="" pc9="">
+                          <!--container-->
+                          <td _ngcontent-ng-c3510103288="" role="button" class="pointer p-0">
+                            <sm-table-card _ngcontent-ng-c1174536081="" _nghost-ng-c2738891822="">
+                              <mat-checkbox _ngcontent-ng-c1174536081="" smclickstoppropagation="" class="mat-mdc-checkbox mat-accent" id="mat-mdc-checkbox-15">
+                                <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-15-input">
+                                  <span class="mdc-checkbox">
+                                    <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                                    <input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-15-input" tabindex="0">
+                                    <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                                    <span aria-hidden="true" class="mdc-checkbox__background">
+                                      <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                                        <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                                      </svg>
+                                      <span class="mdc-checkbox__mixedmark"></span>
+                                    </span>
+                                    <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+                                  </span>
+                                  <span class="mat-internal-form-field-label mdc-label"></span>
+                                </label>
+                              </mat-checkbox>
+                              <!--container-->
+                              <sm-experiment-type-icon-label _ngcontent-ng-c1174536081="" _nghost-ng-c3763374092="">
+                                <mat-icon _ngcontent-ng-c3763374092="" role="img" fontset="al" class="mat-icon notranslate al-ico-type-training al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-type-training" data-mat-icon-namespace="al" fonticon="al-ico-type-training"></mat-icon>
+                                <!--container-->
+                              </sm-experiment-type-icon-label>
+                              <!--container-->
+                              <!--container-->
+                              task1_random-forest-quality-classifier
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                              <sm-status-icon-label _ngcontent-ng-c1174536081="" _nghost-ng-c2535322009="">
+                                <mat-icon _ngcontent-ng-c2535322009="" role="img" fontset="al" class="mat-icon notranslate inline al-ico-pending al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-pending" data-mat-icon-namespace="al" fonticon="al-ico-pending"></mat-icon>
+                                <!--container-->
+                                Pending
+                                <!--container-->
+                                <!--container-->
+                                <!--container-->
+                              </sm-status-icon-label>
+                              <span _ngcontent-ng-c1174536081="" tags-list-container="" class="">
+                                <sm-tag-list _ngcontent-ng-c1174536081="" _nghost-ng-c3875443391="">
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <sm-user-tag _ngcontent-ng-c3875443391="" data-id="tagName" class="tag-item" _nghost-ng-c1901200945="">
+                                    <span _ngcontent-ng-c1901200945="" class="mat-mdc-tooltip-trigger content" style="background-color: rgb(1, 59, 106); color: white;">
+                                      <!--container-->
+                                       xxxtag1
+
+                                    </span>
+                                    <!--container-->
+                                    <!--container-->
+                                    <!--container-->
+                                  </sm-user-tag>
+                                  <sm-user-tag _ngcontent-ng-c3875443391="" data-id="tagName" class="tag-item" _nghost-ng-c1901200945="">
+                                    <span _ngcontent-ng-c1901200945="" class="mat-mdc-tooltip-trigger content" style="background-color: rgb(89, 108, 113); color: white;">
+                                      <!--container-->
+                                       xxxtest1
+
+                                    </span>
+                                    <!--container-->
+                                    <!--container-->
+                                    <!--container-->
+                                  </sm-user-tag>
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                  <!--container-->
+                                </sm-tag-list>
+                                <!--container-->
+                                <!--container-->
+                              </span>
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                              <span _ngcontent-ng-c1174536081="" class="">
+                                <span _ngcontent-ng-c1174536081="" class="ellipsis">
+                                  Updated 15 hours ago
+                                  <span _ngcontent-ng-c1174536081="" class="dot">
+                                    ●
+                                  </span>
+                                  Created by mmmtest 
+                                </span>
+                                <!--container-->
+                              </span>
+                              <!--container-->
+                              <!--container-->
+                              <!--container-->
+                            </sm-table-card>
+                            <!--container-->
+                            <!--container-->
+                            <!--container-->
+                          </td>
+                          <!--container-->
+                        </tr>
+                        <tr _ngcontent-ng-c3510103288="" class="table-load-more hidden"></tr>
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                      </tbody>
+                      <!--container-->
+                      <tfoot role="rowgroup" class="p-datatable-tfoot" data-pc-section="tfoot" style="position: sticky;">
+                        <!--container-->
+                        <!--container-->
+                      </tfoot>
+                      <!--container-->
+                    </table>
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <span class="p-datatable-row-reorder-indicator-up" data-pc-section="rowreorderindicatorup" style="display: none;">
+                      <svg data-p-icon="arrow-down" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="p-icon p-icon-arrow-down">
+                        <path d="M10 2.25C10.4142 2.25003 10.75 2.58581 10.75 3V15.1895L15.4698 10.4697C15.7627 10.1769 16.2374 10.1769 16.5303 10.4697C16.8232 10.7626 16.8232 11.2374 16.5303 11.5303L10.5303 17.5303C10.2374 17.8232 9.76264 17.8232 9.46974 17.5303L3.46973 11.5303C3.17684 11.2374 3.17684 10.7626 3.46973 10.4697C3.76263 10.1769 4.2374 10.1769 4.53028 10.4697L9.25002 15.1895V3C9.25002 2.58579 9.5858 2.25 10 2.25Z" fill="currentColor"></path>
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                      </svg>
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                    <span class="p-datatable-row-reorder-indicator-down" data-pc-section="rowreorderindicatordown" style="display: none;">
+                      <svg data-p-icon="arrow-up" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="p-icon p-icon-arrow-up">
+                        <path d="M9.52638 2.41791C9.82095 2.17769 10.2557 2.19512 10.5303 2.46967L16.5303 8.46969C16.8232 8.76256 16.8231 9.23734 16.5303 9.53024C16.2374 9.82314 15.7627 9.82314 15.4698 9.53024L10.75 4.8105V17C10.75 17.4142 10.4142 17.75 10 17.75C9.5858 17.75 9.25002 17.4142 9.25002 17V4.8105L4.53027 9.53024C4.23737 9.82314 3.76261 9.82314 3.46972 9.53024C3.17685 9.23735 3.17683 8.76258 3.46972 8.46969L9.46974 2.46967L9.52638 2.41791Z" fill="currentColor"></path>
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                        <!--container-->
+                      </svg>
+                      <!--container-->
+                      <!--container-->
+                    </span>
+                    <!--container-->
+                  </p-table>
+                  <!--container-->
+                  <p-context-menu _ngcontent-ng-c3510103288="" class="d-none" pc1="">
+                    <!--container-->
+                  </p-context-menu>
+                </sm-table>
+                <!--container-->
+              </sm-experiments-table>
+              <!--container-->
+            </as-split-area>
+            <as-split-area _ngcontent-ng-c2890758180="" style="display: flex; flex-direction: column; grid-column: 3 / 3;" _nghost-ng-c731707058="" class="as-split-area">
+              <router-outlet _ngcontent-ng-c2890758180=""></router-outlet>
+              <sm-experiment-output _nghost-ng-c3747144724="">
+                <sm-overlay _ngcontent-ng-c3747144724="" _nghost-ng-c2030592807=""></sm-overlay>
+                <sm-info-header-status-icon-label _ngcontent-ng-c3747144724="" _nghost-ng-c798712794="">
+                  <span _ngcontent-ng-c798712794="" class="notch d-flex align-items-center">
+                    <span _ngcontent-ng-c798712794="" class="label">
+                        COMPLETED 
+                    </span>
+                    <!--container-->
+                  </span>
+                </sm-info-header-status-icon-label>
+                <sm-experiment-info-header _ngcontent-ng-c3747144724="" _nghost-ng-c2633527151="">
+                  <sm-experiment-type-icon-label _ngcontent-ng-c2633527151="" data-id="experimentIcon" iconclass="lg" class="me-3" _nghost-ng-c3763374092="">
+                    <mat-icon _ngcontent-ng-c3763374092="" role="img" fontset="al" class="mat-icon notranslate lg al-ico-type-training al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-type-training" data-mat-icon-namespace="al" fonticon="al-ico-type-training"></mat-icon>
+                    <!--container-->
+                  </sm-experiment-type-icon-label>
+                  <!--container-->
+                  <sm-inline-edit _ngcontent-ng-c2633527151="" class="edit-name" _nghost-ng-c1060252214="">
+                    <span _ngcontent-ng-c2633527151="" smshowtooltipifellipsis="" class="mat-mdc-tooltip-trigger" aria-describedby="cdk-describedby-message-ng-1-32" cdk-describedby-host="ng-1">
+                      task_2
+                    </span>
+                    <!--container-->
+                    <button _ngcontent-ng-c1060252214="" mat-icon-button="" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base sm mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+                      <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                      <mat-icon _ngcontent-ng-c1060252214="" role="img" fontset="al" fonticon="al-ico-edit" data-id="Edit Description" class="mat-icon notranslate al-ico-edit al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-edit" data-mat-icon-namespace="al"></mat-icon>
+                      <!--container-->
+                      <span class="mat-focus-indicator"></span>
+                      <span class="mat-mdc-button-touch-target"></span>
+                    </button>
+                    <!--container-->
+                    <form _ngcontent-ng-c1060252214="" novalidate="" class="inline-edit-form ng-untouched ng-pristine ng-invalid">
+                      <input _ngcontent-ng-c1060252214="" type="text" name="inline" data-id="nameField" autocomplete="off" smuniquenamevalidator="" class="form-control inline-edit-input ng-untouched ng-pristine ng-invalid" minlength="2" required="">
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                      <button _ngcontent-ng-c1060252214="" mat-icon-button="" data-id="ApproveButton" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base inline-edit-approve sm mat-unthemed mat-mdc-button-disabled" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" mat-ripple-loader-disabled="" disabled="true">
+                        <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                        <mat-icon _ngcontent-ng-c1060252214="" role="img" fontset="al" fonticon="al-ico-success" class="mat-icon notranslate al-ico-success al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-success" data-mat-icon-namespace="al"></mat-icon>
+                        <!--container-->
+                        <span class="mat-focus-indicator"></span>
+                        <span class="mat-mdc-button-touch-target"></span>
+                      </button>
+                      <button _ngcontent-ng-c1060252214="" mat-icon-button="" data-id="CancelButton" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base inline-edit-close sm mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" id="CANCEL_BUTTON">
+                        <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                        <mat-icon _ngcontent-ng-c1060252214="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+                        <!--container-->
+                        <span class="mat-focus-indicator"></span>
+                        <span class="mat-mdc-button-touch-target"></span>
+                      </button>
+                    </form>
+                    <!--container-->
+                  </sm-inline-edit>
+                  <!--container-->
+                  <sm-id-badge _ngcontent-ng-c2633527151="" _nghost-ng-c2855473008="">
+                    <svg _ngcontent-ng-c2855473008="" xmlns="http://www.w3.org/2000/svg" width="22" height="18" viewBox="0 0 22 18">
+                      <rect _ngcontent-ng-c2855473008="" width="22" height="18" class="id-rect"></rect>
+                      <path _ngcontent-ng-c2855473008="" d="M6,5h2v8h-2V5ZM16,8.5v1c0,1.93-1.57,3.5-3.5,3.5h-3.5V5h3.5c1.93,0,3.5,1.57,3.5,3.5ZM14,8.5c0-.83-.67-1.5-1.5-1.5h-1.5v4h1.5c.83,0,1.5-.67,1.5-1.5v-1Z" class="id-text"></path>
+                    </svg>
+                    <span _ngcontent-ng-c2855473008="" data-id="userId" class="hash">
+                      8bd85783
+                      <span _ngcontent-ng-c2855473008="" class="three-dots">
+                        ...
+                      </span>
+                    </span>
+                    <!--container-->
+                    <!--container-->
+                  </sm-id-badge>
+                  <!--container-->
+                  <span _ngcontent-ng-c2633527151="" class="comment line-item">
+                    <button _ngcontent-ng-c2633527151="" mat-icon-button="" data-id="descriptionIcon" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-haspopup="menu" aria-expanded="false">
+                      <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                      <mat-icon _ngcontent-ng-c2633527151="" role="img" fontset="al" class="mat-icon notranslate al-ico-task-desc-outline al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-task-desc-outline" data-mat-icon-namespace="al" fonticon="al-ico-task-desc-outline"></mat-icon>
+                      <!--container-->
+                      <span class="mat-focus-indicator"></span>
+                      <span class="mat-mdc-button-touch-target"></span>
+                    </button>
+                    <!--container-->
+                  </span>
+                  <mat-menu _ngcontent-ng-c2633527151="" yposition="above" class="">
+                    <!--container-->
+                  </mat-menu>
+                  <button _ngcontent-ng-c2633527151="" mat-icon-button="" smtooltip="Export task information (JSON)" data-id="exportTaskButton" aria-label="Export task information" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-tooltip-trigger line-item mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-describedby="cdk-describedby-message-ng-1-29" cdk-describedby-host="ng-1">
+                    <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                    <mat-icon _ngcontent-ng-c2633527151="" role="img" fontset="al" fonticon="al-ico-export" class="mat-icon notranslate al-ico-export al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-export" data-mat-icon-namespace="al"></mat-icon>
+                    <!--container-->
+                    <span class="mat-focus-indicator"></span>
+                    <span class="mat-mdc-button-touch-target"></span>
+                  </button>
+                  <!--container-->
+                  <!--container-->
+                  <button _ngcontent-ng-c2633527151="" mat-icon-button="" smtooltip="View Full Screen" data-id="fullscreenIcon" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-tooltip-trigger line-item mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-describedby="cdk-describedby-message-ng-1-12" cdk-describedby-host="ng-1">
+                    <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                    <mat-icon _ngcontent-ng-c2633527151="" role="img" fontset="al" fonticon="al-ico-info-max" class="mat-icon notranslate al-ico-info-max al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-info-max" data-mat-icon-namespace="al"></mat-icon>
+                    <!--container-->
+                    <span class="mat-focus-indicator"></span>
+                    <span class="mat-mdc-button-touch-target"></span>
+                  </button>
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <sm-experiment-menu-extended _ngcontent-ng-c2633527151="" class="line-item" _nghost-ng-c3935119698="">
+                    <button _ngcontent-ng-c3935119698="" mat-icon-button="" data-id="menuIcon" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger mat-unthemed" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="" aria-haspopup="menu" aria-expanded="false">
+                      <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                      <mat-icon _ngcontent-ng-c3935119698="" role="img" fontset="al" fonticon="al-ico-bars-menu" class="mat-icon notranslate al-ico-bars-menu al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-bars-menu" data-mat-icon-namespace="al"></mat-icon>
+                      <!--container-->
+                      <span class="mat-focus-indicator"></span>
+                      <span class="mat-mdc-button-touch-target"></span>
+                      <span class="mat-ripple mat-mdc-button-ripple"></span>
+                    </button>
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <mat-menu _ngcontent-ng-c3935119698="" class="">
+                      <!--container-->
+                    </mat-menu>
+                    <sm-tags-menu _ngcontent-ng-c3935119698="" class="light-theme" _nghost-ng-c4039894505="">
+                      <mat-menu _ngcontent-ng-c4039894505="" class="">
+                        <!--container-->
+                      </mat-menu>
+                    </sm-tags-menu>
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                  </sm-experiment-menu-extended>
+                  <!--container-->
+                  <button _ngcontent-ng-c2633527151="" mat-icon-button="" data-id="Cross Button" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base line-item mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+                    <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                    <mat-icon _ngcontent-ng-c2633527151="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+                    <!--container-->
+                    <span class="mat-focus-indicator"></span>
+                    <span class="mat-mdc-button-touch-target"></span>
+                  </button>
+                  <!--container-->
+                  <sm-tag-list _ngcontent-ng-c2633527151="" _nghost-ng-c3875443391="">
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <!--container-->
+                    <sm-user-tag _ngcontent-ng-c3875443391="" caption="ADD TAG" data-id="addTag" class="add-button show-only-on-hover no-tags" _nghost-ng-c1901200945="">
+                      <span _ngcontent-ng-c1901200945="" class="mat-mdc-tooltip-trigger content add-button" style="color: var(--color-primary);">
+                        <i _ngcontent-ng-c1901200945="" class="al-icon al-ico-add xs"></i>
+                        <!--container-->
+                         ADD TAG
+
+                      </span>
+                      <!--container-->
+                      <!--container-->
+                      <!--container-->
+                    </sm-user-tag>
+                    <!--container-->
+                    <!--container-->
+                  </sm-tag-list>
+                  <!--container-->
+                  <!--container-->
+                  <span _ngcontent-ng-c2633527151="" class="mat-mdc-menu-trigger" aria-haspopup="menu" aria-expanded="false"></span>
+                  <!--container-->
+                  <sm-tags-menu _ngcontent-ng-c2633527151="" class="light-theme" _nghost-ng-c4039894505="">
+                    <mat-menu _ngcontent-ng-c4039894505="" class="">
+                      <!--container-->
+                    </mat-menu>
+                  </sm-tags-menu>
+                </sm-experiment-info-header>
+                <sm-experiment-info-navbar _ngcontent-ng-c3747144724="" _nghost-ng-c2132071263="">
+                  <span _ngcontent-ng-c2132071263=""></span>
+                  <sm-router-tab-nav-bar _ngcontent-ng-c2132071263="" _nghost-ng-c2852678980="">
+                    <nav _ngcontent-ng-c2852678980="" mat-tab-nav-bar="" mat-stretch-tabs="false" mat-align-tabs="center" class="mat-mdc-tab-nav-bar mat-mdc-tab-header mat-primary mat-mdc-tab-header-pagination-controls-enabled" role="tablist">
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="execution" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-0" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/execution?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            EXECUTION
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="configuration" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-1" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/hyper-params/hyper-param/_empty_?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            CONFIGURATION
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="artifacts" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-2" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/artifacts?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            ARTIFACTS
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="info" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-3" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/general?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            INFO
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="console" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-4" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/log?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            CONSOLE
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="scalars" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-5" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/scalars?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            SCALARS
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator" data-id="plots" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="false" id="mat-tab-link-6" tabindex="-1" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/plots?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            PLOTS
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <a _ngcontent-ng-c2852678980="" mat-tab-link="" queryparamshandling="merge" routerlinkactive="active" class="mdc-tab mat-mdc-tab-link mat-focus-indicator active mdc-tab--active mdc-tab-indicator--active" data-id="debug samples" aria-controls="mat-tab-nav-panel-0" aria-disabled="false" aria-selected="true" id="mat-tab-link-7" tabindex="0" role="tab" href="/projects/*/tasks/8bd85783fdfe480286c34c679c650bdc/debugImages?columns=selected&amp;columns=type&amp;columns=name&amp;columns=tags&amp;columns=status&amp;columns=project.name&amp;columns=users&amp;columns=started&amp;columns=last_update&amp;columns=last_iteration&amp;columns=parent.name&amp;order=-active_duration">
+                        <span class="mdc-tab__ripple"></span>
+                        <span class="mdc-tab__content">
+                          <span class="mdc-tab__text-label">
+                            DEBUG SAMPLES
+                          </span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                          <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                      </a>
+                      <!--container-->
+                    </nav>
+                    <mat-tab-nav-panel _ngcontent-ng-c2852678980="" role="tabpanel" class="mat-mdc-tab-nav-panel" id="mat-tab-nav-panel-0" aria-labelledby="mat-tab-link-7"></mat-tab-nav-panel>
+                  </sm-router-tab-nav-bar>
+                  <!--container-->
+                  <!--container-->
+                </sm-experiment-info-navbar>
+                <router-outlet _ngcontent-ng-c3747144724="" class="output-outlet"></router-outlet>
+                <sm-debug-images _nghost-ng-c3859969929="">
+                  <!--container-->
+                  <i _ngcontent-ng-c3859969929="" class="al-icon al-ico-disconnect"></i>
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                  <!--container-->
+                </sm-debug-images>
+                <!--container-->
+              </sm-experiment-output>
+              <!--container-->
+              <!--container-->
+            </as-split-area>
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+            <!--container-->
+          </as-split>
+          <sm-entity-footer _ngcontent-ng-c2890758180="" _nghost-ng-c3877746049="">
+            <!--container-->
+          </sm-entity-footer>
+          <!--container-->
+        </sm-common-experiments>
+        <!--container-->
+        <notifier-container class="notifier__container">
+          <ul>
+            <!--container-->
+          </ul>
+        </notifier-container>
+      </sm-app-shell>
+      <!--container-->
+    </sm-root>
+    <noscript aria-hidden="true">
+      Please enable JavaScript to continue using this application.
+    </noscript>
+    <script src="polyfills.js" type="module"></script>
+    <script src="scripts.js" defer=""></script>
+    <script src="main.js" type="module"></script>
+    <footer aria-hidden="true"></footer>
+    EXPLORE CLEARML ENTERPRISE
+    WORKERS &amp; QUEUES
+    MODEL ENDPOINTS
+    DATASETS
+    PROJECTS
+    PIPELINES
+    QUALITY PIPELINE
+    DATA CATALOG
+    Community support on Slack
+    Search all [ctrl + k]
+    View Full Screen
+    Download table as CSV
+    OPEN ARCHIVE
+    Table view
+    Details view
+    Compare view
+    SORTED BY
+    Draft
+    Pending
+    Running
+    Completed
+    Published
+    Failed
+    Aborted
+    All Tasks
+    Sync browsing
+    Copy full ID
+8bd85783fdfe480286c34c679c650bdc
+    Export task information (JSON)
+    xxxtag1
+    xxxtest1
+    task_2
+    Training
+    Data Processing
+    (No tags)
+    mmmtest
+    p20260927
+    <mat-dialog-container tabindex="-1" class="mat-mdc-dialog-container mdc-dialog cdk-dialog-container mat-mdc-dialog-container-with-actions mdc-dialog--open" style="--mat-dialog-transition-duration: 150ms;" id="mat-mdc-dialog-0" role="dialog" aria-modal="false">
+      <sm-clone-dialog _nghost-ng-c2461182095="" class="mat-mdc-dialog-component-host">
+        <sm-dialog-template _ngcontent-ng-c2461182095="" _nghost-ng-c813617501="">
+          <button _ngcontent-ng-c813617501="" mat-icon-button="" data-id="Cross" tabindex="-1" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base stick-to-corner right mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+            <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+            <mat-icon _ngcontent-ng-c813617501="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+          <!--container-->
+          <!--container-->
+          <mat-icon _ngcontent-ng-c813617501="" role="img" fontset="al" data-id="pipelineIcon" class="mat-icon notranslate icon-image lg al-ico-clone al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-clone" data-mat-icon-namespace="al" fonticon="al-ico-clone"></mat-icon>
+          <!--container-->
+          <!--container-->
+          Clone Task
+          <!--container-->
+          <!--container-->
+           A draft copy of 
+          <b _ngcontent-ng-c2461182095="" class="mat-mdc-tooltip-trigger">
+            task_2
+          </b>
+          <!--container-->
+          <!--container-->
+           will be created. 
+          <!--container-->
+          <!--container-->
+          <form _ngcontent-ng-c2461182095="" novalidate="" class="ng-dirty ng-touched ng-valid">
+            <sm-paginated-entity-selector _ngcontent-ng-c2461182095="" formcontrolname="project" label="Project" _nghost-ng-c3684832195="" class="ng-dirty ng-touched ng-valid">
+              <mat-form-field _ngcontent-ng-c3684832195="" appearance="outline" class="mat-mdc-form-field mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-mdc-form-field-has-icon-suffix mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine mat-form-field-animations-enabled ng-valid">
+                <!--container-->
+                <!--container-->
+                <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-8" for="mat-input-8" style="">
+                  <mat-label _ngcontent-ng-c3684832195="">
+                    Project
+                  </mat-label>
+                  <!--container-->
+                  <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+                  <!--container-->
+                </label>
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <input _ngcontent-ng-c3684832195="" matinput="" type="text" class="mat-mdc-input-element mat-mdc-autocomplete-trigger mat-mdc-form-field-input-control mdc-text-field__input ng-untouched ng-pristine cdk-text-field-autofill-monitored ng-valid" id="mat-input-8" required="" aria-required="true" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-haspopup="listbox" aria-invalid="false">
+                <!--container-->
+                <mat-autocomplete _ngcontent-ng-c3684832195="" autoactivefirstoption="" class="mat-mdc-autocomplete">
+                  <!--container-->
+                </mat-autocomplete>
+                <!--container-->
+                <!--container-->
+                <button _ngcontent-ng-c3684832195="" mat-icon-button="" matsuffix="" class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base sm mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" mat-ripple-loader-centered="">
+                  <span class="mat-mdc-button-persistent-ripple mdc-icon-button__ripple"></span>
+                  <mat-icon _ngcontent-ng-c3684832195="" role="img" fontset="al" fonticon="al-ico-dialog-x" class="mat-icon notranslate al-ico-dialog-x al-icon mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="al-ico-dialog-x" data-mat-icon-namespace="al"></mat-icon>
+                  <!--container-->
+                  <span class="mat-focus-indicator"></span>
+                  <span class="mat-mdc-button-touch-target"></span>
+                </button>
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+                <!--container-->
+              </mat-form-field>
+              <!--container-->
+              <!--container-->
+            </sm-paginated-entity-selector>
+            <mat-form-field _ngcontent-ng-c2461182095="" appearance="outline" class="mat-mdc-form-field w-100 mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-pristine ng-valid mat-form-field-animations-enabled ng-touched">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-6" for="mat-input-6" style="">
+                <mat-label _ngcontent-ng-c2461182095="">
+                  Name
+                </mat-label>
+                <span aria-hidden="true" class="mat-mdc-form-field-required-marker mdc-floating-label--required"></span>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <input _ngcontent-ng-c2461182095="" formcontrolname="name" matinput="" autocomplete="off" name="ExperimentName" cdkfocusinitial="" class="mat-mdc-input-element ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored ng-touched" id="mat-input-6" required="" aria-invalid="false" aria-required="true">
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+            <mat-checkbox _ngcontent-ng-c2461182095="" formcontrolname="forceParent" data-id="setAsParentCheckbox" class="mat-mdc-checkbox w-100 mat-accent ng-untouched ng-valid mat-mdc-checkbox-checked ng-dirty" id="mat-mdc-checkbox-16">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-16-input">
+                <span class="mdc-checkbox">
+                  <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                  <input type="checkbox" class="mdc-checkbox__native-control mdc-checkbox--selected" id="mat-mdc-checkbox-16-input" tabindex="0">
+                  <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                  <span aria-hidden="true" class="mdc-checkbox__background">
+                    <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                      <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                    </svg>
+                    <span class="mdc-checkbox__mixedmark"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Set
+                  <b _ngcontent-ng-c2461182095="" class="mat-mdc-tooltip-trigger">
+                     task_2 
+                  </b>
+                  <!--container-->
+                  <!--container-->
+                  <span _ngcontent-ng-c2461182095="" style="white-space: nowrap;">
+                    as parent
+                  </span>
+                </span>
+              </label>
+            </mat-checkbox>
+            <!--container-->
+            <mat-checkbox _ngcontent-ng-c2461182095="" data-id="forceOriginalPackagesCheckbox" class="mat-mdc-checkbox me-3 mat-accent ng-untouched ng-pristine ng-valid" id="mat-mdc-checkbox-17">
+              <label mat-internal-form-field="" class="mdc-form-field mat-internal-form-field" for="mat-mdc-checkbox-17-input">
+                <span class="mdc-checkbox">
+                  <span aria-hidden="true" class="mat-mdc-checkbox-touch-target"></span>
+                  <input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-17-input" tabindex="0">
+                  <span aria-hidden="true" class="mdc-checkbox__ripple"></span>
+                  <span aria-hidden="true" class="mdc-checkbox__background">
+                    <svg focusable="false" viewBox="0 0 24 24" class="mdc-checkbox__checkmark">
+                      <path fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" class="mdc-checkbox__checkmark-path"></path>
+                    </svg>
+                    <span class="mdc-checkbox__mixedmark"></span>
+                  </span>
+                  <span mat-ripple="" aria-hidden="true" class="mat-ripple mat-mdc-checkbox-ripple mat-focus-indicator"></span>
+                </span>
+                <span class="mat-internal-form-field-label mdc-label">
+                  Force original packages
+                </span>
+              </label>
+            </mat-checkbox>
+            <!--container-->
+            <mat-form-field _ngcontent-ng-c2461182095="" appearance="outline" class="mat-mdc-form-field w-100 mat-mdc-form-field-type-mat-input mat-mdc-form-field-label-always-float mat-form-field-appearance-outline mat-primary ng-untouched ng-pristine ng-valid mat-form-field-animations-enabled">
+              <!--container-->
+              <!--container-->
+              <label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label mdc-floating-label--float-above" id="mat-mdc-form-field-label-7" for="mat-input-7" style="">
+                <mat-label _ngcontent-ng-c2461182095="">
+                  Description
+                </mat-label>
+                <!--container-->
+              </label>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <textarea _ngcontent-ng-c2461182095="" formcontrolname="comment" rows="3" name="ExperimentComment" matinput="" class="mat-mdc-input-element clone-description ng-untouched ng-pristine ng-valid mat-mdc-form-field-textarea-control mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" id="mat-input-7" aria-invalid="false" aria-required="false"></textarea>
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+              <!--container-->
+            </mat-form-field>
+          </form>
+        </sm-dialog-template>
+        <mat-dialog-actions _ngcontent-ng-c2461182095="" class="mat-mdc-dialog-actions mdc-dialog__actions">
+          <button _ngcontent-ng-c2461182095="" mat-stroked-button="" data-id="CancelButton" class="mdc-button mat-mdc-button-base mdc-button--outlined mat-mdc-outlined-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple" type="button">
+            <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+            <span class="mdc-button__label">
+              CANCEL
+            </span>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+          <button _ngcontent-ng-c2461182095="" mat-flat-button="" data-id="CloneButton" class="mdc-button mat-mdc-button-base yes-button mdc-button--unelevated mat-mdc-unelevated-button mat-unthemed" mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple">
+            <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+            <span class="mdc-button__label">
+               CLONE 
+            </span>
+            <!--container-->
+            <span class="mat-focus-indicator"></span>
+            <span class="mat-mdc-button-touch-target"></span>
+          </button>
+        </mat-dialog-actions>
+      </sm-clone-dialog>
+      <!--container-->
+    </mat-dialog-container>
+  </body>
+</html>
