@@ -38,7 +38,7 @@ export class DialogTemplateComponent {
   header = input<string>();
   subHeader = input<string>();
   pageHeader = input<string>();
-  headerClass = input<string>();
+  headerClass = input<string>(); //abc
   xClicked = output();
 
   container = viewChild<ElementRef<HTMLDivElement>>('container');
