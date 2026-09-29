@@ -1,1 +1,1 @@
-*.ts filter=ignore-double-colon
+# *.ts filter=ignore-double-colon
